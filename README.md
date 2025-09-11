@@ -278,5 +278,5 @@ Write-Host "Acesse: http://localhost:5173"
 - 📊 **Console logs** detalhados no frontend
 - 🔍 **API logs** estruturados no backend
 - ❌ **Error handling** robusto
-- 📈 **Métricas de progresso** em tempo real
+- 📈 **Métricas de progresso** em tempo real.
 
