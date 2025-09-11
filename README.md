@@ -1,19 +1,20 @@
+
 # 🚀 Sistema de Recrutamento ProfitSeller
 
 Sistema completo de recrutamento com formulário multi-etapas, análise de perfil e salvamento em tempo real no Azure Cosmos DB.
 
 ## 📋 Índice
 
-- [Visão Geral](#-visão-geral)
-- [Arquitetura do Sistema](#-arquitetura-do-sistema)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Configuração do Ambiente](#-configuração-do-ambiente)
-- [Como Executar Localmente](#-como-executar-localmente)
-- [Funcionalidades](#-funcionalidades)
-- [API Documentation](#-api-documentation)
-- [Troubleshooting](#-troubleshooting)
-- [Contribuição](#-contribuição)
+- [Visão Geral](#visão-geral)
+- [Arquitetura do Sistema](#arquitetura-do-sistema)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Configuração do Ambiente](#configuração-do-ambiente)
+- [Como Executar Localmente](#como-executar-localmente)
+- [Funcionalidades](#funcionalidades)
+- [API Documentation](#api-documentation)
+- [Troubleshooting](#troubleshooting)
+- [Contribuição](#contribuição)
 
 ## 🎯 Visão Geral
 
@@ -27,23 +28,21 @@ O **Sistema de Recrutamento ProfitSeller** é uma aplicação completa que permi
 
 ### ✨ Características Principais
 
-🔄 **Salvamento Automático**: Cada resposta é salva automaticamente no banco de dados  
-📱 **Responsivo**: Interface adaptada para desktop e mobile  
-🌐 **Multilíngue**: Suporte a português e inglês  
-☁️ **Cloud Ready**: Integração com Azure Cosmos DB  
-🔒 **Validação**: Validação completa de dados no frontend e backend  
-📊 **Monitoramento**: Logs detalhados para debugging e auditoria  
+- 🔄 **Salvamento Automático**: Cada resposta é salva automaticamente no banco de dados
+- 📱 **Responsivo**: Interface adaptada para desktop e mobile
+- 🌐 **Multilíngue**: Suporte a português e inglês
+- ☁️ **Cloud Ready**: Integração com Azure Cosmos DB
+- 🔒 **Validação**: Validação completa de dados no frontend e backend
+- 📊 **Monitoramento**: Logs detalhados para debugging e auditoria
 
 ## 🏗 Arquitetura do Sistema
 
-```
-┌─────────────────┐    HTTP/REST    ┌─────────────────┐    SDK    ┌─────────────────┐
-│                 │ ──────────────> │                 │ ────────> │                 │
-│   Frontend      │                 │   Backend       │           │  Azure Cosmos   │
-│   (React)       │ <────────────── │   (FastAPI)     │ <──────── │      DB         │
-│                 │   JSON Response │                 │  Response │                 │
-└─────────────────┘                 └─────────────────┘           └─────────────────┘
-      Port 5173                           Port 8000                    Cloud Database
+```text
+┌───────────────┐    HTTP/REST    ┌───────────────┐    SDK    ┌───────────────┐
+│   Frontend    │ ──────────────> │   Backend     │ ────────> │ Azure Cosmos  │
+│   (React)     │ <────────────── │   (FastAPI)   │ <──────── │     DB        │
+└───────────────┘   JSON Response └───────────────┘  Response └───────────────┘
+   Port 5173                       Port 8000           Cloud Database
 ```
 
 ### Fluxo de Dados
@@ -57,41 +56,41 @@ O **Sistema de Recrutamento ProfitSeller** é uma aplicação completa que permi
 
 ## 📁 Estrutura do Projeto
 
-```
+```text
 projetoForm/
-├── 📄 README.md                    # Este arquivo
-├── 📄 CHANGELOG.md                 # Histórico de mudanças
-├── 📁 webapp/                      # Frontend React
-│   ├── 📁 public/
+├── README.md                    # Este arquivo
+├── CHANGELOG.md                 # Histórico de mudanças
+├── webapp/                      # Frontend React
+│   ├── public/
 │   │   └── favicon.ico
-│   ├── 📁 src/
-│   │   ├── 📁 components/          # Componentes React
-│   │   │   ├── 📁 elements/        # Elementos reutilizáveis
-│   │   │   ├── 📁 forms/           # Formulários
-│   │   │   ├── 📁 steps/           # Etapas do processo
-│   │   │   └── 📁 ui/              # Componentes de UI (shadcn/ui)
-│   │   ├── 📁 contexts/            # Contextos React
+│   ├── src/
+│   │   ├── components/          # Componentes React
+│   │   │   ├── elements/        # Elementos reutilizáveis
+│   │   │   ├── forms/           # Formulários
+│   │   │   ├── steps/           # Etapas do processo
+│   │   │   └── ui/              # Componentes de UI (shadcn/ui)
+│   │   ├── contexts/            # Contextos React
 │   │   │   ├── ProcessContext.jsx  # Gerenciamento de estado
 │   │   │   └── LanguageContext.jsx # Controle de idioma
-│   │   ├── 📁 hooks/               # Custom hooks
-│   │   ├── 📁 lib/                 # Utilitários e configurações
-│   │   ├── 📁 pages/               # Páginas da aplicação
-│   │   ├── 📁 services/            # Serviços de API
+│   │   ├── hooks/               # Custom hooks
+│   │   ├── lib/                 # Utilitários e configurações
+│   │   ├── pages/               # Páginas da aplicação
+│   │   ├── services/            # Serviços de API
 │   │   │   └── backendAPIService.js # Comunicação com backend
 │   │   ├── App.jsx                 # Componente principal
 │   │   └── main.jsx               # Ponto de entrada
 │   ├── package.json               # Dependências do frontend
 │   ├── vite.config.js             # Configuração do Vite
 │   └── .env.example               # Variáveis de ambiente exemplo
-└── 📁 serverapp/                   # Backend FastAPI
-    ├── 📁 models/                  # Modelos de dados
-    │   └── user_models.py          # Modelos Pydantic
-    ├── 📁 services/                # Serviços
-    │   └── cosmos_service.py       # Integração Cosmos DB
-    ├── app.py                      # Aplicação principal FastAPI
-    ├── requirements.txt            # Dependências Python
-    ├── .env.example                # Variáveis de ambiente exemplo
-    └── test_cosmos.py              # Testes de conexão
+└── serverapp/                   # Backend FastAPI
+   ├── models/                  # Modelos de dados
+   │   └── user_models.py          # Modelos Pydantic
+   ├── services/                # Serviços
+   │   └── cosmos_service.py       # Integração Cosmos DB
+   ├── app.py                      # Aplicação principal FastAPI
+   ├── requirements.txt            # Dependências Python
+   ├── .env.example                # Variáveis de ambiente exemplo
+   └── test_cosmos.py              # Testes de conexão
 ```
 
 ## 🛠 Tecnologias Utilizadas
@@ -493,5 +492,3 @@ Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalh
 *Desenvolvido com ❤️ para otimizar processos de recrutamento*
 
 </div>
-#   t a s k u s  
- 
