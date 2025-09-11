@@ -1,0 +1,20 @@
+# Dependências do Backend FastAPI para Sistema de Recrutamento
+
+# Framework Web
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Azure Cosmos DB
+azure-cosmos==4.5.1
+
+# Validação de dados
+pydantic>=2.0.0
+email-validator
+
+# Utilitários
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# Desenvolvimento
+pytest==7.4.3
+httpx==0.25.2
