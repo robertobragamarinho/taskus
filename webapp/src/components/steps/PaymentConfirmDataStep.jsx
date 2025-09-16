@@ -9,14 +9,8 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
   const { processData, updateUserData, registerUser } = useContext(ProcessContext);
   const userData = processData?.userData || {};
 
-  const [form, setForm] = useState({
-    nomeCompleto: userData.nome || `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
-    cpf: userData.cpf || '',
-    telefone: userData.phone || '',
-    email: userData.email || '',
-  });
 
-  // Função para formatar CPF
+  // Sempre mostrar o CPF formatado (única função)
   function formatarCPF(valor) {
     const digits = valor.replace(/\D/g, '').slice(0, 11);
     let cpfFormatado = digits;
@@ -26,10 +20,31 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
     return cpfFormatado;
   }
 
+
+  // Função para formatar telefone
+  function formatarTelefone(valor) {
+    const digits = valor.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+  }
+
+  const [form, setForm] = useState({
+    nomeCompleto: userData.nome || `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
+    cpf: formatarCPF(userData.cpf || ''),
+    telefone: formatarTelefone(userData.phone || ''),
+    email: userData.email || '',
+  });
+
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'cpf') {
       setForm(prev => ({ ...prev, cpf: formatarCPF(value) }));
+    } else if (name === 'telefone') {
+      setForm(prev => ({ ...prev, telefone: formatarTelefone(value) }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
     }

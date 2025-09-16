@@ -153,7 +153,7 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
             ) : (
               <>
                 <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Continuar</span>
-                <ChevronRight className="w-4 h-4" />
+               
               </>
             )}
           </motion.button>

@@ -50,22 +50,7 @@ const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
 
   return (
     <div className="space-y-8">
-      {/* Título da etapa */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '10pt' }}>
-            Criando Currículo
-          </h2>
-          <span className="font-hendrix-regular text-gray-500" style={{ fontSize: '9pt' }}>
-            1 de 5
-          </span>
-        </div>
-
-        {/* Barra de progresso */}
-        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-8">
-          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '20%' }}></div>
-        </div>
-      </div>
+      
 
       {/* Conteúdo principal */}
       <div className="bg-gray-100 rounded-2xl p-6">
@@ -129,7 +114,6 @@ const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
             ) : (
               <>
                 <span>Enviar agora</span>
-                <ChevronRight className="w-4 h-4" />
               </>
             )}
           </div>
@@ -159,7 +143,6 @@ const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
             ) : (
               <>
                 <span>Pular</span>
-                <ChevronRight className="w-4 h-4" />
               </>
             )}
           </div>

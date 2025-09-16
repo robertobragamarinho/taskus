@@ -1,17 +1,29 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useProcess } from '@/hooks/useProcess.js';
 import '../../styles/refino.css';
 
 import logoTaskUs from '../../assets/logo-min.webp';
 
+import { useState } from 'react';
+
 const ContratacaoIntroStep = ({ onStart }) => {
-  // Dados fixos do exemplo
-  const nome = "Paulo Pipoca Silva";
+  const [isLoading, setIsLoading] = useState(false);
+  // Dados do contexto
+  const { processData } = useProcess();
+  const userData = processData?.userData || {};
+  // Monta nome do usuário a partir do contexto (fullName, ou firstName + lastName)
+  const nome = useMemo(() => {
+    if (userData.fullName) return userData.fullName;
+    if (userData.firstName && userData.lastName) return `${userData.firstName} ${userData.lastName}`;
+    if (userData.firstName) return userData.firstName;
+    return "Candidato";
+  }, [userData]);
   const codigoAprovacao = "#WST-782411";
   const totalCandidatos = 217;
 
   return (
     // Card principal
-    <div className="w-full h-screen max-w-md bg-[#222426] px-5 flex flex-col items-center mt-5">
+    <div className="w-full min-h-screen max-w-md bg-[#222426] px-5 flex flex-col items-center mt-5">
       {/* Código de aprovação */}
       <div className="mb-4 w-full flex justify-start mb-5">
         <span className="bg-[#0ecb7b] text-white font-hendrix-medium text-xs px-3 py-1 rounded-full shadow" style={{ letterSpacing: '0.5px' }}>
@@ -63,9 +75,23 @@ const ContratacaoIntroStep = ({ onStart }) => {
       </div>
       <button
         className="w-full py-3 rounded-xl bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-medium text-white text-base shadow-lg hover:from-blue-600 hover:to-blue-500 transition flex items-center justify-center"
-        onClick={onStart}
+        onClick={async () => {
+          setIsLoading(true);
+          try {
+            await onStart();
+          } finally {
+            setIsLoading(false);
+          }
+        }}
+        disabled={isLoading}
       >
-        Ir para contratação
+        {isLoading && (
+          <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+        )}
+        {isLoading ? 'Aguarde...' : 'Ir para contratação'}
       </button>
     </div>
   );

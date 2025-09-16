@@ -5,12 +5,12 @@ class BackendAPIService {
   constructor() {
     // Verificar se estamos em desenvolvimento
     const isDevelopment = import.meta.env.DEV;
-    
+
     // URL base da API backend
-    this.baseUrl = isDevelopment 
+    this.baseUrl = isDevelopment
       ? 'http://127.0.0.1:8000/api'  // Desenvolvimento
       : '/api';  // Produção (servido pelo mesmo servidor)
-    
+
     // Configurar axios com timeout e interceptors
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
@@ -19,7 +19,7 @@ class BackendAPIService {
         'Content-Type': 'application/json',
       }
     });
-    
+
     // Interceptor para logs de request (apenas em dev)
     this.axiosInstance.interceptors.request.use((config) => {
       if (isDevelopment) {
@@ -27,7 +27,7 @@ class BackendAPIService {
       }
       return config;
     });
-    
+
     // Interceptor para tratamento de response
     this.axiosInstance.interceptors.response.use(
       (response) => {
@@ -147,8 +147,22 @@ class BackendAPIService {
       throw new Error(error.response?.data?.detail || 'Erro ao verificar status do Cosmos');
     }
   }
-}
 
+  /**
+   * Envia evento de conversão para o backend (Meta/Facebook Conversion API)
+   * @param {Object} conversionData - Dados do evento de conversão
+   * @returns {Promise<Object>} Resposta da API
+   */
+  async sendConversionEvent(conversionData) {
+    try {
+      const response = await this.axiosInstance.post('/conversion', conversionData);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao enviar evento de conversão:', error);
+      throw new Error(error.response?.data?.detail || 'Erro ao enviar evento de conversão');
+    }
+  }
+}
 // Exportar instância única do serviço
 export const backendAPI = new BackendAPIService();
 export default backendAPI;

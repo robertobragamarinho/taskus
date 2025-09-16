@@ -75,8 +75,14 @@ const LoadingStep = ({ onComplete }) => {
     <div className="flex flex-col justify-center items-center h-full space-y-5 px-3 py-10">
       {/* Título principal */}
       <div className="text-center space-y-5">
-        <h1 className="tituloinicial font-hendrix-bold text-2xl text-gray-900 leading-tight">
-          Processo seletivo TaskUs Brasil 2025
+
+        <h1
+          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          style={{ fontSize: '12pt', lineHeight: '1.2' }}
+        >
+          <span className="block sm:inline">
+            Processo seletivo TaskUs Brasil 2025
+          </span>
         </h1>
 
         {/* Bloco com ALTURA PADRÃO para o texto rotativo */}

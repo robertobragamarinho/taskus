@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
+
 import { useEffect, useState } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -12,11 +13,13 @@ import InfoIconMin from '../assets/info_icon-min.webp';
 
 import PersonalInfoStep from '@/components/steps/PersonalInfoStep.jsx';
 
+import backendAPI from '../services/backendAPIService';
+
 
 
 const AnalisePerfilPage = () => {
   const navigate = useNavigate();
-  const { updateProcessStep, completeProcess } = useProcess();
+  const { updateProcessStep, completeProcess, processData } = useProcess();
 
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -197,7 +200,8 @@ const AnalisePerfilPage = () => {
     },
   ];
 
-  const handleStartProfile = () => {
+  const handleStartProfile = async () => {
+    await sendConversionEvent('track', 'Lead');
     setCurrentPhase('analysis');
   };
 
@@ -240,6 +244,41 @@ const AnalisePerfilPage = () => {
     }
   };
 
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  const sendConversionEvent = async (action, eventName) => {
+    let clientIp = '127.0.0.1';
+    try {
+      const res = await fetch('https://api.ipify.org?format=json');
+      const data = await res.json();
+      clientIp = data.ip;
+    } catch (e) {
+      console.warn('Não foi possível obter o IP real, usando 127.0.0.1');
+    }
+
+    const eventData = {
+      ip_adress: clientIp,
+      fbc: getCookie('_fbc') || 'N/A',
+      fbp: getCookie('_fbp') || 'N/A',
+      event_name: eventName,
+      event_time: String(Math.floor(Date.now() / 1000)),
+      action_source: 'website',
+      event_source_url: window.location.href,
+      client_user_agent: window.navigator.userAgent.substring(0, 100)
+    };
+
+    backendAPI.sendConversionEvent(eventData)
+      .then(res => {
+        console.log('Conversão enviada:', res);
+      })
+      .catch(err => {
+        console.error('Erro ao enviar conversão:', err);
+      });
+  };
 
   // finalizeProfile removida: o fluxo agora chama completeProcess e exibe o passo final antes de navegar
 
@@ -328,8 +367,14 @@ const AnalisePerfilPage = () => {
                 >
                   {/* Título principal */}
                   <div className="text-left space-y-4">
-                    <h1 className="tituloquest font-hendrix-semibold text-gray-800" style={{ fontSize: '12pt', marginTop: '5vw' }}>
-                      Responda o questionário a seguir com atenção
+
+                    <h1
+                      className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+                      style={{ fontSize: '12pt', lineHeight: '1.2' }}
+                    >
+                      <span className="block sm:inline">
+                        Responda o questionário a seguir com atenção!
+                      </span>
                     </h1>
 
                     <div className="space-y-3">
@@ -377,7 +422,6 @@ const AnalisePerfilPage = () => {
                       <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '7pt' }}>
                         Iniciar perguntas
                       </span>
-                      <ChevronRight className="w-4 h-4" />
                     </motion.button>
                   </motion.div>
                 </motion.div>

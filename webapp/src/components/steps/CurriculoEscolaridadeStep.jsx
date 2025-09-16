@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import '../../styles/refino.css';
 
-const CurriculoEscolaridadeStep = ({ onVoltar, onSelecionarEscolaridade }) => {
+const CurriculoEscolaridadeStep = ({ onSelecionarEscolaridade }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tipoAcao, setTipoAcao] = useState(null);
   const [escolaridadeSelecionada, setEscolaridadeSelecionada] = useState('');
@@ -16,55 +16,33 @@ const CurriculoEscolaridadeStep = ({ onVoltar, onSelecionarEscolaridade }) => {
     'Ensino Superior Completo'
   ];
 
-  // eslint-disable-next-line no-unused-vars
-  const handleVoltar = async () => {
-    setIsLoading(true);
-    setTipoAcao('voltar');
-    try {
-      if (onVoltar) {
-        await onVoltar();
-      }
-    } catch (error) {
-      console.error('Erro ao voltar:', error);
-    } finally {
-      setIsLoading(false);
-    }
+
+
+  // Agora apenas seleciona a opção, não avança
+  const handleSelecionarOpcao = (opcao) => {
+    setEscolaridadeSelecionada(opcao);
   };
 
-  const handleSelecionarOpcao = async (opcao) => {
+  // Novo handler para o botão Continuar
+  const handleContinuar = async () => {
+    if (!escolaridadeSelecionada) return;
     setIsLoading(true);
-    setTipoAcao('selecionar');
-    setEscolaridadeSelecionada(opcao);
-
+    setTipoAcao('continuar');
     try {
       if (onSelecionarEscolaridade) {
-        await onSelecionarEscolaridade(opcao);
+        await onSelecionarEscolaridade(escolaridadeSelecionada);
       }
     } catch (error) {
-      console.error('Erro ao selecionar escolaridade:', error);
+      console.error('Erro ao avançar escolaridade:', error);
     } finally {
       setIsLoading(false);
+      setTipoAcao(null);
     }
   };
 
   return (
     <div className="space-y-8">
-      {/* Título da etapa */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '10pt' }}>
-            Criando Currículo
-          </h2>
-          <span className="font-hendrix-regular text-gray-500" style={{ fontSize: '9pt' }}>
-            1 de 5
-          </span>
-        </div>
 
-        {/* Barra de progresso */}
-        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-8">
-          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '20%' }}></div>
-        </div>
-      </div>
 
       {/* Título principal */}
       <div className="bg-gray-100 rounded-2xl p-6">
@@ -74,37 +52,60 @@ const CurriculoEscolaridadeStep = ({ onVoltar, onSelecionarEscolaridade }) => {
 
         {/* Opções de escolaridade */}
         <div className="space-y-3">
-          {opcoesEscolaridade.map((opcao, index) => (
+          {opcoesEscolaridade.map((opcao) => (
             <button
-              key={index}
+              key={opcao}
+              type="button"
               onClick={() => handleSelecionarOpcao(opcao)}
-              disabled={isLoading && tipoAcao === 'selecionar'}
-              className={`
-                w-full bg-white rounded-xl p-4 border border-gray-200
-                font-hendrix-regular text-gray-700 text-left
-                transition-all duration-200 ease-out
-                ${isLoading && tipoAcao === 'selecionar' && escolaridadeSelecionada === opcao
-                  ? 'bg-gray-100 cursor-not-allowed'
-                  : 'hover:bg-blue-50 hover:border-blue-200 active:bg-blue-100'
-                }
-                flex items-center justify-between
+              className={`w-full py-4 px-6 rounded-2xl font-hendrix-regular text-gray-800 border-2 transition-all duration-200 text-center flex items-center justify-center
+                ${escolaridadeSelecionada === opcao
+                  ? 'border-blue-600 bg-blue-50 font-hendrix-semibold'
+                  : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'}
+                ${isLoading ? 'cursor-not-allowed opacity-70' : ''}
               `}
-              style={{ fontSize: '10pt' }}
+              style={{ fontSize: '11pt' }}
+              disabled={isLoading}
             >
-              <span>{opcao}</span>
-              {isLoading && tipoAcao === 'selecionar' && escolaridadeSelecionada === opcao ? (
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <ChevronRight className="w-4 h-4 text-gray-400" />
-              )}
+              {opcao}
             </button>
           ))}
         </div>
       </div>
 
+
       <p className="font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
         Verifique se os dados estão corretos
       </p>
+
+      {/* Botão Continuar estilizado igual ao CurriculoCriacaoStep */}
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={handleContinuar}
+          disabled={!escolaridadeSelecionada || isLoading}
+          className={`
+            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
+            transition-all duration-300 ease-out
+            ${!escolaridadeSelecionada || isLoading
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg hover:shadow-xl'}
+          `}
+          style={{ fontSize: '11pt' }}
+        >
+          <div className="flex items-center justify-center space-x-2">
+            {isLoading && tipoAcao === 'continuar' ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Salvando...</span>
+              </>
+            ) : (
+              <>
+                <span>Continuar</span>
+              </>
+            )}
+          </div>
+        </button>
+      </div>
 
       {/* Botão Voltar */}
       {/* <div className="flex justify-start">

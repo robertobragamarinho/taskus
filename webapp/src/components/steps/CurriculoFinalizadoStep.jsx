@@ -1,86 +1,96 @@
+  // Função para formatar data de AAAA-MM-DD para DD/MM/AAAA
+  function formatarDataBR(data) {
+    if (!data) return '';
+    // Se já estiver no formato DD/MM/AAAA, retorna direto
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(data)) return data;
+    // Se vier no formato AAAA-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+      const [ano, mes, dia] = data.split('-');
+      return `${dia}/${mes}/${ano}`;
+    }
+    return data;
+  }
+  // Função para formatar telefone no padrão (34) 99871-3749
+  function formatTelefoneBR(telefone) {
+    if (!telefone) return '';
+    // Remove tudo que não for dígito
+    const digits = telefone.toString().replace(/\D/g, '');
+    if (digits.length === 11) {
+      // Celular com DDD: (99) 99999-9999
+      return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+    } else if (digits.length === 10) {
+      // Fixo com DDD: (99) 9999-9999
+      return `(${digits.slice(0,2)}) ${digits.slice(2,6)}-${digits.slice(6)}`;
+    }
+    return telefone; // Retorna como está se não bater os padrões
+  }
 
 import { User } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useProcess } from '@/hooks/useProcess.js';
 import '../../styles/refino.css';
 
 const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao, dados }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { processData } = useProcess();
 
   const handleEnviar = async () => {
     setIsLoading(true);
     try {
       await onEnviarParaAvaliacao();
-    } catch (error) {
+    } catch {
       // Silencioso
     } finally {
       setIsLoading(false);
     }
   };
-  const { updateUserData } = useProcess();
-  const [phoneUser, setPhoneUser] = useState('');
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      const userId = sessionStorage.getItem('userId');
-      if (userId) {
-        try {
-          const { default: backendAPI } = await import('../../services/backendAPIService.js');
-          const result = await backendAPI.getUser(userId);
-          setPhoneUser(result?.data?.phone || '');
-          if (result.success && result.data) {
-            updateUserData({
-              nome: result.data.nome,
-              email: result.data.email,
-              phone: result.data.phone,
-              idade: result.data.idade ? String(result.data.idade) : ''
-            });
-          }
-        } catch (err) {
-          // Silencioso
-        }
-      }
-    };
-    loadUserData();
-  }, []);
-  // Função utilitária para fallback
+  // Utilitário para fallback
   const getValue = (value) => {
     if (value === undefined || value === null || value === "") return null;
     return value;
   };
 
-  useEffect(()=>{
-    console.log('ENTROU AQUI : ', dados);
-  },[dados])
+  // Dados do contexto
+  const userData = processData?.userData || {};
+  const nomeCompleto = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+  const emailContext = userData.email;
+  const telefoneContext = userData.phone;
+  const idadeContext = userData.age;
 
-
-
-  // Para localização pode vir como objeto ou string
-  const estado = getValue(curriculoData?.localizacao?.estado || curriculoData?.estado);
-  const cidade = getValue(curriculoData?.localizacao?.cidade || curriculoData?.cidade);
+  // Estado e cidade: busca em múltiplos caminhos possíveis no contexto
+  const estado =
+    getValue(userData.Estado) ||
+    getValue(userData.estado) ||
+    getValue(userData?.endereco?.Estado) ||
+    getValue(userData?.endereco?.estado) ||
+    getValue(curriculoData?.localizacao?.estado) ||
+    getValue(curriculoData?.estado) ||
+    '';
+  const cidade =
+    getValue(userData.Cidade) ||
+    getValue(userData.cidade) ||
+    getValue(userData?.endereco?.Cidade) ||
+    getValue(userData?.endereco?.cidade) ||
+    getValue(curriculoData?.localizacao?.cidade) ||
+    getValue(curriculoData?.cidade) ||
+    '';
   const escolaridade = getValue(curriculoData?.escolaridade);
-  const nome = getValue(curriculoData?.nome);
-  const email = getValue(curriculoData?.email);
-  const telefone = getValue(curriculoData?.telefone);
-  const idade = getValue(curriculoData?.idade);
-
-  const nomeCompleto = `${dados?.usuario?.firstName} ${dados?.usuario?.lastName}`
-  const fone = dados?.usuario?.phone
-  const age =  dados?.usuario?.age
-  const _email = dados?.usuario?.email
-
+  // Prioridade: contexto > curriculoData > dados
+  const nome = getValue(nomeCompleto) || getValue(curriculoData?.nome);
+  const email = getValue(emailContext) || getValue(curriculoData?.email) || getValue(dados?.usuario?.email);
+  const telefoneRaw = getValue(telefoneContext) || getValue(curriculoData?.telefone) || getValue(dados?.usuario?.phone);
+  const telefone = formatTelefoneBR(telefoneRaw);
+  const idade = getValue(idadeContext) || getValue(curriculoData?.idade) || getValue(dados?.usuario?.age);
 
   // Experiências pode vir como array ou não
   const experiencias = Array.isArray(curriculoData?.experiencias) ? curriculoData.experiencias : [];
 
-
   // Habilidades pode vir como array ou string
   const habilidades = Array.isArray(curriculoData?.habilidades) ? curriculoData.habilidades : (curriculoData?.habilidades ? [curriculoData.habilidades] : []);
 
-
-  
   return (
     <div className="space-y-6">
       {/* Título da etapa */}
@@ -119,7 +129,7 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
         {/* Nome */}
         <div className="text-center">
           <h2 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '14pt' }}>
-            {nome ? nome : nomeCompleto}
+            {nome}
           </h2>
         </div>
 
@@ -127,7 +137,7 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
         <div className="space-y-3">
           <div className="flex justify-between items-center">
             <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>E-mail</span>
-            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{email ? email : _email}</span>
+            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{email}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Telefone</span>
@@ -135,29 +145,34 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
               type="text"
               className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1"
               style={{ fontSize: '9pt', minWidth: 0, marginLeft: '1rem' }}
-              value={telefone ? telefone : phoneUser}
+              value={telefone}
               readOnly
             />
           </div>
           <div className="flex justify-between items-center">
             <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Idade</span>
-            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{idade ? idade : age}</span>
+            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{idade}</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Estado</span>
-            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{estado}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Cidade</span>
-            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{cidade}</span>
-          </div>
+          {/* Só mostra Estado e Cidade se NÃO houver nome do arquivo */}
+          {!(dados && dados.arquivo && dados.arquivo.nome) && (
+            <>
+              <div className="flex justify-between items-center">
+                <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Estado</span>
+                <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{estado}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Cidade</span>
+                <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{cidade}</span>
+              </div>
+            </>
+          )}
         </div>
 
-        {dados ? (
+        {dados && dados.arquivo && dados.arquivo.nome ? (
           <div className="space-y-4">
             <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Recebemos seu currículo!</h3>
             <div className="space-y-2">
-              <span className="font-hendrix-regular text-gray-800">Arquivo: {dados?.arquivo?.nome}</span><br/>
+              <span className="font-hendrix-regular text-gray-800">Arquivo: {dados.arquivo.nome}</span><br/>
             </div>
           </div>
         ) : (
@@ -186,11 +201,11 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
                     </div>
                     <div className="flex justify-between items-center text-gray-500" style={{ fontSize: '8pt' }}>
                       <span className="font-hendrix-regular">Início</span>
-                      <span className="font-hendrix-regular">{getValue(exp.dataInicio || exp.inicio)}</span>
+                      <span className="font-hendrix-regular">{formatarDataBR(getValue(exp.dataInicio || exp.inicio))}</span>
                     </div>
                     <div className="flex justify-between items-center text-gray-500" style={{ fontSize: '8pt' }}>
                       <span className="font-hendrix-regular">Fim</span>
-                      <span className="font-hendrix-regular">{getValue(exp.dataFim || exp.fim)}</span>
+                      <span className="font-hendrix-regular">{formatarDataBR(getValue(exp.dataFim || exp.fim))}</span>
                     </div>
                   </div>
                 ))

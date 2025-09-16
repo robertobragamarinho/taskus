@@ -21,8 +21,14 @@ const WhatYouWillDoStep = () => {
     <div className="space-y-6">
       {/* Título principal */}
       <div className="mb-6">
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4" style={{ fontSize: '12pt' }}>
-          O que faz um atendente de suporte ao cliente?
+
+        <h1
+          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          style={{ fontSize: '12pt', lineHeight: '1.2' }}
+        >
+          <span className="block sm:inline">
+            O que faz um atendente de suporte ao cliente?
+          </span>
         </h1>
 
         {/* Primeira descrição */}

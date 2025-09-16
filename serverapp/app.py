@@ -1,17 +1,26 @@
-# Servidor Backend FastAPI para Sistema de Recrutamento
-from fastapi import FastAPI, HTTPException
+import os
+from datetime import datetime
+import hashlib
+import requests
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-import os
-from datetime import datetime
-
-# Importar serviços
 from services.cosmos_service import CosmosService
-from models.user_models import UserCreate, UserResponse, UserUpdate, ProgressUpdate, ProgressResponse
+from models.user_models import UserCreate, UserResponse, UserUpdate, ProgressUpdate, ProgressResponse, FacebookConversionEvent
 
-# Inicializar FastAPI
+
+# Configurações Facebook Conversions API
+PIXEL_ID = os.getenv("FB_PIXEL_ID")
+ACCESS_TOKEN = os.getenv("FB_ACCESS_TOKEN")
+API_VERSION = "v18.0"
+
+
+def hash_sha256(value):
+    return hashlib.sha256(value.strip().lower().encode()).hexdigest()
+
+
 app = FastAPI(
     title="Sistema de Recrutamento API",
     description="API para sistema de recrutamento com Cosmos DB",
@@ -20,31 +29,31 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
-# Configurar CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Em produção, especificar domínios
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Inicializar serviço do Cosmos DB
+# Cosmos DB
 cosmos_service = CosmosService()
+
 
 # Rotas da API
 @app.get("/api/health")
 async def health_check():
-    """Verificar se a API está funcionando"""
     return {
         "status": "healthy",
         "timestamp": datetime.now().isoformat(),
         "service": "Sistema de Recrutamento API"
     }
 
+
 @app.get("/api/cosmos-status")
 async def cosmos_status():
-    """Verificar status da conexão com Cosmos DB"""
     try:
         if cosmos_service.client is None:
             return {
@@ -57,9 +66,7 @@ async def cosmos_status():
                 "key_length": len(cosmos_service.key)
             }
         else:
-            # Testar conexão fazendo uma consulta simples
             try:
-                # Tentar acessar informações do banco
                 database_info = cosmos_service.database.read()
                 return {
                     "status": "connected",
@@ -83,9 +90,9 @@ async def cosmos_status():
             "error": str(e)
         }
 
+
 @app.post("/api/user", response_model=UserResponse)
 async def create_user(user_data: UserCreate):
-    """Cadastrar novo usuário no sistema"""
     try:
         print("[API] Dados recebidos para cadastro:", user_data)
         result = await cosmos_service.create_user(user_data.model_dump())
@@ -99,16 +106,17 @@ async def create_user(user_data: UserCreate):
             )
         else:
             print("[API] Erro ao cadastrar usuário:", result.get("message"))
-            raise HTTPException(status_code=400, detail=result.get("message", "Erro desconhecido ao cadastrar usuário"))
+            raise HTTPException(status_code=400, detail=result.get(
+                "message", "Erro desconhecido ao cadastrar usuário"))
     except Exception as e:
         import traceback
         print("[API] Erro interno ao cadastrar usuário:", str(e))
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Erro interno: {str(e)}")
 
+
 @app.get("/api/users/{user_id}")
 async def get_user(user_id: str):
-    """Buscar usuário por ID"""
     try:
         result = await cosmos_service.get_user(user_id)
         if result:
@@ -119,13 +127,14 @@ async def get_user(user_id: str):
                 "data": result
             }
         else:
-            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+            raise HTTPException(
+                status_code=404, detail="Usuário não encontrado")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get("/api/users")
 async def list_users(limit: int = 50):
-    """Listar todos os usuários cadastrados"""
     try:
         users = await cosmos_service.list_users(limit)
         return {
@@ -138,11 +147,10 @@ async def list_users(limit: int = 50):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.put("/api/user/{user_id}")
 async def update_user(user_id: str, user_data: UserUpdate):
-    """Atualizar dados do usuário"""
     try:
-        # Converter para dict apenas os campos não nulos
         update_data = user_data.model_dump(exclude_unset=True)
         result = await cosmos_service.update_user(user_id, update_data)
         if result["success"]:
@@ -156,9 +164,9 @@ async def update_user(user_id: str, user_data: UserUpdate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.delete("/api/users/{user_id}")
 async def delete_user(user_id: str):
-    """Deletar usuário por ID"""
     try:
         result = await cosmos_service.delete_user(user_id)
         if result["success"]:
@@ -171,19 +179,15 @@ async def delete_user(user_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/api/progress/{user_id}", response_model=ProgressResponse)
 async def update_progress(user_id: str, progress_data: ProgressUpdate):
-    """Atualizar progresso do processo de recrutamento"""
     try:
         print(f"🔍 Recebendo progresso para user: {user_id}")
         print(f"📋 Dados recebidos: {progress_data}")
-        
-        # Converter para dict e adicionar timestamp
         process_data = progress_data.model_dump()
         process_data["timestamp"] = datetime.now().isoformat()
-        
         print(f"📊 Dados processados: {process_data}")
-        
         result = await cosmos_service.update_process_progress(user_id, process_data)
         if result["success"]:
             return ProgressResponse(
@@ -196,14 +200,15 @@ async def update_progress(user_id: str, progress_data: ProgressUpdate):
             raise HTTPException(status_code=400, detail=result["message"])
     except ValueError as ve:
         print(f"❌ Erro de validação: {str(ve)}")
-        raise HTTPException(status_code=422, detail=f"Erro de validação: {str(ve)}")
+        raise HTTPException(
+            status_code=422, detail=f"Erro de validação: {str(ve)}")
     except Exception as e:
         print(f"❌ Erro geral: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get("/api/progress/{user_id}")
 async def get_progress(user_id: str):
-    """Obter progresso do usuário no processo de recrutamento"""
     try:
         result = await cosmos_service.get_user_progress(user_id)
         if result["success"]:
@@ -218,27 +223,68 @@ async def get_progress(user_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Configurar servir arquivos estáticos (build do frontend)
+
+
+# Endpoint Facebook Conversions API
+@app.post("/api/conversion")
+async def conversion_event(event: FacebookConversionEvent):
+    """Receber evento do frontend, preparar e enviar para Facebook Conversions API"""
+    # Aqui você pode adaptar para receber outros dados do frontend se necessário
+    # Exemplo: email e phone podem ser enviados em um campo separado, se desejar
+    # Para este exemplo, só os campos do modelo são obrigatórios
+
+    # Monta user_data para Facebook (fbc/fbp devem estar dentro de user_data)
+    user_data = {
+        "client_ip_address": event.ip_adress,
+        "client_user_agent": event.client_user_agent,
+        "fbc": event.fbc,
+        "fbp": event.fbp
+        # Adicione hashes de email/telefone se desejar
+    }
+
+    # Permitir custom_data e test_event_code se vierem no modelo futuramente
+    event_dict = {
+        "event_name": event.event_name,
+        "event_time": int(event.event_time),  # garantir inteiro
+        "event_source_url": event.event_source_url,
+        "action_source": event.action_source,
+        "user_data": user_data
+    }
+    # Se quiser adicionar custom_data futuramente:
+    # if hasattr(event, 'custom_data') and event.custom_data:
+    #     event_dict["custom_data"] = event.custom_data
+    # Se quiser adicionar event_id:
+    # if hasattr(event, 'event_id') and event.event_id:
+    #     event_dict["event_id"] = event.event_id
+
+    payload = {
+        "data": [event_dict]
+        # "test_event_code": "TEST123"  # descomente para testes
+    }
+    url = f"https://graph.facebook.com/{API_VERSION}/{PIXEL_ID}/events?access_token={ACCESS_TOKEN}"
+    response = requests.post(url, json=payload)
+    try:
+        return {"status": response.status_code, "response": response.json()}
+    except Exception:
+        return {"status": response.status_code, "response": response.text}
+
+
+# Servir arquivos estáticos (build do frontend)
 build_path = os.path.join(os.path.dirname(__file__), "build")
 if os.path.exists(build_path):
     app.mount("/static", StaticFiles(directory=build_path), name="static")
 
-# Rota principal para servir o frontend (SPA)
+# SPA React
+
+
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
-    """Servir a aplicação React buildada"""
-    # Verificar se existe arquivo estático
     static_file_path = os.path.join(build_path, full_path)
-    
     if os.path.exists(static_file_path) and os.path.isfile(static_file_path):
         return FileResponse(static_file_path)
-    
-    # Se não encontrar arquivo específico, servir index.html (SPA)
     index_path = os.path.join(build_path, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    
-    # Se não tiver build, mostrar mensagem
     return {
         "message": "Frontend não encontrado. Execute 'npm run build' na pasta webapp primeiro.",
         "api_docs": "/api/docs",

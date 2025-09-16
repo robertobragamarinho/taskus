@@ -78,49 +78,47 @@ const ProcessProvider = ({ children }) => {
     }));
   };
 
-  // Função para cadastrar usuário no banco e salvar ID na sessão
+  // Função para cadastrar usuário no banco e SEMPRE salvar no contexto
   const registerUser = async (userData) => {
     try {
-            
       // Import dinâmico do novo serviço do backend
       const { default: backendAPI } = await import('../services/backendAPIService.js');
-      
+
       // Criar usuário via API backend
       const result = await backendAPI.createUser(userData);
-      
+
       if (result.success) {
         // Salvar ID do usuário na sessão
         sessionStorage.setItem('userId', result.userId);
-        
-        // Atualizar estado
+
+        // Atualizar contexto com dados completos retornados da API
         setProcessData(prev => ({
           ...prev,
           userId: result.userId,
-          userData: userData
+          userData: result.data || userData // prioriza dados do backend, fallback para enviados
         }));
-        
 
-        
         return result;
       } else {
         throw new Error(result.message || 'Erro ao cadastrar usuário');
       }
     } catch (error) {
       console.error('❌ Erro ao cadastrar usuário:', error);
-      
+
       // Fallback para localStorage se o backend falhar
       const fallbackUserId = `user_offline_${Date.now()}`;
       sessionStorage.setItem('userId', fallbackUserId);
-      
+
+      // Salva no contexto mesmo em caso de erro
       setProcessData(prev => ({
         ...prev,
         userId: fallbackUserId,
         userData: userData
       }));
-      
-      console.warn('⚠️ Usando modo offline - dados salvos localmente');
-      return { 
-        success: true, 
+
+      console.warn('⚠️ Usando modo offline - dados salvos localmente : ', userData);
+      return {
+        success: true,
         userId: fallbackUserId,
         message: 'Dados salvos localmente (modo offline)',
         offline: true

@@ -134,7 +134,7 @@ const TesteHabilidadesPage = () => {
         },
         {
           id: 4,
-          texto: "Oi! Sinto muito pela experiência até aqui não é o padrão que buscamos. Vou assumir seu caso agora para resolver. Pode me informar o nº do pedido ou CPF/e-mail? Abro o protocolo e te retorno em até 30 minutos com a solução ou próximo passo."
+          texto: "Oi! Sinto muito pela experiência até aqui não é o padrão que buscamos. Vou assumir seu caso agora para resolver. Pode me informar o nº do pedido ou CPF/e-mail? Abro o protocolo e te retorno em até 30 minutos com a solução ou próximo passo."
         }
       ]
     }
@@ -166,10 +166,10 @@ const TesteHabilidadesPage = () => {
       mensagemCliente: "Olá, comprei um celular no pedido #578921 ontem, paguei no cartão de crédito final 4210, mas até agora não recebi confirmação. Meu CPF é 123.456.789-00 e estou começando a ficar preocupado, preciso de ajuda urgente!",
       urgente: true,
       opcoes: [
-        { id: 1, texto: "A - Número do pedido (#578921)" },
-        { id: 2, texto: "B - Últimos dígitos do cartão (4210)" },
-        { id: 3, texto: "C - CPF (123.456.789-00)" },
-        { id: 4, texto: "D - Todos os dados acima" }
+        { id: 1, texto: "Número do pedido (#578921)" },
+        { id: 2, texto: "Últimos dígitos do cartão (4210)" },
+        { id: 3, texto: "CPF (123.456.789-00)" },
+        { id: 4, texto: "Todos os dados acima" }
       ]
     },
     // Maria Madalena - pedido de desconto (nova)
@@ -183,9 +183,9 @@ const TesteHabilidadesPage = () => {
       mensagemCliente: "Olha, eu adorei o produto, mas vi no site que não tinha desconto. Você consegue me dar 20% de desconto por fora, sem registrar no sistema?",
       urgente: false,
       opcoes: [
-        { id: 1, texto: "A - Daria o desconto, já que é só um cliente pedindo." },
-        { id: 2, texto: "B - Explicaria que não pode conceder descontos fora das regras da empresa, mas ofereceria verificar promoções oficiais ou próximos benefícios." },
-        { id: 3, texto: "C - Ignoraria a mensagem para evitar conflito." }
+        { id: 1, texto: "Daria o desconto, já que é só um cliente pedindo." },
+        { id: 2, texto: "Explicaria que não pode conceder descontos fora das regras da empresa, mas ofereceria verificar promoções oficiais ou próximos benefícios." },
+        { id: 3, texto: "Ignoraria a mensagem para evitar conflito." }
       ]
     },
     // Maria Madalena - múltiplas solicitações (nova)
@@ -199,9 +199,9 @@ const TesteHabilidadesPage = () => {
       mensagemCliente: "Oi, tudo bem? Preciso de ajuda com três coisas: 1 - Alterar o endereço da minha entrega. 2 - Saber quando meu pedido vai chegar. 3 - Atualizar o número do meu telefone no cadastro.",
       urgente: false,
       opcoes: [
-        { id: 1, texto: "A - Alterar o endereço da entrega" },
-        { id: 2, texto: "B - Informar o prazo de entrega" },
-        { id: 3, texto: "C - Atualizar o número de telefone" }
+        { id: 1, texto: "Alterar o endereço da entrega" },
+        { id: 2, texto: "Informar o prazo de entrega" },
+        { id: 3, texto: "Atualizar o número de telefone" }
       ]
     }
   ];

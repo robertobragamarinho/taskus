@@ -83,7 +83,7 @@ const TesteRapidoAtendimentoStep = ({ onStart }) => {
           ) : (
             <>
               <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Iniciar</span>
-              <ChevronRight className="w-4 h-4" />
+              
             </>
           )}
         </motion.button>

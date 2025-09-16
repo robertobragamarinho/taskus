@@ -21,8 +21,13 @@ const IniciaProcessoSeletivo = () => {
     <div className="space-y-6">
       {/* Título principal */}
       <div className="mb-6">
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4" style={{ fontSize: '12pt' }}>
-          Bem-vindo(a) ao processo seletivo online da TaskUs
+        <h1
+          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          style={{ fontSize: '12pt', lineHeight: '1.2' }}
+        >
+          <span className="block sm:inline">
+            Bem-vindo(a) ao processo seletivo online da TaskUs!
+          </span>
         </h1>
 
         {/* Primeira descrição */}

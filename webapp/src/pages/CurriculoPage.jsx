@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProcess } from '../hooks/useProcess.js';
@@ -33,35 +36,6 @@ const  CurriculoPage = () => {
   });
 
 
-  useEffect(() => {
-    // Carregar dados do usuário da sessionStorage e API
-    const loadUserData = async () => {
-      const userId = sessionStorage.getItem('userId');
-      if (userId) {
-        try {
-          const { default: backendAPI } = await import('../services/backendAPIService.js');
-          const result = await backendAPI.getUser(userId);
-          if (result.success && result.data) {
-            const user = result.data;
-            // Preencher os campos do formulário
-            setDadosUsuario({
-              firstName: user.nome?.split(' ')[0] || '',
-              lastName: user.nome?.split(' ').slice(1).join(' ') || '',
-              email: user.email || '',
-              phone: user.telefone || '',
-              age: user.idade ? String(user.idade) : '',
-              termsAccepted: true // Assume que já aceitou se está cadastrado
-            });
-          }
-          // eslint-disable-next-line no-unused-vars
-        } catch (err) {
-          // Silencioso, não impede o fluxo
-        }
-      }
-    };
-    loadUserData();
-    // eslint-disable-next-line
-  }, []);
 
   const handleEnviarArquivo = async (arquivo) => {
     try {
@@ -123,18 +97,12 @@ const  CurriculoPage = () => {
     }
   };
 
-  const handleConfirmarFoto = async () => {
-    try {
-      console.log('📷 Foto enviada, ir para visualização');
-      // Simular URL da foto enviada com uma imagem SVG de perfil
-      const fotoSimulada = "https://images.pexels.com/photos/2328141/pexels-photo-2328141.jpeg";
-
-      setFotoUrl(fotoSimulada);
+  // Novo handler: recebe o arquivo, gera URL temporária e avança
+  const handleFotoSelecionada = (file) => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setFotoUrl(url);
       setCurrentStep(9);
-
-
-    } catch (error) {
-      console.error('❌ Erro ao confirmar foto:', error);
     }
   };
 
@@ -159,21 +127,30 @@ const  CurriculoPage = () => {
       // Atualizar usuário com a URL da foto
       const userId = sessionStorage.getItem('userId');
       if (userId && fotoUrl) {
-        const { default: backendAPI } = await import('../services/backendAPIService.js');
-        await backendAPI.updateUser(userId, { foto: fotoUrl });
+        try {
+          const { default: backendAPI } = await import('../services/backendAPIService.js');
+          await backendAPI.updateUser(userId, { foto: fotoUrl });
+        } catch (err) {
+          console.warn('⚠️ Erro ao atualizar foto no backend, mas prosseguindo:', err);
+        }
       }
 
-      await updateProcessStep(
-        'curriculo',
-        2,
-        dadosFotoFinal,
-        'foto_confirmada'
-      );
+      try {
+        await updateProcessStep(
+          'curriculo',
+          2,
+          dadosFotoFinal,
+          'foto_confirmada'
+        );
+      } catch (err) {
+        console.warn('⚠️ Erro ao atualizar progresso, mas prosseguindo:', err);
+      }
 
       console.log('✅ Foto confirmada e salva, indo para currículo finalizado');
-      setCurrentStep(10);
     } catch (error) {
       console.error('❌ Erro ao confirmar foto final:', error);
+    } finally {
+      setCurrentStep(10);
     }
   };
 
@@ -202,32 +179,10 @@ const  CurriculoPage = () => {
     }
   };
 
-  const handlePrecisoEditar = async () => {
-    try {
-      console.log('📝 Usuário quer editar dados');
-      // Aqui você pode implementar a lógica para editar dados
-      // Por exemplo, ir para uma tela de edição
-      setCurrentStep(7); // Etapa de edição
-    } catch (error) {
-      console.error('❌ Erro ao iniciar edição:', error);
-    }
-  };
 
   const handleDadosCorretos = async () => {
     try {
       console.log('✅ Dados confirmados pelo usuário');
-
-      // Atualizar dados do usuário no backend
-      const userId = sessionStorage.getItem('userId');
-      if (userId) {
-        const { default: backendAPI } = await import('../services/backendAPIService.js');
-        await backendAPI.updateUser(userId, {
-          nome: dadosUsuario.nome,
-          email: dadosUsuario.email,
-          telefone: dadosUsuario.telefone,
-          idade: dadosUsuario.idade ? parseInt(dadosUsuario.idade) : ''
-        });
-      }
 
       // Salvar confirmação dos dados
       await updateProcessStep(
@@ -266,16 +221,19 @@ const  CurriculoPage = () => {
         estado: dadosLocalizacao.estado?.nome || '',
         cidade: dadosLocalizacao.municipio?.nome || ''
       };
-      console.log('📍 Dados de localização (simples):', dadosLocalizacaoSimples);
 
       // Salvar localização no cadastro do usuário
       const userId = sessionStorage.getItem('userId');
       if (userId) {
-        const { default: backendAPI } = await import('../services/backendAPIService.js');
-        await backendAPI.updateUser(userId, {
-          estado: dadosLocalizacaoSimples.estado,
-          cidade: dadosLocalizacaoSimples.cidade
-        });
+        try {
+          const { default: backendAPI } = await import('../services/backendAPIService.js');
+          await backendAPI.updateUser(userId, {
+            estado: dadosLocalizacaoSimples.estado,
+            cidade: dadosLocalizacaoSimples.cidade
+          });
+        } catch (err) {
+          console.warn('⚠️ Erro ao atualizar usuário no backend, mas prosseguindo:', err);
+        }
       }
 
       // Salvar dados de localização no progresso
@@ -296,6 +254,8 @@ const  CurriculoPage = () => {
 
     } catch (error) {
       console.error('❌ Erro ao salvar localização:', error);
+      // Avança mesmo se der erro
+      setCurrentStep(4);
     }
   };
 
@@ -403,6 +363,13 @@ const  CurriculoPage = () => {
   };
 
 
+  // Definição dos steps que possuem barra de progresso (1 a 6)
+  const stepsComProgresso = [1, 2, 3, 4, 5, 6];
+  const totalSteps = 6; // Ajuste conforme o número de etapas principais
+  const progressPercent = stepsComProgresso.includes(currentStep)
+    ? Math.round((currentStep - 1) / (totalSteps - 1) * 100)
+    : 100;
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
@@ -431,21 +398,37 @@ const  CurriculoPage = () => {
       <div className="flex-1 flex items-center justify-center px-4 py-6">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 pb-8">
+            {/* Título e barra de progresso global */}
+            {stepsComProgresso.includes(currentStep) && (
+              <div className="pt-2 mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '12pt' }}>
+                    Criando Currículo
+                  </h2>
+                  <span className="font-hendrix-regular text-gray-500" style={{ fontSize: '9pt' }}>
+                    {currentStep} de {totalSteps}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+                </div>
+              </div>
+            )}
+
             {/* Etapa 1: Introdução do currículo */}
             {currentStep === 1 && (
               <CurriculoIntroStep
                 onEnviarArquivo={handleEnviarArquivo}
                 onCriarCurriculo={handleCriarCurriculo}
+                progressPercent={progressPercent}
               />
             )}
 
             {/* Etapa 2: Confirmação dos dados salvos */}
             {currentStep === 2 && (
               <CurriculoCriacaoStep
-                dadosUsuario={dadosUsuario}
-                onChange={setDadosUsuario}
-                onPrecisoEditar={handlePrecisoEditar}
-                onDadosCorretos={handleDadosCorretos}
+                onContinue={handleDadosCorretos}
+                progressPercent={progressPercent}
               />
             )}
 
@@ -454,6 +437,7 @@ const  CurriculoPage = () => {
               <CurriculoLocalizacaoStep
                 onVoltar={handleVoltarLocalizacao}
                 onContinuar={handleContinuarLocalizacao}
+                progressPercent={progressPercent}
               />
             )}
 
@@ -462,24 +446,23 @@ const  CurriculoPage = () => {
               <CurriculoEscolaridadeStep
                 onVoltar={handleVoltarEscolaridade}
                 onSelecionarEscolaridade={handleSelecionarEscolaridade}
+                progressPercent={progressPercent}
               />
             )}
   
             {currentStep === 5 && (
-
               <CurriculoHabilidadesStep
                 onVoltar={handleVoltarExperiencia}
                 onContinuar={handleContinuarHabilidades}
+                progressPercent={progressPercent}
               />
-
-
-              
             )}
 
             {currentStep === 6 && (
               <CurriculoExperienciaStep
                 onVoltar={handleVoltarExperiencia}
                 onContinuar={handleContinuarExperiencia}
+                progressPercent={progressPercent}
               />
             )}
 
@@ -495,12 +478,10 @@ const  CurriculoPage = () => {
               />
             )}
 
-
-
             {/* Etapa Foto - Padrões */}
             {currentStep === 8 && (
               <CurriculoFotoPadroesStep
-                onEnviarAgora={handleConfirmarFoto}
+                onEnviarAgora={handleFotoSelecionada}
                 onPular={handlePularFoto}
               />
             )}

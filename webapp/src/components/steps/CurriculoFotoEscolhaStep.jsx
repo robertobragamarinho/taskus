@@ -60,7 +60,6 @@ const _pularEnvioFoto = () => {
             ) : (
               <>
                 <span>Pular</span>
-                <ChevronUp className="w-4 h-4" />
               </>
             )}
           </div>
@@ -89,7 +88,6 @@ const _pularEnvioFoto = () => {
             ) : (
               <>
                 <span>Sim, eu quero</span>
-                <ChevronRight className="w-4 h-4" />
               </>
             )}
           </div>

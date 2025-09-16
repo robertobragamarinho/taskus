@@ -215,7 +215,7 @@ const MultiStepForm = () => {
   };
 
   return (
-    <div className="min-h flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
       <div className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
@@ -242,7 +242,7 @@ const MultiStepForm = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
+      <div className="flex-1 flex items-center justify-center px-4 py-5">
         <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 pb-8">
             {/* Renderizar etapa atual */}
@@ -260,134 +260,131 @@ const MultiStepForm = () => {
 
             {/* Botões de navegação */}
             <div className="mt-8">
-              {currentStep > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                >
-                  {currentStep >= 2 ? (
-                    <div className="flex gap-3">
-                      {/* Botão voltar (esquerda) */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.1 }}
+              >
+                {([3,4,5,6,7].includes(currentStep)) ? (
+                  <div className="flex gap-3">
+                    {/* Botão voltar (esquerda) */}
+                    <button
+                      onClick={handleBack}
+                      disabled={isLoading}
+                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                      style={{
+                        background: '#111827',
+                        color: '#fff',
+                        fontSize: '9pt'
+                      }}
+                    >
+                      <ChevronLeft className="w-4 h-4 text-white" />
+                      Voltar
+                    </button>
+
+                    {/* Botão continuar / finalizar (direita) */}
+                    {currentStep < steps.length - 1 ? (
                       <button
-                        onClick={handleBack}
+                        onClick={nextStep}
                         disabled={isLoading}
-                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
                         style={{
-                          background: '#111827',
-                          color: '#fff',
+                          background: isLoading
+                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
                           fontSize: '9pt'
                         }}
                       >
-                        <ChevronLeft className="w-4 h-4 text-white" />
-                        Voltar
+                        {isLoading ? (
+                          <>
+                            Salvando...
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                            <ChevronRight className="w-4 h-4" />
+                          </>
+                        )}
                       </button>
-
-                      {/* Botão continuar / finalizar (direita) */}
-                      {currentStep < steps.length - 1 ? (
-                        <button
-                          onClick={nextStep}
-                          disabled={isLoading}
-                          className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                          style={{
-                            background: isLoading
-                              ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                              : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                            fontSize: '9pt'
-                          }}
-                        >
-                          {isLoading ? (
-                            <>
-                              Salvando...
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </>
-                          ) : (
-                            <>
-                              {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                              <ChevronRight className="w-4 h-4" />
-                            </>
-                          )}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={handleSubmit}
-                          disabled={isLoading}
-                          className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                          style={{
-                            background: isLoading
-                              ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                              : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                            fontSize: '9pt'
-                          }}
-                        >
-                          {isLoading ? (
-                            <>
-                              Finalizando...
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </>
-                          ) : (
-                            <>
-                              {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    // Para steps 1 (e 0) mostramos apenas o botão direito em largura total
-                    <div>
-                      {currentStep < steps.length - 1 ? (
-                        <button
-                          onClick={nextStep}
-                          disabled={isLoading}
-                          className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                          style={{
-                            background: isLoading
-                              ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                              : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                            fontSize: '9pt'
-                          }}
-                        >
-                          {isLoading ? (
-                            <>
-                              Salvando...
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </>
-                          ) : (
-                            <>
-                              {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                              <ChevronRight className="w-4 h-4" />
-                            </>
-                          )}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={handleSubmit}
-                          disabled={isLoading}
-                          className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                          style={{
-                            background: isLoading
-                              ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                              : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                            fontSize: '9pt'
-                          }}
-                        >
-                          {isLoading ? (
-                            <>
-                              Finalizando...
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            </>
-                          ) : (
-                            <>
-                              {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </motion.div>
-              )}
+                    ) : (
+                      <button
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        style={{
+                          background: isLoading
+                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                          fontSize: '9pt'
+                        }}
+                      >
+                        {isLoading ? (
+                          <>
+                            Finalizando...
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  // Para steps 0,1,2 mostramos apenas o botão direito em largura total
+                  <div>
+                    {currentStep < steps.length - 1 ? (
+                      <button
+                        onClick={nextStep}
+                        disabled={isLoading}
+                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        style={{
+                          background: isLoading
+                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                          fontSize: '9pt'
+                        }}
+                      >
+                        {isLoading ? (
+                          <>
+                            Salvando...
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        style={{
+                          background: isLoading
+                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                          fontSize: '9pt'
+                        }}
+                      >
+                        {isLoading ? (
+                          <>
+                            Finalizando...
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </>
+                        ) : (
+                          <>
+                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </motion.div>
             </div>
           </div>
         </div>

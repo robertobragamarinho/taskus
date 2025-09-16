@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { ProcessContext } from '../../contexts/ProcessContextDefinition.js';
+import { Loader2 } from 'lucide-react';
 import '../../styles/refino.css';
 
 const areas = [
@@ -20,6 +23,7 @@ const areas = [
 const ContratacaoFinalStep = ({ onFinalizar }) => {
     const [selected, setSelected] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { updateUserData } = useContext(ProcessContext);
 
     const handleSelect = (value) => {
         setSelected(value);
@@ -27,16 +31,22 @@ const ContratacaoFinalStep = ({ onFinalizar }) => {
 
     const handleConfirm = async (e) => {
         e.preventDefault();
-        if (selected && onFinalizar) {
-            setIsLoading(true);
+        if (!selected) return;
+        setIsLoading(true);
+        // Salva a área escolhida em userData
+        const areaLabel = areas.find(a => a.value === selected)?.label || '';
+        if (updateUserData) {
+            await updateUserData({ areaAtuacao: { label: areaLabel } });
+        }
+        await new Promise(res => setTimeout(res, 2000));
+        if (onFinalizar) {
             try {
                 await Promise.resolve(onFinalizar(selected));
             } catch (error) {
                 // erro silencioso
-            } finally {
-                setIsLoading(false);
             }
         }
+        setIsLoading(false);
     };
 
     return (
@@ -69,7 +79,6 @@ const ContratacaoFinalStep = ({ onFinalizar }) => {
                             disabled={isLoading}
                         >
                             <span className="flex items-center gap-2">
-                                <span className="text-[#1655ff] text-xl">&gt;</span>
                                 {a.label}
                             </span>
                         </button>
@@ -82,8 +91,8 @@ const ContratacaoFinalStep = ({ onFinalizar }) => {
                     disabled={!selected || isLoading}
                     className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${!selected || isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
-                    Confirmar
-                    <span className="ml-2 text-xl">&gt;</span>
+                    {isLoading ? <Loader2 className="animate-spin mr-2" size={22} /> : null}
+                    {isLoading ? 'Enviando...' : 'Confirmar'} 
                 </button>
             </form>
         </div>

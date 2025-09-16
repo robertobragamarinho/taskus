@@ -20,25 +20,28 @@ const ReviewContratacao = ({ onContinue }) => {
     const { processData } = useContext(ProcessContext);
     const user = processData?.userData || {};
 
-    const nomeCompleto = user.nome || `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    // Lógica robusta para exibir o nome corretamente, incluindo nomeCompleto do contexto
+    let nomeCompleto = "";
+    if (user.nomeCompleto && typeof user.nomeCompleto === "string" && user.nomeCompleto.trim().length > 0) {
+        nomeCompleto = user.nomeCompleto.trim();
+    } else if (user.nome && typeof user.nome === "string" && user.nome.trim().length > 0) {
+        nomeCompleto = user.nome.trim();
+    } else if (user.firstName && typeof user.firstName === "string" && user.firstName.trim().length > 0) {
+        nomeCompleto = user.firstName.trim();
+        if (user.lastName && typeof user.lastName === "string" && user.lastName.trim().length > 0) {
+            nomeCompleto += ` ${user.lastName.trim()}`;
+        }
+    } else {
+        nomeCompleto = "Seu nome completo";
+    }
+
     const cpf = user.cpf || "";
     const dataInicio = user.dataInicio || "daqui (15 dias próxima segunda)";
     const turnoTrabalho = user.turnoTrabalho || "20:00 às 05:00 (1h de intervalo)";
-    // Monta endereço completo com todos os campos fornecidos pelo usuário
-    const enderecoObj = user.enderecoEntrega || {};
-    const endereco = user.enderecoEntrega
-        ? [
-            enderecoObj.rua,
-            enderecoObj.numero ? `Nº ${enderecoObj.numero}` : '',
-            enderecoObj.complemento,
-            enderecoObj.referencia,
-            enderecoObj.bairro,
-            enderecoObj.municipio?.nome,
-            enderecoObj.estado?.sigla
-        ]
-            .filter(Boolean)
-            .join(', ')
-        : "endereço não informado";
+              // Busca o logradouro salvo no contexto (userData.endereco.Logradouro)
+              const endereco = user.endereco && user.endereco.Logradouro
+                  ? user.endereco.Logradouro
+                  : "endereço não informado";
 
     const [isLoading, setIsLoading] = useState(false);
     const handleContinue = () => {
@@ -46,7 +49,7 @@ const ReviewContratacao = ({ onContinue }) => {
         setTimeout(() => {
             setIsLoading(false);
             onContinue();
-        }, 1000);
+        }, 2000); // 2 segundos de loading
     };
 
 
@@ -82,9 +85,24 @@ const ReviewContratacao = ({ onContinue }) => {
                 <div className="font-hendrix-semibold text-white mb-3 text-left" style={{ fontSize: '15pt' }}>Informações do colaborador</div>
                 <div className="flex flex-col gap-3">
                     {/* Card Nome */}
-                    <div className="w-full bg-white rounded-2xl flex items-center justify-between px-5 py-3 shadow" style={{ minHeight: '54px' }}>
-                        <span className="font-hendrix-semibold text-[#1655ff] text-lg" style={{ fontSize: '15pt' }}>Nome</span>
-                        <span className="font-hendrix-semibold text-[#181A1B] text-lg text-right" style={{ fontSize: '15pt' }}>{nomeCompleto || "Seu nome completo"}</span>
+                    <div className="w-full bg-white rounded-2xl flex items-start justify-between px-5 py-3 shadow" style={{ minHeight: '54px' }}>
+                        <span className="font-hendrix-semibold text-[#1655ff] text-lg whitespace-nowrap pr-2" style={{ fontSize: '15pt', minWidth: 60 }}>Nome</span>
+                        <span
+                            className="font-hendrix-semibold text-[#181A1B] text-lg text-right break-words"
+                            style={{
+                                fontSize: nomeCompleto.length > 28 ? '13pt' : '15pt',
+                                wordBreak: 'break-word',
+                                maxWidth: '70%',
+                                lineHeight: 1.2,
+                                whiteSpace: 'pre-line',
+                                textAlign: 'right',
+                                display: 'block',
+                            }}
+                        >
+                            {nomeCompleto.length > 28
+                                ? nomeCompleto.replace(/ (?!.* )/, '\n') // quebra antes do último sobrenome
+                                : nomeCompleto}
+                        </span>
                     </div>
                     {/* Card CPF */}
                     <div className="w-full bg-white rounded-2xl flex items-center justify-between px-5 py-3 shadow" style={{ minHeight: '54px' }}>

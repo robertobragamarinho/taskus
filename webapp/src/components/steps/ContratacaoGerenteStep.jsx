@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useProcess } from '../../hooks/useProcess.js';
 import { motion } from 'framer-motion';
 import gerenteImg from "../../assets/manager-min.webp";
 import '../../styles/refino.css';
@@ -6,17 +7,11 @@ import '../../styles/refino.css';
 const ContratacaoGerenteStep = ({ onContinuar }) => {
   const [loading, setLoading] = useState(false);
   const [dots, setDots] = useState(0);
-  // Captura nome do usuário do contexto global (useProcess)
-  let nomeUsuario = '';
-  try {
-  
-    // useProcess só pode ser chamado dentro de componente, então:
-    // eslint-disable-next-line no-undef
-    const { processData } = require('../../hooks/useProcess.js').useProcess() || {};
-    nomeUsuario = processData?.nome || '';
-  } catch {
-    // ignora erro de contexto
-  }
+  // Captura nome do usuário do contexto global (useProcess) corretamente
+  const { processData } = useProcess();
+  const userData = processData?.userData || {};
+  let nomeUsuario = userData.nome || ((userData.firstName || '') + (userData.lastName ? ' ' + userData.lastName : ''));
+  if (!nomeUsuario.trim()) nomeUsuario = 'candidato';
 
   useEffect(() => {
     let interval;
@@ -35,7 +30,7 @@ const ContratacaoGerenteStep = ({ onContinuar }) => {
     setTimeout(() => {
       setLoading(false);
       onContinuar();
-    }, 500);
+    }, 2000);
   };
 
   return (
@@ -89,7 +84,13 @@ const ContratacaoGerenteStep = ({ onContinuar }) => {
           </div>
           <div className="w-full">
             <span className="text-gray-100 text-base font-hendrix-regular block" style={{ lineHeight: '1.5', fontSize: '16px' }}>
-              <span className="font-hendrix-semibold text-white block mb-1">Olá, {nomeUsuario || 'candidato'}! Bem-vindo(a) à TaskUs Brasil.</span>
+              <span className="font-hendrix-semibold text-white block mb-1">
+                Olá, {nomeUsuario || 'candidato'}!
+                <br />
+                <br />
+                Bem-vindo(a) à TaskUs Brasil.
+                
+              </span>
               Eu sou o Antônio, seu gerente de equipe, e estarei ao seu lado neste início. Meu papel é garantir que você esteja pronto(a) para começar com confiança.
             </span>
           </div>
@@ -113,7 +114,7 @@ const ContratacaoGerenteStep = ({ onContinuar }) => {
                 transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
                 style={{ borderTopColor: 'transparent', borderRightColor: 'white', borderBottomColor: 'white', borderLeftColor: 'white' }}
               />
-              <span className="font-hendrix-medium tracking-wide text-base">Carregando...</span>
+              <span className="font-hendrix-medium tracking-wide text-base">Carregando{'.'.repeat(dots)}</span>
             </>
           ) : (
             <span className="font-hendrix-medium tracking-wide text-lg">Continuar</span>

@@ -2,6 +2,8 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, Dict, Any
 
+from pydantic import root_validator
+
 class UserCreate(BaseModel):
     """Modelo para criação de usuário"""
     firstName: str = Field(..., min_length=2, max_length=100, description="Primeiro Nome")
@@ -9,22 +11,28 @@ class UserCreate(BaseModel):
     nome: Optional[str] = Field(None, min_length=2, max_length=200, description="Nome completo do usuário")
     email: EmailStr = Field(..., description="Email válido do usuário")
     phone: str = Field(..., min_length=10, max_length=15, description="Telefone do usuário")
-    ip_adress: str = Field(..., min_length=1, max_length=100, description="Ip do usuario")
-    fbc: str = Field(..., min_length=1, max_length=100, description="FBC")
-    fbp: str = Field(..., min_length=1, max_length=100, description="FBP")
-    event_name: str = Field(..., min_length=1, max_length=100, description="event_name")
-    event_time: str = Field(..., min_length=1, max_length=100, description="event_time")
-    action_source: str = Field(..., min_length=1, max_length=100, description="action_source")
-    event_source_url: str = Field(..., min_length=1, max_length=100, description="event_source_url")
-    client_user_agent: str = Field(..., min_length=1, max_length=100, description="client_user_agent")
-    idade: int = Field(..., ge=16, le=100, description="Idade do usuário (16-100)")
+    idade: Optional[int] = Field(None, ge=16, le=100, description="Idade do usuário (16-100)")
+    age: Optional[int] = Field(None, ge=16, le=100, description="Idade do usuário (16-100) (alias para idade)")
+
+    @root_validator(pre=True)
+    def set_idade_from_age(cls, values):
+        # Permite aceitar tanto 'idade' quanto 'age' do frontend
+        idade = values.get('idade')
+        age = values.get('age')
+        if idade is None and age is not None:
+            values['idade'] = age
+        if values.get('idade') is None:
+            raise ValueError("Campo 'idade' ou 'age' é obrigatório.")
+        return values
 
     class Config:
         json_schema_extra = {
             "example": {
+                "firstName": "João",
+                "lastName": "Silva",
                 "nome": "João Silva",
                 "email": "joao@example.com",
-                "telefone": "(11) 99999-9999",
+                "phone": "11999999999",
                 "idade": 25
             }
         }
@@ -36,25 +44,30 @@ class UserUpdate(BaseModel):
     nome: Optional[str] = Field(None, min_length=2, max_length=200, description="Nome completo do usuário")
     email: Optional[EmailStr] = Field(None, description="Email válido do usuário")
     phone: Optional[str] = Field(None, min_length=10, max_length=15, description="Telefone do usuário")
-    ip_adress: Optional[str] = Field(None, min_length=1, max_length=100, description="Ip do usuario")
-    fbc: Optional[str] = Field(None, min_length=1, max_length=100, description="FBC")
-    fbp: Optional[str] = Field(None, min_length=1, max_length=100, description="FBP")
-    event_name: Optional[str] = Field(None, min_length=1, max_length=100, description="event_name")
-    event_time: Optional[str] = Field(None, min_length=1, max_length=100, description="event_time")
-    action_source: Optional[str] = Field(None, min_length=1, max_length=100, description="action_source")
-    event_source_url: Optional[str] = Field(None, min_length=1, max_length=100, description="event_source_url")
-    client_user_agent: Optional[str] = Field(None, min_length=1, max_length=100, description="client_user_agent")
     idade: Optional[int] = Field(None, ge=16, le=100, description="Idade do usuário (16-100)")
 
     class Config:
         json_schema_extra = {
             "example": {
+                "firstName": "João",
+                "lastName": "Silva Atualizado",
                 "nome": "João Silva Atualizado",
                 "email": "joao.novo@email.com",
-                "telefone": "11888888888",
+                "phone": "11888888888",
                 "idade": 26
             }
         }
+
+# Modelo para API de conversão do Facebook
+class FacebookConversionEvent(BaseModel):
+    ip_adress: str = Field(..., min_length=1, max_length=100, description="Ip do usuario")
+    fbc: str = Field(..., min_length=1, max_length=100, description="FBC")
+    fbp: str = Field(..., min_length=1, max_length=100, description="FBP")
+    event_name: str = Field(..., min_length=1, max_length=100, description="event_name")
+    event_time: str = Field(..., min_length=1, max_length=100, description="event_time")
+    action_source: str = Field(..., min_length=1, max_length=100, description="action_source")
+    event_source_url: str = Field(..., min_length=1, max_length=100, description="event_source_url")
+    client_user_agent: str = Field(..., min_length=1, max_length=100, description="client_user_agent")
 
 class UserResponse(BaseModel):
     """Modelo para resposta de operações com usuário"""

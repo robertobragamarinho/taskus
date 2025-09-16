@@ -22,14 +22,22 @@ const SupportTypesInfoStep = () => {
       description: 'Você irá responder os clientes por e-mail. Esse modelo de suporte é mais utilizado em situações como devoluções, trocas e solicitações de reembolso.'
     }
   ];
- 
+
   return (
     <div className="space-y-6">
       {/* Título principal */}
       <div className="text-center space-y-3">
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-900" style={{ fontSize: '12pt' }}>
-          São 3 áreas de atendimento disponíveis.
+
+        <h1
+          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          style={{ fontSize: '12pt', lineHeight: '1.2' }}
+        >
+          <span className="block sm:inline">
+            São 3 áreas de atendimento disponíveis.
+          </span>
         </h1>
+
+
         <p className="subtitulodaetapa font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
           Quando você for contratado(a),  poderá escolher qual das 3 áreas quer trabalhar.
         </p>
@@ -51,7 +59,7 @@ const SupportTypesInfoStep = () => {
               <div className="flex-shrink-0 mt-1">
                 <type.icon
                   className="w-6 h-6"
-                  style={{ color: '#1655ff'}}
+                  style={{ color: '#1655ff' }}
                 />
               </div>
 

@@ -17,15 +17,21 @@ const CustomerServiceProcessStep = () => {
     <div className="space-y-6">
       {/* Título principal */}
       <div className="mb-6">
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4" style={{ fontSize: '12pt' }}>
-          Como funcionam os atendimentos?
+
+        <h1
+          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          style={{ fontSize: '12pt', lineHeight: '1.2' }}
+        >
+          <span className="block sm:inline">
+            Como funcionam os atendimentos?
+          </span>
         </h1>
-        
+
         {/* Texto descritivo */}
         <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
           Empresas como Amazon, Shopee e Netshoes tem uma alta demanda de suporte ao cliente, por isso para manter a qualidade e não deixar clientes sem resposta, elas contratam a TaskUs como parceira especializada.
         </p>
-        
+
         {/* Subtítulo */}
         <p className="textocontinuidade font-hendrix-semibold text-gray-600 mb-4" style={{ fontSize: '9pt' }}>
           Você vai receber mensagens de clientes sobre:
@@ -36,9 +42,9 @@ const CustomerServiceProcessStep = () => {
       <div className="space-y-3 mb-6">
         {serviceTypes.map((type, index) => (
           <div key={index} className="bg-gray-50 rounded-lg p-3">
-            <p 
+            <p
               className="font-hendrix-light"
-              style={{ 
+              style={{
                 fontSize: '12pt',
                 color: '#969696'
               }}
@@ -61,20 +67,20 @@ const CustomerServiceProcessStep = () => {
         {routineSteps.map((step, index) => (
           <div key={index} className="flex items-start space-x-3">
             {/* Número */}
-            <span 
+            <span
               className="font-hendrix-medium flex-shrink-0"
-              style={{ 
+              style={{
                 fontSize: '14pt',
                 color: '#1655ff'
               }}
             >
               {index + 1}.
             </span>
-            
+
             {/* Texto */}
-            <p 
+            <p
               className="font-hendrix-light flex-1"
-              style={{ 
+              style={{
                 fontSize: '12pt',
                 color: '#969696'
               }}

@@ -117,10 +117,10 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
       {/* Título e subtítulo fixos no topo */}
       <div className="w-full px-6 pt-10 pb-2">
         <h1 className="font-hendrix-semibold text-2xl text-gray-900 mb-2 text-left" style={{ lineHeight: 1.25 }}>
-          Confirme seu número de telefone para continuar
+          Confirme seu endereço de e-mail para continuar
         </h1>
         <p className="font-hendrix-regular text-gray-500 text-base mb-2 text-left">
-          Enviamos um código de 6 dígitos por sms para você, por favor digite ele abaixo.
+          Enviamos um código de 6 dígitos por e-mail para você, por favor confira o recebimento e digite o código abaixo.
         </p>
       </div>
       {/* Centraliza campo de código e reenviar verticalmente */}

@@ -60,22 +60,7 @@ const CurriculoExperienciaStep = ({ onVoltar, onContinuar }) => {
 
   return (
     <div className="space-y-8">
-      {/* Título da etapa */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '10pt' }}>
-            Criando Currículo
-          </h2>
-          <span className="font-hendrix-regular text-gray-500" style={{ fontSize: '9pt' }}>
-            1 de 5
-          </span>
-        </div>
 
-        {/* Barra de progresso */}
-        <div className="w-full bg-gray-200 rounded-full h-1.5 mb-8">
-          <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: '20%' }}></div>
-        </div>
-      </div>
 
       {/* Título principal */}
       <div className="bg-gray-100 rounded-2xl p-6">
@@ -113,75 +98,34 @@ const CurriculoExperienciaStep = ({ onVoltar, onContinuar }) => {
 
               {/* Início */}
               <div className="space-y-2">
-                <div className="relative">
-                  <select
-                    value={experiencia.inicio}
-                    onChange={(e) => updateExperiencia(index, 'inicio', e.target.value)}
-                    className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-500 appearance-none pr-12"
-                    style={{ fontSize: '10pt' }}
-                  >
-                    <option value="">Toque para selecionar</option>
-                    <option value="Janeiro 2024">Janeiro 2024</option>
-                    <option value="Fevereiro 2024">Fevereiro 2024</option>
-                    <option value="Março 2024">Março 2024</option>
-                    <option value="Abril 2024">Abril 2024</option>
-                    <option value="Maio 2024">Maio 2024</option>
-                    <option value="Junho 2024">Junho 2024</option>
-                    <option value="Julho 2024">Julho 2024</option>
-                    <option value="Agosto 2024">Agosto 2024</option>
-                    <option value="Setembro 2024">Setembro 2024</option>
-                    <option value="Outubro 2024">Outubro 2024</option>
-                    <option value="Novembro 2024">Novembro 2024</option>
-                    <option value="Dezembro 2024">Dezembro 2024</option>
-                    <option value="Janeiro 2023">Janeiro 2023</option>
-                    <option value="Fevereiro 2023">Fevereiro 2023</option>
-                    <option value="Março 2023">Março 2023</option>
-                    <option value="Abril 2023">Abril 2023</option>
-                    <option value="Maio 2023">Maio 2023</option>
-                    <option value="Junho 2023">Junho 2023</option>
-                    <option value="Julho 2023">Julho 2023</option>
-                    <option value="Agosto 2023">Agosto 2023</option>
-                    <option value="Setembro 2023">Setembro 2023</option>
-                    <option value="Outubro 2023">Outubro 2023</option>
-                    <option value="Novembro 2023">Novembro 2023</option>
-                    <option value="Dezembro 2023">Dezembro 2023</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  <label className="absolute -top-2 left-4 bg-gray-100 px-2 font-hendrix-medium text-gray-700" style={{ fontSize: '9pt' }}>
-                    Início
-                  </label>
-                </div>
+                <label className="font-hendrix-medium text-gray-700" style={{ fontSize: '9pt' }}>
+                  Início
+                </label>
+                <input
+                  type="date"
+                  value={experiencia.inicio}
+                  onChange={(e) => updateExperiencia(index, 'inicio', e.target.value)}
+                  className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-700 placeholder-gray-400"
+                  style={{ fontSize: '10pt' }}
+                  placeholder="DD/MM/AAAA"
+                  pattern="\d{4}-\d{2}-\d{2}"
+                />
               </div>
 
               {/* Fim */}
               <div className="space-y-2">
-                <div className="relative">
-                  <select
-                    value={experiencia.fim}
-                    onChange={(e) => updateExperiencia(index, 'fim', e.target.value)}
-                    className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-500 appearance-none pr-12"
-                    style={{ fontSize: '10pt' }}
-                  >
-                    <option value="">Toque para selecionar</option>
-                    <option value="Janeiro 2025">Janeiro 2025</option>
-                    <option value="Fevereiro 2025">Fevereiro 2025</option>
-                    <option value="Março 2025">Março 2025</option>
-                    <option value="Abril 2025">Abril 2025</option>
-                    <option value="Maio 2025">Maio 2025</option>
-                    <option value="Junho 2025">Junho 2025</option>
-                    <option value="Julho 2025">Julho 2025</option>
-                    <option value="Agosto 2025">Agosto 2025</option>
-                    <option value="Setembro 2025">Setembro 2025</option>
-                    <option value="Outubro 2025">Outubro 2025</option>
-                    <option value="Novembro 2025">Novembro 2025</option>
-                    <option value="Dezembro 2025">Dezembro 2025</option>
-                    <option value="Atual">Atual</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-                  <label className="absolute -top-2 left-4 bg-gray-100 px-2 font-hendrix-medium text-gray-700" style={{ fontSize: '9pt' }}>
-                    Fim
-                  </label>
-                </div>
+                <label className="font-hendrix-medium text-gray-700" style={{ fontSize: '9pt' }}>
+                  Fim
+                </label>
+                <input
+                  type="date"
+                  value={experiencia.fim}
+                  onChange={(e) => updateExperiencia(index, 'fim', e.target.value)}
+                  className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-700 placeholder-gray-400"
+                  style={{ fontSize: '10pt' }}
+                  placeholder="DD/MM/AAAA"
+                  pattern="\d{4}-\d{2}-\d{2}"
+                />
               </div>
 
               {/* Separador entre experiências (só mostra se não for a última) */}
@@ -265,7 +209,6 @@ const CurriculoExperienciaStep = ({ onVoltar, onContinuar }) => {
             ) : (
               <>
                 <span>Continuar</span>
-                <ChevronRight className="w-4 h-4" />
               </>
             )}
           </div>

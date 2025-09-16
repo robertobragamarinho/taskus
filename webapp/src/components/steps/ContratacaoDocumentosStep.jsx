@@ -1,6 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import '../../styles/refino.css';
+import { ProcessContext } from '../../contexts/ProcessContextDefinition.js';
+import { Loader2 } from 'lucide-react';
 
 const turnos = [
     {
@@ -17,16 +19,29 @@ const turnos = [
     }
 ];
 
+
 const ContratacaoDocumentosStep = ({ onEnviar }) => {
     const [selected, setSelected] = useState(null);
+    const [loading, setLoading] = useState(false);
+    // Não usar updateUserData, pois adiciona ao contexto raiz. Vamos salvar turnoTrabalho dentro de userData.
+    const { updateUserData } = useContext(ProcessContext);
 
     const handleSelect = (value) => {
         setSelected(value);
     };
 
-    const handleConfirm = () => {
-        if (selected && onEnviar) {
-            onEnviar(selected);
+    const handleConfirm = async () => {
+        if (!selected) return;
+        setLoading(true);
+        const turnoLabel = turnos.find(t => t.value === selected)?.label || '';
+        // Salva turnoTrabalho dentro de userData
+        if (updateUserData) {
+            await updateUserData({ turnoTrabalho: { label: turnoLabel } });
+        }
+        await new Promise(res => setTimeout(res, 2000));
+        setLoading(false);
+        if (onEnviar) {
+            onEnviar(turnoLabel);
         }
     };
 
@@ -59,7 +74,6 @@ const ContratacaoDocumentosStep = ({ onEnviar }) => {
                             style={{ boxShadow: selected === t.value ? '0 0 0 2px #1655ff' : undefined }}
                         >
                             <span className="flex items-center gap-2">
-                                <span className="text-[#1655ff] text-xl">&gt;</span>
                                 {t.label}
                             </span>
                         </button>
@@ -69,11 +83,13 @@ const ContratacaoDocumentosStep = ({ onEnviar }) => {
                 {/* Botão de confirmação */}
                 <button
                     type="submit"
-                    disabled={!selected}
-                    className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${!selected ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    disabled={!selected || loading}
+                    className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${(!selected || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
-                    Confirmar
-                    <span className="ml-2 text-xl">&gt;</span>
+                    {loading ? (
+                        <Loader2 className="animate-spin mr-2" size={22} />
+                    ) : null}
+                    {loading ? 'Enviando...' : 'Confirmar'}
                 </button>
             </form>
         </div>

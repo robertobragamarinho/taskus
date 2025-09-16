@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
@@ -17,10 +20,12 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
   });
 
   // Nome priorizando processData, com fallback para dadosUsuario
-  const nome =
-    processData?.userData?.firstName && processData?.userData?.lastName
-      ? `${processData.userData.firstName} ${processData.userData.lastName}`
-      : dadosUsuario?.nome || 'Usuário Desconhecido';
+  let nome = '';
+  if (processData?.userData?.firstName) {
+    nome = `${processData.userData.firstName} ${processData.userData?.lastName || ''}`.trim();
+  } else {
+    nome = dadosUsuario?.nome || 'Usuário Desconhecido';
+  }
 
   // CPF exibido (somente leitura)
   const cpfDisplay =
@@ -92,18 +97,6 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
           A análise leva de 4 a 7 minutos. Ao final, vamos informar se você foi selecionado(a) para a contratação.
         </p>
 
-        {/* <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 my-5">
-          <div className="flex items-center space-x-3">
-            <div className="flex-shrink-0">
-              <img className="h-6" src={InfoIconMin} alt="Informação" />
-            </div>
-            <div className="flex-1">
-              <p className="font-hendrix-medium text-yellow-800" style={{ fontSize: '9pt' }}>
-                Leva menos de 7 minutos.
-              </p>
-            </div>
-          </div>
-        </div> */}
 
 
         <div className="rounded-xl p-4" style={{ backgroundColor: '#f3f6f9' }}>
@@ -134,13 +127,7 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
               </span>
             </div>
 
-            {/* CPF */}
-            <div className="flex items-center justify-between">
-              <span className="font-hendrix-medium text-gray-500 text-sm">CPF</span>
-              <span className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-40 text-right font-hendrix-regular text-gray-900 text-sm">
-                {cpfDisplay}
-              </span>
-            </div>
+          
           </div>
         </div>
 

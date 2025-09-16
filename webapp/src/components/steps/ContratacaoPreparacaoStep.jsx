@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
+import { Loader2 } from 'lucide-react';
 // enderecoFormatado: string formatado para exibir o endereço
 import '../../styles/refino.css';
 
 const ContratacaoPreparacaoStep = ({ onContinuar, enderecoFormatado }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+    await new Promise(res => setTimeout(res, 2000));
+    if (onContinuar) onContinuar();
+    setIsLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-between px-4 pt-8 pb-10">
       <div className="w-full max-w-md mx-auto">
@@ -28,10 +38,12 @@ const ContratacaoPreparacaoStep = ({ onContinuar, enderecoFormatado }) => {
       <div className="w-full max-w-md mx-auto mb-15">
         <button
           type="button"
-          className="w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center"
-          onClick={onContinuar}
+          className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
+          onClick={handleClick}
+          disabled={isLoading}
         >
-          Continuar
+          {isLoading && <Loader2 className="animate-spin mr-2" size={22} />}
+          {isLoading ? 'Enviando...' : 'Continuar'}
         </button>
       </div>
     </div>

@@ -101,7 +101,6 @@ const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
             ) : (
               <>
                 <span>Enviar do meu celular (PDF, DOC ou Imagem)</span>
-                <ChevronUp className="w-4 h-4" />
               </>
             )}
           </div>
@@ -130,7 +129,6 @@ const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
             ) : (
               <>
                 <span>Criar meu currículo agora</span>
-                <ChevronRight className="w-4 h-4" />
               </>
             )}
           </div>
