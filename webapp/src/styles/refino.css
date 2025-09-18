@@ -1,0 +1,93 @@
+/* Textos */
+
+.titulodaetapa {
+  font-size: 22pt !important;
+  line-height: 3.5vh;
+  margin-top: 5vw;
+  text-align: left;
+}
+
+.tituloanalise {
+  font-size: 19pt !important;
+  line-height: 3vh;
+  margin-top: 5vw;
+  text-align: left;
+}
+
+.subtitulodaetapa {
+  font-size: 13pt !important;
+  line-height: 4vw !important;
+  margin-top: 1vw;
+  text-align: left;
+}
+
+.subtituloemdestaque {
+  font-size: 10pt !important;
+  line-height: 4vw;
+  margin-top: 5vw;
+  margin-bottom: 5vw;
+}
+
+.tituloinicial {
+  font-size: 26pt !important;
+  line-height: 4vh;
+  margin-top: 5vw;
+}
+
+.subtituloinicial {
+  font-size: 16pt !important;
+  line-height: 5vw;
+  margin-bottom: 8vw;
+}
+
+.textocontinuidade {
+  font-size: 12pt !important;
+  line-height: 4vw;
+  text-align: left;
+  color: #000;
+}
+
+.textocontinuidadeinicial {
+  font-size: 13pt !important;
+  line-height: 4vw;
+  margin-top: 5vw;
+  margin-bottom: 5vw;
+}
+
+.aviso {
+  font-size: 8pt !important;
+  line-height: 3vw;
+  margin-top: 5vw;
+  margin-bottom: 5vw;
+}
+
+/* Imputs */
+
+.imputs {
+    width: 100% !important;
+    height: 12vw !important;
+    font-size: 12pt !important;
+}
+
+/* Questionários */
+
+.tituloquest {
+  font-size: 20pt !important;
+  line-height: 3vh;
+  margin-top: 1vw;
+  margin-bottom: 3vw;
+  text-align: left;
+}
+
+.subtituloquest {
+  font-size: 13pt !important;
+  line-height: 5vw;
+  margin-bottom: 12vw;
+  text-align: left;
+}
+
+.modalo {
+  width: 100%;
+  background-color: yellowgreen;
+ 
+}

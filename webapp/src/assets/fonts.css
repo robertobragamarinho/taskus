@@ -1,0 +1,142 @@
+/* BRHendrix Font Family */
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Thin-BF6556d1b4ef4d0.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-ThinItalic-BF6556d1b4dff37.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-ExtraLight-BF6556d1b52d8ff.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-ExtraLightItalic-BF6556d1b549f2d.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Light-BF6556d1b53e741.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-LightItalic-BF6556d1b5067ac.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Regular-BF6556d1b5096f9.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-RegularItalic-BF6556d1b5267ce.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Medium-BF6556d1b4e12b2.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-MediumItalic-BF6556d1b53343e.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-SemiBold-BF6556d1b51cbb8.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-SemiBoldItalic-BF6556d1b50b46a.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Bold-BF6556d1b5459d3.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-BoldItalic-BF6556d1b4e4458.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-Black-BF6556d1b528e86.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BRHendrix';
+  src: url('./fontes/BRHendrix-BlackItalic-BF6556d1b4ee93c.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Font utility classes */
+.font-hendrix-thin { font-family: 'BRHendrix', sans-serif; font-weight: 100; }
+.font-hendrix-extralight { font-family: 'BRHendrix', sans-serif; font-weight: 200; }
+.font-hendrix-light { font-family: 'BRHendrix', sans-serif; font-weight: 300; }
+.font-hendrix-regular { font-family: 'BRHendrix', sans-serif; font-weight: 400; }
+.font-hendrix-medium { font-family: 'BRHendrix', sans-serif; font-weight: 500; }
+.font-hendrix-semibold { font-family: 'BRHendrix', sans-serif; font-weight: 600; }
+.font-hendrix-bold { font-family: 'BRHendrix', sans-serif; font-weight: 700; }
+.font-hendrix-black { font-family: 'BRHendrix', sans-serif; font-weight: 900; }
+
+/* Global font family */
+.font-hendrix { font-family: 'BRHendrix', sans-serif; }

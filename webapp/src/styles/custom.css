@@ -1,0 +1,51 @@
+/* Estilos customizados para inputs e placeholders */
+
+/* Estilo para os placeholders dos inputs */
+.custom-input::placeholder {
+  color: #f3f3f3 !important;
+}
+
+.custom-input::-webkit-input-placeholder {
+  color: #f3f3f3 !important;
+}
+
+.custom-input::-moz-placeholder {
+  color: #f3f3f3 !important;
+  opacity: 1;
+}
+
+.custom-input:-ms-input-placeholder {
+  color: #f3f3f3 !important;
+}
+
+.custom-input:-moz-placeholder {
+  color: #f3f3f3 !important;
+  opacity: 1;
+}
+
+/* Estilo para o texto digitado nos inputs */
+.custom-input {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+/* Botão com gradiente personalizado */
+.gradient-button {
+  background: linear-gradient(to right, #1655ff, #e5e7eb) !important;
+  color: white !important;
+}
+
+.gradient-button:hover {
+  opacity: 0.9 !important;
+}
+
+/* Botão voltar personalizado */
+.back-button {
+  background-color: #212121 !important;
+  color: white !important;
+}
+
+.back-button:disabled {
+  background-color: #9ca3af !important;
+  opacity: 0.5 !important;
+}
