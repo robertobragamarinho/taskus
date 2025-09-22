@@ -2,9 +2,11 @@
 
 
 import { useState, useEffect, useRef } from 'react';
-import { ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import '../../styles/refino.css';
+import { useProcess } from '../../hooks/useProcess.js';
+
+import { backendAPI } from '../../services/backendAPIService.js';
 
 // Função para gerar 4 códigos aleatórios de 6 dígitos
 function gerarCodigosAleatorios() {
@@ -21,6 +23,9 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
   const inputRefs = useRef([]);
   const [codigoEnviado, setCodigoEnviado] = useState('');
   const [codigosAleatorios] = useState(gerarCodigosAleatorios());
+
+  const { processData } = useProcess();
+
 
 
   // Recupera o telefone do usuário da prop ou do localStorage/context
@@ -64,6 +69,24 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
     }
   }, [timer]);
 
+  useEffect(() => {
+    // Gera código aleatório de 6 dígitos
+    const codigoEmail = Math.floor(100000 + Math.random() * 900000).toString();
+    setCodigoEnviado(codigoEmail);
+
+    const confirmaEmail = async () => {
+      try {
+        const email = processData.userData.email;
+        await backendAPI.confirmEmail(email, codigoEmail);
+        console.log('✅ E-mail de confirmação enviado para:', email, 'com código:', codigoEmail);
+      } catch (error) {
+        console.error('❌ Erro ao enviar e-mail de confirmação:', error);
+      }
+    };
+
+    confirmaEmail();
+  }, []);
+
   const handleChange = (e, idx) => {
     const val = e.target.value.replace(/\D/g, '').slice(0, 1);
     if (!val) return;
@@ -101,14 +124,21 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
   };
 
   const [loading, setLoading] = useState(false);
+  const [codigoInvalido, setCodigoInvalido] = useState(false);
 
   const handleConfirmar = async () => {
+    const codigoDigitado = code.join('');
     if (code.every(d => d)) {
-      setLoading(true);
-      setTimeout(async () => {
-        await onContinuar(code.join(''));
-        setLoading(false);
-      }, 1000);
+      if (codigoDigitado === codigoEnviado) {
+        setCodigoInvalido(false);
+        setLoading(true);
+        setTimeout(async () => {
+          await onContinuar(codigoDigitado);
+          setLoading(false);
+        }, 1000);
+      } else {
+        setCodigoInvalido(true);
+      }
     }
   };
 
@@ -134,7 +164,10 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
               inputMode="numeric"
               maxLength={1}
               value={digit}
-              onChange={e => handleChange(e, idx)}
+              onChange={e => {
+                handleChange(e, idx);
+                setCodigoInvalido(false); 
+              }}
               onKeyDown={e => handleKeyDown(e, idx)}
               onPaste={handlePaste}
               className="w-12 h-14 text-center text-2xl font-hendrix-semibold border-b-2 border-gray-300 focus:border-orange-500 outline-none bg-transparent"
@@ -142,6 +175,9 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
             />
           ))}
         </div>
+        {codigoInvalido && (
+          <div className="text-red-600 font-hendrix-medium text-sm mb-2 text-center">O código informado não coincide. Tente novamente.</div>
+        )}
         <div className="text-center text-gray-500 text-sm mb-10">
           {timer > 0 ? (
             <>Reenviar (Aguarde 0:{timer.toString().padStart(2, '0')})</>

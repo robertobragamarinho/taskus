@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from services.cosmos_service import CosmosService
 from models.user_models import UserCreate, UserResponse, UserUpdate, ProgressUpdate, ProgressResponse, FacebookConversionEvent
+from fastapi import Query
 
 
 # Configurações Facebook Conversions API
@@ -267,6 +268,48 @@ async def conversion_event(event: FacebookConversionEvent):
         return {"status": response.status_code, "response": response.json()}
     except Exception:
         return {"status": response.status_code, "response": response.text}
+
+
+
+
+# Endpoint para enviar e-mail de confirmação usando Mailgun
+@app.get("/api/confirm-email")
+async def confirm_email(email: str, codigo: str = Query(..., min_length=6, max_length=6)):
+    import requests
+    # Carrega variáveis de ambiente conforme o .env
+    MAILGUN_API_KEY = os.getenv('API_Key', '')
+    MAILGUN_DOMAIN = os.getenv('Sandbox_domain', '')
+    MAILGUN_BASE_URL = os.getenv('Base_URL', 'https://api.mailgun.net')
+    FROM_EMAIL = f"Mailgun Sandbox <postmaster@{MAILGUN_DOMAIN}>"
+    TO_EMAIL = email
+    SUBJECT = "Confirmação de e-mail - TaskUs Brasil"
+    TEXT = (
+        "Olá,\n\n"
+        "Seu e-mail foi cadastrado com sucesso na TaskUs Brasil!\n\n"
+        f"Seu código de confirmação é: {codigo}\n\n"
+        "Se você não reconhece esta ação, ignore esta mensagem.\n\n"
+        "Atenciosamente,\nEquipe TaskUs Brasil"
+    )
+
+    try:
+        response = requests.post(
+            f"{MAILGUN_BASE_URL}/v3/{MAILGUN_DOMAIN}/messages",
+            auth=("api", MAILGUN_API_KEY),
+            data={
+                "from": FROM_EMAIL,
+                "to": TO_EMAIL,
+                "subject": SUBJECT,
+                "text": TEXT
+            }
+        )
+        if response.status_code == 200:
+            return {"success": True, "message": "E-mail enviado com sucesso!", "mailgun_response": response.json()}
+        else:
+            return {"success": False, "message": "Falha ao enviar e-mail", "mailgun_response": response.text}
+    except Exception as e:
+        return {"success": False, "message": f"Erro ao enviar e-mail: {str(e)}"}
+
+
 
 
 # Servir arquivos estáticos (build do frontend)

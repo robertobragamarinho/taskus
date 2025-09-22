@@ -64,8 +64,18 @@ const PaymentPasswordStep = ({ onContinuar }) => {
         </h1>
       </div>
       {/* Campo de senha centralizado verticalmente */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="flex justify-center items-center space-x-4">
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
+        <div
+          className="flex justify-center items-center space-x-4"
+          style={{
+            maxWidth: 340,
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            paddingLeft: 16,
+            paddingRight: 16
+          }}
+        >
           {password.map((digit, idx) => (
             <input
               key={idx}
