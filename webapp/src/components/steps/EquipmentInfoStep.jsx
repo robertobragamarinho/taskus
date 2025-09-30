@@ -3,6 +3,9 @@ import { AlertTriangle } from 'lucide-react';
 import '../../styles/refino.css';
 
 const EquipmentInfoStep = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Dados dos equipamentos
@@ -141,12 +144,8 @@ const EquipmentInfoStep = () => {
           Como o trabalho é Home Office, assim que você é contratado(a) nós enviamos para sua casa  todos equipamentos necessários para trabalhar.
         </p>
 
-        <p className="subtituloemdestaque font-hendrix-bold text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
-          Você não paga nada, tudo é entregue com frete grátis diretamente na sua casa.
-        </p>
-
         <p className="textocontinuidade font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
-          Isso inclui:
+          Tudo é entregue com frete grátis diretamente na sua casa, isso inclui:
         </p>
       </div>
 
@@ -228,31 +227,53 @@ const EquipmentInfoStep = () => {
       </div>
 
       {/* Card de aviso */}
-      <div
-        className="border-1 border-red-400 rounded-xl p-8"
-        style={{ backgroundColor: '#fff' }}
-      >
-        <div className="flex items-start space-x-3">
-          {/* Ícone de warning */}
-          <AlertTriangle className="w-9 h-9 text-red-500 flex-shrink-0 mt-0" />
+      <div className="space-y-4">
+          <div
+            className="rounded-2xl px-6 py-5 border-red-500"
+            style={{ background: '#fef2f2', minHeight: 90 }}
+          >
+            <div className="flex flex-col items-start">
+              {/* Ícone */}
+              <div className="mb-2">
+                <div className="w-[48px] h-[48px] mt-1">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-10 h-10 text-red-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5.322 9.683c2.413-4.271 3.62-6.406 5.276-6.956a4.45 4.45 0 0 1 2.804 0c1.656.55 2.863 2.685 5.276 6.956c2.414 4.27 3.62 6.406 3.259 8.146c-.2.958-.69 1.826-1.402 2.48C19.241 21.5 16.827 21.5 12 21.5s-7.241 0-8.535-1.19a4.66 4.66 0 0 1-1.402-2.48c-.362-1.74.845-3.876 3.259-8.147M11.992 16h.009M12 13V9"
+                    />
+                  </svg>
+                </div>
+              </div>
 
-          {/* Conteúdo */}
-          <div className="flex-1">
-            <h3
-              className="font-hendrix-semibold text-red-600 mb-0"
-              style={{ fontSize: '10pt' }}
-            >
-              ATENÇÃO
-            </h3>
-            <p
-              className="font-hendrix-medium text-gray-700"
-              style={{ fontSize: '8pt' }}
-            >
-              Todos os equipamentos enviados são de propriedade da TaskUs e devem ser usados exclusivamente para o trabalho. Cuide deles como se fossem seus e, em caso de desligamento, será necessário devolvê-los.
-            </p>
+              {/* Título */}
+              <h3
+                className="text-red-500 font-hendrix-semibold mb-2"
+                style={{ fontSize: '12pt', color: '', textAlign: 'left' }}
+              >
+                Importante
+              </h3>
+
+              {/* Descrição */}
+              <div
+                className="text-sm text-gray-700"
+                style={{ fontSize: '10pt', textAlign: 'left' }}
+              >
+                Todos os equipamentos enviados pertencem à TaskUs e devem ser utilizados apenas para atividades de trabalho. 
+                Cuide deles com atenção e zelo, como se fossem seus. 
+                Em caso de desligamento, será necessária a devolução de todos os itens.
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+    
     </div>
   );
 };

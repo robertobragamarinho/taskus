@@ -53,7 +53,7 @@ const ProfileAnalysisStep = ({
           <span className="font-hendrix-bold text-gray-800" style={{ fontSize: '10pt' }}>
             Análise de perfil
           </span>
-          <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '10pt' }}>
+          <span className="font-hendrix-medium text-gray-400" style={{ fontSize: '10pt' }}>
             {currentQuestion} de {totalQuestions}
           </span>
         </div>

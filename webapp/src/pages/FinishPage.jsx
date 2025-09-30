@@ -36,28 +36,32 @@ const FinishPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#181A1B]">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 flex-shrink-0 w-full">
-        <div className="w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                <img
-                  className='h-5 w-auto max-w-[120px] object-contain'
-                  src={LogoTaskUs}
-                  alt="Logo TaskUs"
-                />
-              </div>
-            </div>
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600 whitespace-nowrap">Contratação</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+             {/* Header */}
+             <div className="bg-[#00005f] flex-shrink-0">
+               <div className="max-w-md mx-auto px-6 py-4">
+                 <div className="flex items-center justify-between">
+       
+                   {/* Logo ToskUs */}
+                   <div className="flex items-center space-x-2">
+       
+                     <div className="flex items-center space-x-1">
+                       <img
+                         src={LogoTaskUs}
+                         className='h-6'
+                       />
+                     </div>
+                   </div>
+       
+       
+                   {/* Logo Recrutamento Online */}
+                   <div className="flex items-center space-x-2">
+                     <span className="font-hendrix-medium text-xs text-blue-200">{'Contratação'}</span>
+                   </div>
+                 </div>
+               </div>
+             </div>
+   
 
       {/* Main Content */}
       <main className="">

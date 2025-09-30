@@ -200,16 +200,12 @@ const ContratacaoEquipamentosStep = ({ onConfirm }) => {
   <div className="flex flex-col items-center justify-start px-4 pt-8 pb-10">
       <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={handleSubmit}>
         {/* Código de aprovação */}
-        <div className="mb-4 flex justify-start">
-          <span className="bg-[#0ecb7b] text-white font-hendrix-medium text-xs px-3 py-1 rounded-full shadow" style={{ letterSpacing: '0.5px' }}>
-            Código de aprovação: #WST-782411
-          </span>
-        </div>
+ 
         {/* Título */}
-        <h1 className="font-hendrix-bold text-3xl text-white mb-3 leading-tight">
-          Envio dos equipamentos de trabalho
+        <h1 className="headlines font-hendrix-bold text-3xl text-white mb-3 leading-tight">
+          Envio dos equipamentos para você trabalhar
         </h1>
-        <p className="font-hendrix-regular text-base text-gray-300 mb-8">
+        <p className="subheadlines font-hendrix-regular text-base text-gray-300 mb-8">
           Para iniciar suas atividades, a TaskUS envia para sua casa um kit completo de trabalho. O envio será feito pelos correios, pago por nós.
         </p>
         {/* Lista de equipamentos */}
@@ -217,15 +213,15 @@ const ContratacaoEquipamentosStep = ({ onConfirm }) => {
           {equipamentos.map((eq) => (
             <div
               key={eq}
-              className="w-full py-3 px-5 rounded-2xl bg-[#222426] font-hendrix-semibold text-white text-base"
-              style={{ border: '2px solid #fff' }}
+              className="w-full py-3 px-5 rounded-2xl bg-[#] font-hendrix-regular text-white text-base"
+              style={{ border: '0.9px solid #fff' }}
             >
               {eq}
             </div>
           ))}
         </div>
         {/* Endereço */}
-        <h3 className="font-hendrix-bold text-lg text-white mb-3">Preencha o endereço para entrega</h3>
+        <h3 className="aviso font-hendrix-bold text-lg text-white mb-3">Preencha o endereço para entrega</h3>
         <div className="grid grid-cols-2 gap-4 mb-4">
           {/* Campo Estado autocomplete */}
           <div className="col-span-1 relative">
@@ -298,7 +294,7 @@ const ContratacaoEquipamentosStep = ({ onConfirm }) => {
         <input name="referencia" value={form.referencia} onChange={handleChange} placeholder="Referência" className="w-full bg-white rounded-2xl px-5 py-3 text-base font-hendrix-semibold text-gray-900 mb-4" />
         <div className="flex items-center space-x-2 mb-8">
           <input type="checkbox" name="aceita" checked={form.aceita} onChange={handleChange} className="form-checkbox h-5 w-5 text-blue-600 rounded-full" />
-          <label htmlFor="aceita" className="font-hendrix-regular text-white text-base">Confirmo que meu endereço está correto</label>
+          <label htmlFor="aceita" className="font-hendrix-regular text-[15px] text-white text-base">Confirmo que meu endereço está correto</label>
         </div>
         
         {/* Botão */}

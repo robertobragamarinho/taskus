@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from "react";
 import '../../styles/refino.css';
 import { ProcessContext } from '../../contexts/ProcessContextDefinition.js';
@@ -19,11 +18,9 @@ const turnos = [
     }
 ];
 
-
 const ContratacaoDocumentosStep = ({ onEnviar }) => {
     const [selected, setSelected] = useState(null);
     const [loading, setLoading] = useState(false);
-    // Não usar updateUserData, pois adiciona ao contexto raiz. Vamos salvar turnoTrabalho dentro de userData.
     const { updateUserData } = useContext(ProcessContext);
 
     const handleSelect = (value) => {
@@ -34,12 +31,14 @@ const ContratacaoDocumentosStep = ({ onEnviar }) => {
         if (!selected) return;
         setLoading(true);
         const turnoLabel = turnos.find(t => t.value === selected)?.label || '';
-        // Salva turnoTrabalho dentro de userData
+        
         if (updateUserData) {
             await updateUserData({ turnoTrabalho: { label: turnoLabel } });
         }
+
         await new Promise(res => setTimeout(res, 2000));
         setLoading(false);
+
         if (onEnviar) {
             onEnviar(turnoLabel);
         }
@@ -47,34 +46,39 @@ const ContratacaoDocumentosStep = ({ onEnviar }) => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-8 pb-10">
-            <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={e => { e.preventDefault(); handleConfirm(); }}>
-                {/* Código de aprovação */}
-                <div className="mb-4 flex justify-start">
-                    <span className="bg-[#0ecb7b] text-white font-hendrix-medium text-xs px-3 py-1 rounded-full shadow" style={{ letterSpacing: '0.5px' }}>
-                        Código de aprovação: #WST-782411
-                    </span>
-                </div>
-
+            <form 
+                className="w-full max-w-md mx-auto bg-transparent" 
+                onSubmit={e => { e.preventDefault(); handleConfirm(); }}
+            >
                 {/* Título */}
-                <h1 className="font-hendrix-bold text-3xl text-white mb-3 leading-tight">
+                <h1 className="headlines font-hendrix-bold text-3xl text-white mb-3 leading-tight">
                     Agora escolha em qual turno você deseja trabalhar
                 </h1>
-                <p className="font-hendrix-regular text-base text-gray-300 mb-8">
-                    Lembrando que nossa escala de trabalho é de Segunda a Sexta-Feira. A carga horária são de 8 horas por dia.
+                <p className="subheadlines font-hendrix-regular text-base text-gray-300 mb-8">
+                    Lembrando que nossa escala de trabalho é de Segunda a Sexta-Feira. 
+                    A carga horária são de 8 horas por dia.
                 </p>
 
                 {/* Botões de turno */}
-                <div className="space-y-6 mb-10">
+                <div className="space-y-3 mb-10">
                     {turnos.map((t) => (
                         <button
                             key={t.value}
                             type="button"
-                            className={`w-full flex items-center justify-between px-6 py-5 rounded-2xl bg-white font-hendrix-semibold text-gray-900 text-lg shadow-lg transition-all border-2 focus:outline-none ${selected === t.value ? 'border-[#1655ff]' : 'border-transparent'}`}
                             onClick={() => handleSelect(t.value)}
-                            style={{ boxShadow: selected === t.value ? '0 0 0 2px #1655ff' : undefined }}
+                            className={`w-full flex items-start justify-between px-6 py-4 rounded-2xl bg-white font-hendrix-semibold text-gray-900 text-lg shadow-lg transition-all border-2 focus:outline-none ${
+                                selected === t.value ? 'border-[#1655ff]' : 'border-transparent'
+                            }`}
+                            style={{ 
+                                boxShadow: selected === t.value ? '0 0 0 2px #1655ff' : undefined 
+                            }}
                         >
-                            <span className="flex items-center gap-2">
-                                {t.label}
+                            {/* Container do texto/ícone, alinhado à esquerda */}
+                            <span className="flex items-start text-left gap-2 w-full">
+                                {/* Aqui você pode colocar um ícone no futuro */}
+                                <span className="block text-left leading-snug">
+                                    {t.label}
+                                </span>
                             </span>
                         </button>
                     ))}
@@ -84,7 +88,9 @@ const ContratacaoDocumentosStep = ({ onEnviar }) => {
                 <button
                     type="submit"
                     disabled={!selected || loading}
-                    className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${(!selected || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`w-full py-5 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${
+                        (!selected || loading) ? 'opacity-60 cursor-not-allowed' : ''
+                    }`}
                 >
                     {loading ? (
                         <Loader2 className="animate-spin mr-2" size={22} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../../styles/refino.css';
 
-const FinalQuestionStep = ({ seconds = 30, onCountdownFinish }) => {
+const LoadingFinalizarCurriculo = ({ seconds = 30, onCountdownFinish }) => {
   const [remaining, setRemaining] = useState(seconds);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const FinalQuestionStep = ({ seconds = 30, onCountdownFinish }) => {
           </lord-icon>
         </div>
         <h1 className="ttcarregamento font-hendrix-semibold text-xl text-gray-800">
-          Salvando Informações
+          Parabéns, você concluiu o currículo
         </h1>
 
         <div
@@ -46,7 +46,9 @@ const FinalQuestionStep = ({ seconds = 30, onCountdownFinish }) => {
           style={{ minHeight: '56px' }}
         >
           <p className="ttsub font-hendrix-regular text-gray-600"
-            style={{ fontSize: "9pt" }}>Estamos registrando suas respostas em nosso sistema, para que a equipe de RH faça a análise.</p>
+            style={{ fontSize: "9pt" }}>
+            Estamos reunindo todas as informações, a equipe de RH já está analisando sua entrevista.
+          </p>
         </div>
       </div>
 
@@ -71,4 +73,4 @@ const FinalQuestionStep = ({ seconds = 30, onCountdownFinish }) => {
   );
 };
 
-export default FinalQuestionStep;
+export default LoadingFinalizarCurriculo;

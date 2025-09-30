@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -240,8 +241,8 @@ const TesteHabilidadesPage = () => {
     return result;
   };
 
-  // Aplicar embaralhamento local para que dúvidas da mesma pessoa apareçam em ordem aleatória
-  const simulacoes = shuffleSameClient(simulacoesConversa);
+  // Usar perguntas na ordem original, sem embaralhamento para evitar repetições
+  const simulacoes = simulacoesConversa;
 
 
   const handleStartTest = async () => {
@@ -325,32 +326,36 @@ const TesteHabilidadesPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen  flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-md mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                <img
-                  className='h-5'
-                  src={LogoTaskUs}
-                />
-              </div>
-            </div>
-
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="textocontinuidade font-hendrix-medium text-xs text-gray-600">Recrutamento Online</span>
-            </div>
-          </div>
-        </div>
-      </div>
+           <div className="bg-[#00005f] border-b border-gray-200 flex-shrink-0">
+             <div className="max-w-md mx-auto px-6 py-4">
+               <div className="flex items-center justify-between">
+     
+                 {/* Logo ToskUs */}
+                 <div className="flex items-center space-x-2">
+     
+                   <div className="flex items-center space-x-1">
+                     <img
+                       src={LogoTaskUs}
+                       className='h-6'
+                     />
+                   </div>
+                 </div>
+     
+     
+                 {/* Logo Recrutamento Online */}
+                 <div className="flex items-center space-x-2">
+                   <span className="font-hendrix-medium text-xs text-blue-200">{'Processo Seletivo'}</span>
+                 </div>
+               </div>
+             </div>
+           </div>
+     
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+     <div className=" flex items-center justify-center px-4 py-5">
+        <div className="w-full max-w-md rounded-3xl bg-white shadow-sm border overflow-hidden">
           <div className="p-6 pb-8">
             {/* Etapa 1: Introdução do teste */}
             {currentStep === 1 && (

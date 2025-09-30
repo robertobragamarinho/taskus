@@ -60,11 +60,11 @@ const CurriculoHabilidadesStep = ({ onVoltar, onContinuar }) => {
 
 
       {/* Título principal */}
-      <div className="bg-gray-100 rounded-2xl p-6">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-2" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
-          Marque suas principais habilidades
+      <div className="bg-gray-100 rounded-2xl mt-10 p-6">
+        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800 mb-5" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
+          Quais dessas <br /> habilidades você possui?
         </h1>
-        <p className="font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '10pt' }}>
+        <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '10pt' }}>
           Escolha até 3 alternativas
         </p>
 
@@ -75,12 +75,12 @@ const CurriculoHabilidadesStep = ({ onVoltar, onContinuar }) => {
               key={habilidade}
               type="button"
               onClick={() => handleSelecionar(habilidade)}
-              className={`w-full py-4 px-6 rounded-2xl font-hendrix-regular text-gray-800 border-2 transition-all duration-200 text-center
-                ${habilidadesSelecionadas.includes(habilidade)
-                  ? 'border-blue-600 bg-blue-50 font-hendrix-semibold'
-                  : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'}
-              `}
-              style={{ fontSize: '11pt' }}
+              className={`w-full py-4 px-6 rounded-2xl font-hendrix-regular text-gray-800 border-2 transition-all duration-200 flex justify-start text-left
+  ${habilidadesSelecionadas.includes(habilidade)
+    ? 'border-blue-600 bg-blue-50 font-hendrix-semibold'
+    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'}
+`}
+              style={{ fontSize: '10pt' }}
               disabled={isLoading}
             >
               {habilidade}

@@ -50,7 +50,11 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
     }
   };
 
+
   const [loading, setLoading] = useState(false);
+
+  // Verifica se todos os campos estão preenchidos
+  const allFilled = Object.values(form).every(v => v && v.trim() !== "");
 
   const handleConfirmar = async () => {
     setLoading(true);
@@ -65,9 +69,9 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col  bg-white">
       <div className="flex-1 flex flex-col justify-start px-6 pt-10">
-        <h1 className="font-hendrix-semibold text-2xl text-gray-900 mb-6" style={{ lineHeight: 1.25 }}>
+        <h1 className="font-medium text-2xl text-gray-900 mb-6" style={{ lineHeight: 1.25 }}>
           Confirme seus dados para<br />criação da conta salário
         </h1>
         <div className="space-y-7">
@@ -123,15 +127,15 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
         <motion.button
           type="button"
           onClick={handleConfirmar}
-          disabled={loading}
+          disabled={loading || !allFilled}
           whileTap={{ scale: 0.97 }}
-          whileHover={{ scale: loading ? 1 : 1.03 }}
-          className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full font-hendrix-medium text-white shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300 bg-orange-500 hover:bg-orange-600 ${loading ? 'cursor-not-allowed' : ''}`}
+          whileHover={{ scale: loading || !allFilled ? 1 : 1.03 }}
+          className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full font-hendrix-medium text-white shadow-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300 bg-orange-500 hover:bg-orange-600 ${loading || !allFilled ? 'cursor-not-allowed opacity-60' : ''}`}
           style={{
             fontSize: '15pt',
             boxShadow: '0 2px 8px 0 rgba(255,140,0,0.10)',
             border: 'none',
-            opacity: loading ? 0.7 : 1
+            opacity: loading || !allFilled ? 0.7 : 1
           }}
         >
           {loading ? (
@@ -145,7 +149,7 @@ const PaymentConfirmDataStep = ({ onConfirmar, setNumbPhone, setUserName }) => {
               <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '13pt' }}>Carregando...</span>
             </>
           ) : (
-            <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '15pt' }}>Confirmar informações</span>
+            <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '13pt' }}>Confirmar informações</span>
           )}
         </motion.button>
       </div>

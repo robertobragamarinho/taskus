@@ -44,23 +44,24 @@ const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="">
       {/* Título principal */}
       <div className="pt-6">
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt'}}>
-          Envie seu currículo para continuar com a  entrevista.
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="#1655ff"><g fill="none" stroke="#1655ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M4 3H3a1 1 0 0 0-1 1v14l1.5 3L5 18V4a1 1 0 0 0-1-1m17 9.001v-4c0-2.358 0-3.536-.732-4.269C19.535 3 18.357 3 16 3h-3c-2.357 0-3.536 0-4.268.732C8 4.465 8 5.643 8 8.001v8c0 2.358 0 3.537.732 4.27c.62.62 1.561.714 3.268.729m0-14h5m-5 4h5"/><path d="M14 19s1.5.5 2.5 2c0 0 1.5-4 5.5-6M2 7h3"/></g></svg>
+        <h1 className="tituloquest font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt'}}>
+          Precisamos ter um <br />currículo vinculado ao processo seletivo 
         </h1>
       </div>
 
       {/* Descrição */}
-      <div className="space-y-4">
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-600" style={{ fontSize: '10pt'}}>
-          Caso ainda não tenha, podemos te ajudar a criar um. Escolha a opção que faz mais sentido para você.
+      <div className="">
+        <p className="subtituloquest font-hendrix-regular text-gray-600" style={{ fontSize: '10pt'}}>
+          Vamos criar um em 6 etapas rápidas, após isso, a equipe de RH irá finalizar a análise da sua entrevista e você saberá se será contratado (a).
         </p>
       </div>
 
       {/* Aviso de tempo */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+      <div className="bg-yellow-50 mb-10 border border-yellow-200 rounded-xl p-4">
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
             <img 
@@ -83,30 +84,14 @@ const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
           onClick={handleEnviarArquivo}
           disabled={isLoading && tipoAcao === 'enviar'}
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            ${isLoading && tipoAcao === 'enviar'
-              ? 'bg-gray-800 cursor-not-allowed' 
-              : 'bg-gray-900 hover:bg-gray-800 active:bg-gray-700 shadow-lg hover:shadow-xl'
-            }
           `}
           style={{ fontSize: '11pt' }}
         >
-          <div className="flex items-center justify-center space-x-2">
-            {isLoading && tipoAcao === 'enviar' ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Processando...</span>
-              </>
-            ) : (
-              <>
-                <span>Enviar do meu celular (PDF, DOC ou Imagem)</span>
-              </>
-            )}
-          </div>
+         
         </button>
 
         {/* Botão Criar Currículo */}
+        
         <button
           onClick={handleCriarCurriculo}
           disabled={isLoading && tipoAcao === 'criar'}

@@ -7,7 +7,7 @@ import PaymentConfirmDataStep from '../components/steps/PaymentConfirmDataStep.j
 import PaymentPasswordStep from '../components/steps/PaymentPasswordStep.jsx';
 import PaymentSuccessStep from '../components/steps/PaymentSuccessStep.jsx';
 import PaymentTelNumber from '@/components/steps/PaymentTelNumber.jsx';
-import PaymentConfirmPasswordStep from '@/components/steps/PaymentConfirmPasswordStep.jsx';
+// import PaymentConfirmPasswordStep from '@/components/steps/PaymentConfirmPasswordStep.jsx';
 import PaymentCallback from '@/components/steps/PaymentCallback.jsx';
 
 
@@ -243,10 +243,10 @@ const TelaPagamento = () => {
             dadosUsuario={processData}
             onEditar={handleEditarDados}
             onConfirmar={handleConfirmarDados}
-            setNumbPhone={ (numPhone) => {
+            setNumbPhone={(numPhone) => {
               setNumberPhone(numPhone);
             }}
-            setUserName={ (name) => {
+            setUserName={(name) => {
               setNameUser(name);
             }}
           />
@@ -264,20 +264,10 @@ const TelaPagamento = () => {
         return (
           <PaymentPasswordStep
             onContinuar={handleCriarSenhaNumerica}
-            isConfirmation={false}
           />
         );
 
       case 6:
-        return (
-          <PaymentConfirmPasswordStep
-            onContinuar={handleConfirmarSenha}
-            senhaCadastrada={senhaCadastrada}
-            erroSenha={erroSenha}
-          />
-        );
-
-      case 7:
         return (
           <PaymentSuccessStep
             onContinuar={handleFinalizarProcesso}

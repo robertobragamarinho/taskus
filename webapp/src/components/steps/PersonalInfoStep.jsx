@@ -120,7 +120,7 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
           <Input
             id="fullName"
             type="text"
-            placeholder="Seu nome completo"
+            placeholder="Nome completo"
             value={data.fullName || ''}
             onChange={(e) => {
               updateData({ fullName: e.target.value });
@@ -158,7 +158,7 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
           <Input
             id="phone"
             type="tel"
-            placeholder="(99)99999-9999"
+            placeholder="Número de telefone"
             value={phoneInput}
             onChange={(e) => handlePhoneChange(e.target.value)}
             className={`imputs font-hendrix-regular w-full px-4 py-4 border rounded-xl bg-gray-50 border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white text-gray-900 placeholder-gray-500 ${
@@ -220,7 +220,7 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
       </div>
 
       {/* Checkbox de confirmação */}
-      <div className="mt-6 flex justify-center">
+      <div className="mt-6 flex">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -232,7 +232,7 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
           />
           <span
             className="font-hendrix-medium text-gray-700 leading-relaxed"
-            style={{ fontSize: '9pt' }}
+            style={{ fontSize: '8pt', textAlign: 'left' }}
           >
             Autorizo o uso das informações para fins de contratação.
           </span>
@@ -247,6 +247,8 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
           {errors.termsAccepted}
         </p>
       )}
+
+      
 
       {/* Botão local de continuar para quando componente for montado isoladamente (AnalisePerfilPage) */}
       <div className="pt-4">

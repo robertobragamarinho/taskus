@@ -146,8 +146,8 @@ const MultiStepForm = () => {
     const prev = Math.max(currentStep - 1, 0);
     setIsLoading(true);
     try {
-  // apenas atualiza localmente sem backend
-  setCurrentStep(prev);
+      // apenas atualiza localmente sem backend
+      setCurrentStep(prev);
     } catch (error) {
       console.error('Erro ao voltar etapa:', error);
     } finally {
@@ -217,7 +217,7 @@ const MultiStepForm = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-[#00005f] border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
 
@@ -235,16 +235,16 @@ const MultiStepForm = () => {
 
             {/* Logo Recrutamento Online */}
             <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600">{'Recrutamento Online'}</span>
+              <span className="font-hendrix-medium text-xs text-blue-200">{'Processo Seletivo'}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-5">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 pb-8">
+      <div className="flex items-center justify-center px-4 py-5">
+        <div className="w-full max-w-md rounded-3xl bg-white shadow-sm border overflow-hidden">
+          <div className="p-5 pb-8">
             {/* Renderizar etapa atual */}
             <AnimatePresence mode="wait">
               <motion.div
@@ -265,20 +265,20 @@ const MultiStepForm = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
               >
-                {([3,4,5,6,7].includes(currentStep)) ? (
-                  <div className="flex gap-3">
+                {([3, 4, 5, 6, 7].includes(currentStep)) ? (
+                  <div className="flex gap-1">
                     {/* Botão voltar (esquerda) */}
                     <button
                       onClick={handleBack}
                       disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                      className={`h-14 w-30 flex items-center gap-2 px-2 py-5 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
                       style={{
-                        background: '#111827',
+                        background: '#000',
                         color: '#fff',
-                        fontSize: '9pt'
+                        fontSize: '10pt'
                       }}
                     >
-                      <ChevronLeft className="w-4 h-4 text-white" />
+                      <ChevronLeft className="w-5 h-5 text-white" />
                       Voltar
                     </button>
 
@@ -287,12 +287,12 @@ const MultiStepForm = () => {
                       <button
                         onClick={nextStep}
                         disabled={isLoading}
-                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        className={`h-14 flex-1 flex items-center justify-end gap-2 px-2 py-5 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
                         style={{
                           background: isLoading
                             ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
                             : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
+                          fontSize: '10pt'
                         }}
                       >
                         {isLoading ? (
@@ -303,7 +303,7 @@ const MultiStepForm = () => {
                         ) : (
                           <>
                             {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                            <ChevronRight className="w-4 h-4" />
+                            <ChevronRight className="w-5 h-5" />
                           </>
                         )}
                       </button>
@@ -326,7 +326,11 @@ const MultiStepForm = () => {
                           </>
                         ) : (
                           <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                            {currentStep === 7
+                              ? 'Iniciar Entrevista'
+                              : currentStep === 1
+                                ? 'Iniciar Agora'
+                                : 'Continuar'}
                           </>
                         )}
                       </button>
@@ -339,12 +343,13 @@ const MultiStepForm = () => {
                       <button
                         onClick={nextStep}
                         disabled={isLoading}
-                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                        className={`h-14 w-full flex items-center font-hendrix-medium justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
                         style={{
                           background: isLoading
                             ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
                             : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
+                          fontSize: '14pt',
+
                         }}
                       >
                         {isLoading ? (
@@ -354,7 +359,11 @@ const MultiStepForm = () => {
                           </>
                         ) : (
                           <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                            {currentStep === 7
+                              ? 'Iniciar Entrevista'
+                              : currentStep === 1
+                                ? 'Iniciar Agora'
+                                : 'Continuar'}
                           </>
                         )}
                       </button>
@@ -377,7 +386,11 @@ const MultiStepForm = () => {
                           </>
                         ) : (
                           <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                            {currentStep === 7
+                              ? 'Iniciar Entrevista'
+                              : currentStep === 1
+                                ? 'Iniciar Agora'
+                                : 'Continuar'}
                           </>
                         )}
                       </button>

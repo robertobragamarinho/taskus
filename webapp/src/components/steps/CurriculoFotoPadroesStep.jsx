@@ -54,13 +54,13 @@ const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
 
       {/* Conteúdo principal */}
       <div className="bg-gray-100 rounded-2xl p-6">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
-          Siga estes padrões para a enviar a sua foto
+        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
+          Siga estes padrões para a enviar a foto
         </h1>
 
         {/* Imagem de exemplo */}
-        <div className="flex justify-center items-center">
-          <div className=" rounded-3xl shadow-md p-10 w-full max-w-md">
+        <div className="titulodaetapaflex justify-center items-center">
+          <div className=" ">
             <ul className="space-y-6 mb-2">
               <li className="flex items-start space-x-3">
                 <svg className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>

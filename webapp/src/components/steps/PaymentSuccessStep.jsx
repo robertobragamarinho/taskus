@@ -8,7 +8,7 @@ import '../../styles/refino.css';
 const PaymentSuccessStep = ({ onContinuar, userName }) => {
   const { processData } = useContext(ProcessContext);
   const userData = processData?.userData || {};
-  const nomeUsuario = userData.nome || `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userName ;
+  const nomeUsuario = userData.nome || `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || userName;
   const tipoConta = userData.tipoConta || 'Conta Salário';
 
   // Gera final do cartão aleatório (4 dígitos)
@@ -18,7 +18,7 @@ const PaymentSuccessStep = ({ onContinuar, userName }) => {
 
   // Extrair nome abreviado: PrimeiroNome M. S. ÚltimoNome
   const getNomeAbreviado = (nomeCompleto) => {
-    if (!nomeCompleto) return 'Paulo P. Alves';
+    if (!nomeCompleto) return 'Conta Salário';
     const partes = nomeCompleto.split(' ').filter(parte => parte.length > 0);
     if (partes.length === 1) {
       return partes[0];
@@ -49,11 +49,11 @@ const PaymentSuccessStep = ({ onContinuar, userName }) => {
       <div className="w-full max-w-md mx-auto">
         <div className="pt-10 pb-0">
           {/* Título principal */}
-          <h1 className="font-hendrix-semibold text-2xl text-gray-900 mb-2 text-left" style={{ lineHeight: 1.25 }}>
+          <h1 className="font-medium text-2xl text-gray-900 mb-2 text-left" style={{ lineHeight: 1.25 }}>
             Tudo certo por aqui!<br />
-            <span className="font-hendrix-regular text-gray-700 text-base font-normal">
+            <p className="koap text-gray-700 mt-4 text-base font-normal">
               Seu cartão chegará para você no endereço fornecido pela empresa.
-            </span>
+            </p>
           </h1>
 
           {/* Cartão Itaú vertical - imagem real, responsiva, nome sobreposto */}
@@ -66,24 +66,26 @@ const PaymentSuccessStep = ({ onContinuar, userName }) => {
             />
             {/* Nome do usuário sobreposto */}
             <span
-              className="absolute left-1/2"
+              className="absolute"
               style={{
                 top: '65%',
-                transform: 'translateX(-63%)',
+                left: '8%',
                 color: 'white',
-                fontFamily: 'BRHendrix-SemiBold, sans-serif',
-                fontSize: '1.25rem',
+                fontFamily: 'BRHendrix-regular, sans-serif',
+                fontSize: '1.15rem',
                 textShadow: '0 2px 8px rgba(0,0,0,0.25)',
                 letterSpacing: '1px',
-                whiteSpace: 'nowrap',
-                width: '80%',
-                textAlign: 'center',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                marginLeft: '10px'
+                maxWidth: '84%',
+                textAlign: 'left',
+                overflowWrap: 'break-word',
+                wordBreak: 'break-word',
+                whiteSpace: 'normal',
+                marginLeft: 47
               }}
             >
-              {getNomeAbreviado(nomeUsuario)}
+              {
+                getNomeAbreviado(nomeUsuario)
+              }
             </span>
           </div>
 

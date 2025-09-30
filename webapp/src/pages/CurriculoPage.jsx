@@ -19,10 +19,12 @@ import ConfirmacaoCurriculo from '../components/steps/ConfirmacaoCurriculo.jsx';
 import CurriculoLoadingStep from '../components/steps/CurriculoLoadingStep.jsx';
 
 
+import LoadingFinalizarCurriculo from '@/components/steps/LoadingFinalizarCurriculo.jsx';
+
 
 import LogoTaskUs from '../assets/logo-min.webp';
 
-const  CurriculoPage = () => {
+const CurriculoPage = () => {
   const navigate = useNavigate();
   const { processData, updateProcessStep } = useProcess();
   const [currentStep, setCurrentStep] = useState(1);
@@ -172,7 +174,7 @@ const  CurriculoPage = () => {
       );
 
 
-      setCurrentStep(11);
+      setCurrentStep(13);
 
     } catch (error) {
       console.error('❌ Erro ao enviar para avaliação:', error);
@@ -373,45 +375,48 @@ const  CurriculoPage = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-[#00005f] border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
+
+            {/* Logo ToskUs */}
             <div className="flex items-center space-x-2">
+
               <div className="flex items-center space-x-1">
                 <img
-                  className='h-5'
                   src={LogoTaskUs}
+                  className='h-6'
                 />
               </div>
             </div>
 
+
             {/* Logo Recrutamento Online */}
             <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600">Recrutamento Online</span>
+              <span className="font-hendrix-medium text-xs text-blue-200">{'Processo Seletivo'}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="flex items-center justify-center px-4 py-5">
+        <div className="w-full max-w-md rounded-3xl bg-white shadow-sm border overflow-hidden">
           <div className="p-6 pb-8">
             {/* Título e barra de progresso global */}
             {stepsComProgresso.includes(currentStep) && (
-              <div className="pt-2 mb-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '12pt' }}>
-                    Criando Currículo
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="font-hendrix-bold text-gray-800" style={{ fontSize: '10pt' }}>
+                    Currículo
                   </h2>
-                  <span className="font-hendrix-regular text-gray-500" style={{ fontSize: '9pt' }}>
+                  {/* <span className="font-hendrix-medium text-gray-400" style={{ fontSize: '10pt' }}>
                     {currentStep} de {totalSteps}
-                  </span>
+                  </span> */}
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                {/* <div className="w-full bg-gray-200 rounded-full h-1.5">
                   <div className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
-                </div>
+                </div> */}
               </div>
             )}
 
@@ -449,7 +454,7 @@ const  CurriculoPage = () => {
                 progressPercent={progressPercent}
               />
             )}
-  
+
             {currentStep === 5 && (
               <CurriculoHabilidadesStep
                 onVoltar={handleVoltarExperiencia}
@@ -507,6 +512,17 @@ const  CurriculoPage = () => {
                 dados={arqivoPDf}
               />
             )}
+
+            {
+              currentStep === 13 && (
+                <LoadingFinalizarCurriculo
+                  seconds={10}
+                  onCountdownFinish={() => {
+                    setCurrentStep(11);
+                  }}
+                />
+              )
+            }
 
             {/* Etapa 11: Confirmação do Currículo */}
             {currentStep === 11 && !showLoadingStep && (

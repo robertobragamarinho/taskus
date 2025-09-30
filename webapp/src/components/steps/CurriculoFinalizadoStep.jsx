@@ -94,20 +94,9 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
   return (
     <div className="space-y-6">
       {/* Título da etapa */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '10pt' }}>
-            Recrutamento Online
-          </h2>
-        </div>
-      </div>
-
+   
       {/* Título principal */}
-      <div className="text-center mb-6">
-        <h1 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt', lineHeight: '1.3' }}>
-          Currículo Finalizado
-        </h1>
-      </div>
+
 
       {/* Card do currículo */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">

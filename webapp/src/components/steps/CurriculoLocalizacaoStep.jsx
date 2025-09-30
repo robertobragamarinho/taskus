@@ -152,8 +152,8 @@ const CurriculoLocalizacaoStep = ({ onContinuar }) => {
     <div className="space-y-8">
 
       {/* Título principal */}
-      <div className="bg-gray-100 rounded-2xl p-6">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
+      <div className="bg-gray-100 mt-10 rounded-2xl p-6">
+        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
           Em qual estado e cidade você reside atualmente?
         </h1>
 
@@ -170,8 +170,8 @@ const CurriculoLocalizacaoStep = ({ onContinuar }) => {
                 value={estadoInput}
                 onChange={handleEstadoInput}
                 className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-900 pr-12"
-                style={{ fontSize: '10pt' }}
-                placeholder={loadingEstados ? 'Carregando estados...' : 'Digite para buscar o estado'}
+                style={{ fontSize: '12pt' }}
+                placeholder={loadingEstados ? 'Carregando estados...' : 'Digite seu estado'}
                 autoComplete="off"
                 disabled={loadingEstados}
               />
@@ -195,7 +195,7 @@ const CurriculoLocalizacaoStep = ({ onContinuar }) => {
           {/* Campo Cidade */}
           <div className="space-y-2">
             <label className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt' }}>
-              Município
+              Cidade
             </label>
             <div className="relative">
               <input
@@ -203,7 +203,7 @@ const CurriculoLocalizacaoStep = ({ onContinuar }) => {
                 value={cidadeInput}
                 onChange={handleCidadeInput}
                 className="w-full bg-white rounded-xl p-4 border border-gray-200 font-hendrix-regular text-gray-900 pr-12"
-                style={{ fontSize: '10pt' }}
+                style={{ fontSize: '12pt' }}
                 placeholder={
                   !estadoSelecionado
                     ? 'Selecione um estado primeiro'
@@ -233,9 +233,7 @@ const CurriculoLocalizacaoStep = ({ onContinuar }) => {
         </div>
       </div>
 
-      <p className="font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
-        Verifique se os dados estão corretos
-      </p>
+      
 
       {/* Botões de ação */}
       <div className="flex space-x-4">

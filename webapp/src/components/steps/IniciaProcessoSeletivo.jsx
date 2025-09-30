@@ -1,7 +1,11 @@
 import { Check } from 'lucide-react';
+import { useEffect } from 'react';
 import '../../styles/refino.css';
 
 const IniciaProcessoSeletivo = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const resources = [
     {
       title: 'O que faz um atendente de suporte',
@@ -12,37 +16,38 @@ const IniciaProcessoSeletivo = () => {
       description: ''
     },
     {
-      title: 'Benefícios de trabalhar com a TaskUs',
+      title: 'Benefícios de trabalhar na TaskUs',
       description: ''
     }
   ];
-
+ 
   return (
     <div className="space-y-6">
       {/* Título principal */}
-      <div className="mb-6">
+      <div className="">
+
         <h1
-          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
+          className="titulodaetapa font-hendrix-semibold text-gray-700 mb-3"
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
           <span className="block sm:inline">
-            Bem-vindo(a) ao processo seletivo online da TaskUs!
+            Seja bem-vindo(a) ao processo seletivo online da TaskUs
           </span>
         </h1>
 
         {/* Primeira descrição */}
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-3" >
-          Em poucos minutos você vai saber se essa vaga é realmente para você
+        <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-10" >
+          Em poucos minutos você vai saber se essa vaga é realmente para você.
         </p>
 
         {/* Segunda descrição */}
-        <p className="textocontinuidade font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
+        <p className="textocontinuidade font-hendrix-medium text-gray100" style={{ fontSize: '9pt' }}>
           Você verá agora:
         </p>
       </div>
 
       {/* Lista de recursos com checkmarks */}
-      <div className="space-y-4">
+      <div className="space-y-1">
         {resources.map((resource, index) => (
           <div key={index} className="flex items-start space-x-3">
             {/* Ícone de check */}

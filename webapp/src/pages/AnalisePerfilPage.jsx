@@ -43,7 +43,7 @@ const AnalisePerfilPage = () => {
 
   useEffect(() => {
     // Loading com barra de progresso de 3 segundos
-    const duration = 3000; // 3 segundos
+    const duration = 10000; // 3 segundos
     const interval = 30; // Atualizar a cada 30ms
     const increment = 100 / (duration / interval);
 
@@ -283,31 +283,36 @@ const AnalisePerfilPage = () => {
   // finalizeProfile removida: o fluxo agora chama completeProcess e exibe o passo final antes de navegar
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+    <div className="min-h-screen flex-col" style={{ backgroundColor: '#f5f5f5' }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
+      <div className="bg-[#00005f] border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
+
             {/* Logo ToskUs */}
             <div className="flex items-center space-x-2">
-              <img
-                className='h-6'
-                src={LogoTaskUs}
-              />
+
+              <div className="flex items-center space-x-1">
+                <img
+                  src={LogoTaskUs}
+                  className='h-6'
+                />
+              </div>
             </div>
+
 
             {/* Logo Recrutamento Online */}
             <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600">Recrutamento Online</span>
+              <span className="font-hendrix-medium text-xs text-blue-200">{'Processo Seletivo'}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 pb-8">
+      <div className=" flex items-center justify-center px-4 py-5">
+        <div className="w-full max-w-md rounded-3xl bg-white shadow-sm border overflow-hidden">
+          <div className="p-5 pb-5">
             <AnimatePresence mode="wait">
               {isLoading ? (
                 <motion.div
@@ -316,19 +321,34 @@ const AnalisePerfilPage = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="text-center space-y-8"
+                  className="text-center mt-10  space-y-8"
                 >
-                  <div className="space-y-4">
-                    <h2 className="font-hendrix-semibold text-xl text-gray-800">
-                      Carregando entrevista...
+                  <div className="space-y-4 text-center">
+                    {/* Lordicon animado */}
+                    <div className="flex justify-center">
+                      <lord-icon
+                        src="https://cdn.lordicon.com/wpequvda.json"
+                        trigger="loop"
+                        delay="2000"
+                        colors="primary:#110a5c"
+                        style={{ width: "100px", height: "100px" }}
+                      >
+                      </lord-icon>
+                    </div>
+
+                    <h2 className="ttcarregamento font-hendrix-semibold text-xl text-gray-800">
+                      Entrevista Online
                     </h2>
-                    <p className="font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-                      Aguarde enquanto preparamos tudo
+
+                    <p
+                      className="ttsub font-hendrix-regular text-gray-600"
+                      style={{ fontSize: "9pt" }}
+                    >
+                      Estamos preparando tudo para você inicar o processo seletivo.
                     </p>
                   </div>
-
                   {/* Barra de progresso */}
-                  <div className="space-y-3">
+                  <div className="space-y-3 mb-10">
                     <div className="w-full bg-gray-200 rounded-full h-1.5">
                       <motion.div
                         className="h-1.5 rounded-full"
@@ -366,18 +386,21 @@ const AnalisePerfilPage = () => {
                   className="space-y-8"
                 >
                   {/* Título principal */}
-                  <div className="text-left space-y-4">
+                  <div className="mt-5">
 
+
+                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24"><path fill="none" stroke="#1655ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 13.5h8m-8-5h4M6.099 19q-1.949-.192-2.927-1.172C2 16.657 2 14.771 2 11v-.5c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h4c3.771 0 5.657 0 6.828 1.172S22 6.729 22 10.5v.5c0 3.771 0 5.657-1.172 6.828S17.771 19 14 19c-.56.012-1.007.055-1.445.155c-1.199.276-2.309.89-3.405 1.424c-1.563.762-2.344 1.143-2.834.786c-.938-.698-.021-2.863.184-3.865" color="currentColor" /></svg>
                     <h1
-                      className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
-                      style={{ fontSize: '12pt', lineHeight: '1.2' }}
+                      className="tituloquest w-60 font-hendrix-semibold text-gray-900"
+                      style={{ fontSize: '12pt', lineHeight: '1.2', color: '#000' }}
                     >
                       <span className="block sm:inline">
-                        Responda o questionário a seguir com atenção!
+                        Queremos te conhecer melhor
                       </span>
                     </h1>
 
-                    <div className="space-y-3">
+
+                    <div className="space-y-4">
                       <p className="subtituloquest font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
                         São apenas 10 perguntas rápidas para a gente te conhecer melhor e entender se você combina com a vaga. Fica tranquilo(a), não existe resposta certa ou errada.
                       </p>
@@ -389,15 +412,20 @@ const AnalisePerfilPage = () => {
                   </div>
 
                   {/* Card amarelo com tempo */}
-                  <div className="bg-yellow-100 rounded-lg p-4 flex items-center space-x-3">
-                    <img
-                      className='h-8'
-                      src={InfoIconMin}
-                    />
-                    <span className="font-hendrix-regular text-yellow-800" style={{ fontSize: '10pt' }}>
-
-                      Leva menos de 2 minutos
-                    </span>
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-shrink-0">
+                        <img
+                          className='h-6'
+                          src={InfoIconMin}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-hendrix-medium text-yellow-800" style={{ fontSize: '9pt' }}>
+                          Criar o currículo leva menos de 3 minutos.
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Botão Iniciar */}
@@ -419,8 +447,8 @@ const AnalisePerfilPage = () => {
                         border: 'none'
                       }}
                     >
-                      <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '7pt' }}>
-                        Iniciar perguntas
+                      <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '12pt' }}>
+                        Iniciar
                       </span>
                     </motion.button>
                   </motion.div>

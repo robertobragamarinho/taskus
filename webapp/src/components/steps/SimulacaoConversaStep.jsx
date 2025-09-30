@@ -26,8 +26,8 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
       {/* Header com progresso */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="font-hendrix-semibold text-blue-600" style={{ fontSize: '10pt', letterSpacing: '0.02em' }}>
-            Teste de atendimento
+          <span className="font-hendrix-bold text-gray-800" style={{ fontSize: '10pt' }}>
+            Teste prático
           </span>
           <span className="font-hendrix-medium text-gray-400" style={{ fontSize: '10pt', letterSpacing: '0.02em' }}>
             {currentIndex ?? conversaData.numeroConversa} de {total ?? 5}
@@ -45,7 +45,7 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
       </div>
 
       {/* Área da conversa */}
-      <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-4" style={{ minHeight: '220px' }}>
+      <div className="bg-white rounded-2xl p-5  border border-gray-200 space-y-4" style={{ minHeight: '220px' }}>
         <div className="flex items-start space-x-4">
           {/* Avatar do cliente */}
           <div className="flex-shrink-0">
@@ -58,7 +58,7 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
             </div>
           </div>
           {/* Informações do cliente e mensagem */}
-          <div className="flex-1 space-y-2">
+          <div className="flex- space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 flex-wrap">
                 <span className="font-hendrix-semibold text-gray-900" style={{ fontSize: '12pt', letterSpacing: '0.01em' }}>
@@ -68,25 +68,17 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
                   {conversaData.cliente.id}
                 </span>
               </div>
-              <div className="flex items-center space-x-1">
-                < img
-                  className='h-3'
-                  src={LogoTaskUs}
-                  alt="Logo taskUs"
-
-                />
-              </div>
+      
             </div>
             {/* Mensagem do cliente */}
-            <div className="bg-gray-50 rounded-xl p-4 shadow-sm border border-gray-100">
-              <p className="font-hendrix-regular text-gray-900" style={{ fontSize: '11pt', lineHeight: '1.5', letterSpacing: '0.01em' }}>
+            <div className="bg-gray-50 rounded-xl rounded-tl-none p-4 shadow-sm border border-gray-100">
+              <p
+                className="font-hendrix-regular text-gray-900"
+                style={{ fontSize: '11pt', lineHeight: '1.5', letterSpacing: '0.01em' }}
+              >
                 {conversaData.mensagemCliente}
-                {conversaData.urgente && (
-                  <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-hendrix-bold ml-2">
-                    URGENTE!
-                  </span>
-                )}
               </p>
+              
             </div>
           </div>
         </div>

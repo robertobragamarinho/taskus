@@ -1,24 +1,25 @@
 /* Textos */
 
 .titulodaetapa {
-  font-size: 22pt !important;
-  line-height: 3.5vh;
-  margin-top: 5vw;
+  font-size: 20pt !important;
+  line-height: 3.5vh !important;
+  margin-top: 6vw;
   text-align: left;
 }
 
 .tituloanalise {
   font-size: 19pt !important;
   line-height: 3vh;
-  margin-top: 5vw;
+  margin-top: 3vw;
   text-align: left;
 }
 
 .subtitulodaetapa {
-  font-size: 13pt !important;
-  line-height: 4vw !important;
-  margin-top: 1vw;
+  font-size: 13.3pt !important;
+  line-height: 5vw !important;
+  margin-top: -2vw;
   text-align: left;
+  margin-bottom: 10vw;
 }
 
 .subtituloemdestaque {
@@ -44,7 +45,7 @@
   font-size: 12pt !important;
   line-height: 4vw;
   text-align: left;
-  color: #000;
+  color: #4b4b4b;
 }
 
 .textocontinuidadeinicial {
@@ -73,16 +74,16 @@
 
 .tituloquest {
   font-size: 20pt !important;
-  line-height: 3vh;
-  margin-top: 1vw;
-  margin-bottom: 3vw;
-  text-align: left;
+  line-height: 3.5vh !important;
+  margin-top: 5vw !important;
+  margin-bottom: 5vw !important;
+  text-align: left !important;
 }
 
 .subtituloquest {
   font-size: 13pt !important;
   line-height: 5vw;
-  margin-bottom: 12vw;
+  margin-bottom: 5vw !important;
   text-align: left;
 }
 
@@ -90,4 +91,49 @@
   width: 100%;
   background-color: yellowgreen;
  
+}
+
+.ttcarregamento {
+  font-size: 23pt !important;
+  line-height: 3.6vh;
+  margin-top: 5vw;
+  text-align: center;
+}
+
+.ttsub {
+  font-size: 14pt !important;
+  line-height: 5vw !important;
+  margin-top: 1vw;
+  text-align: center;
+  margin-bottom: 10vw;
+}
+
+.areacucc {
+  margin-left: 2vw;
+  width: 83%;
+}
+
+
+/* Contratando */
+
+.headlines {
+  font-size: 18pt !important;
+  line-height: 3.3vh !important;
+  text-align: left;
+}
+
+.subheadlines {
+  font-size: 12pt !important;
+  line-height: 2.3vh !important;
+  text-align: left;
+}
+
+.aviso {
+  font-size: 14pt !important;
+  line-height: 2.6vh !important;
+  text-align: left;
+}
+
+.koap {
+  line-height: 2vh !important;
 }

@@ -30,8 +30,8 @@ const _pularEnvioFoto = () => {
     <div className="space-y-8 ">
       {/* Título principal */}
       <div className="pt-6">
-        <h1 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt', lineHeight: '1.3' }}>
-          Você gostaria de adicionar uma foto ao seu curriculo? (Opcional)
+        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt', lineHeight: '1.3' }}>
+          Você gostaria de adicionar uma foto ao seu curriculo? 
         </h1>
       </div>
 

@@ -64,11 +64,7 @@ const ReviewContratacao = ({ onContinue }) => {
     return (
         <div className="min-h-screen w-full flex flex-col bg-[#181A1B] ">
             {/* Código de aprovação */}
-            <div className="flex justify-self-start pt-6 pb-2 ml-5 mb-5">
-                <span className="bg-[#1ED760] text-[#181A1B] rounded-full px-4 py-1 font-hendrix-semibold text-xs tracking-wide shadow" style={{ fontSize: '11pt' }}>
-                    Código de aprovação: #AIST.76341
-                </span>
-            </div>
+       
 
             {/* Título principal */}
             <div className="w-full px-6 mb-2">

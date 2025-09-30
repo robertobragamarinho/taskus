@@ -166,7 +166,7 @@ const PaymentTelNumber = ({ onContinuar, telefoneUsuarioProp }) => {
               value={digit}
               onChange={e => {
                 handleChange(e, idx);
-                setCodigoInvalido(false); 
+                setCodigoInvalido(false);
               }}
               onKeyDown={e => handleKeyDown(e, idx)}
               onPaste={handlePaste}

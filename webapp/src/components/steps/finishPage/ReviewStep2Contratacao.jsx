@@ -63,7 +63,7 @@ const ReviewStep2Contratacao = ({ onContinue }) => {
         <div className="min-h-screen w-full flex flex-col items-center justify-start bg-[#181A1B] px-6 pt-8 pb-10">
             <div className="w-full max-w-md mx-auto px-0 pt-8 pb-0">
                 {/* Título principal */}
-                <h1 className="font-hendrix-bold text-white mb-2 text-left" style={{ fontSize: '27pt', lineHeight: 1.1 }}>
+                <h1 className="headlinesfont-hendrix-bold text-white mb-2 text-left" style={{ fontSize: '27pt', lineHeight: 1.1 }}>
                     Parabéns! Sua contratação foi confirmada.
                 </h1>
                 <p className="font-hendrix-regular text-[#B3B3B3] mb-8 text-left" style={{ fontSize: '15pt', lineHeight: 1.3 }}>

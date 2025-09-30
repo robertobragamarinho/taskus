@@ -45,9 +45,9 @@ const CurriculoEscolaridadeStep = ({ onSelecionarEscolaridade }) => {
 
 
       {/* Título principal */}
-      <div className="bg-gray-100 rounded-2xl p-6">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
-          Qual é o seu nível de escolaridade?
+      <div className="bg-gray-100 mt-10 rounded-2xl p-6">
+        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
+          Qual é o seu nível <br/> de escolaridade?
         </h1>
 
         {/* Opções de escolaridade */}
@@ -57,13 +57,13 @@ const CurriculoEscolaridadeStep = ({ onSelecionarEscolaridade }) => {
               key={opcao}
               type="button"
               onClick={() => handleSelecionarOpcao(opcao)}
-              className={`w-full py-4 px-6 rounded-2xl font-hendrix-regular text-gray-800 border-2 transition-all duration-200 text-center flex items-center justify-center
+              className={`w-full py-4 px-6 rounded-2xl font-hendrix-regular text-gray-800 border-2 transition-all duration-200 text-center flex 
                 ${escolaridadeSelecionada === opcao
                   ? 'border-blue-600 bg-blue-50 font-hendrix-semibold'
                   : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50'}
                 ${isLoading ? 'cursor-not-allowed opacity-70' : ''}
               `}
-              style={{ fontSize: '11pt' }}
+              style={{ fontSize: '10pt' }}
               disabled={isLoading}
             >
               {opcao}
@@ -71,11 +71,6 @@ const CurriculoEscolaridadeStep = ({ onSelecionarEscolaridade }) => {
           ))}
         </div>
       </div>
-
-
-      <p className="font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
-        Verifique se os dados estão corretos
-      </p>
 
       {/* Botão Continuar estilizado igual ao CurriculoCriacaoStep */}
       <div className="space-y-4">

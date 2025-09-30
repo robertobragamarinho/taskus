@@ -36,25 +36,35 @@ const LastAnswerLoadingStep = ({ seconds = 15, onFinish }) => {
   const mensagemAtual = mensagens[mensagemIndex];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[360px] py-10">
-      <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-sm">
+    <div className="mt-10 max-w-md bg-white ">
         <div className="text-center">
-          <h1 className="font-hendrix-bold text-2xl text-gray-900 leading-tight">
-            Teste prático finalizado com sucesso!!!
+           <div className="flex justify-center">
+    <lord-icon
+      src="https://cdn.lordicon.com/wpequvda.json"
+      trigger="loop"
+      delay="2000"
+      colors="primary:#110a5c"
+      style={{ width: "100px", height: "100px" }}
+    >
+    </lord-icon>
+  </div>
+          <h1 className="ttcarregamento font-hendrix-semibold text-xl text-gray-800">
+            Teste prático concluído
           </h1>
 
           <div
-            className=" font-hendrix-regular text-base text-gray-600 leading-relaxed max-w-sm mx-auto mt-3"
+            className="subtituloinicial font-hendrix-regular text-base text-gray-600 leading-relaxed max-w-sm mx-auto mt-3"
             style={{ minHeight: '56px' }}
           >
-            <p className="transition-opacity duration-300 opacity-100">{mensagemAtual}</p>
+            <p  className="ttsub font-hendrix-regular text-gray-600"
+    style={{ fontSize: "9pt" }}>Estamos registrando suas respostas em nosso sistema, para que a equipe de RH faça a análise.</p>
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 mb-10">
           <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
             <div
-              className="h-2.5 rounded-full"
+              className="h-2.5  rounded-full"
               style={{
                 width: `${percent}%`,
                 background: 'linear-gradient(135deg, #1655ff 0%, #60a5fa 100%)',
@@ -68,7 +78,6 @@ const LastAnswerLoadingStep = ({ seconds = 15, onFinish }) => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

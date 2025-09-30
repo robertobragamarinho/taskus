@@ -17,6 +17,11 @@ const LoadingStep = ({ onComplete }) => {
   const [msgIndex, setMsgIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
 
+  // Sempre faz scroll para o topo ao montar
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Barra de progresso (mantido como no seu código)
   useEffect(() => {
     // We'll update the progress smoothly to reach 100% in totalDurationMs.

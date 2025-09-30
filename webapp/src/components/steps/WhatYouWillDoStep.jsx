@@ -1,7 +1,11 @@
 import { Check } from 'lucide-react';
+import { useEffect } from 'react';
 import '../../styles/refino.css';
 
 const WhatYouWillDoStep = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   const resources = [
     {
       title: 'Sistema do Colaborador',
@@ -26,7 +30,7 @@ const WhatYouWillDoStep = () => {
           className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
-          <span className="block sm:inline">
+          <span className="titulodaetapa block sm:inline">
             O que faz um atendente de suporte ao cliente?
           </span>
         </h1>
@@ -37,8 +41,8 @@ const WhatYouWillDoStep = () => {
         </p>
 
         {/* Segunda descrição */}
-        <p className="textocontinuidade font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-          O trabalho é simples, e você não precisa se preocupar em “saber tudo”, Pois você terá acesso a:
+        <p className="textocontinuidade font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>
+          O trabalho é simples, e você não precisa se preocupar em “saber tudo”, pois você terá acesso a:
         </p>
       </div>
 
@@ -59,7 +63,7 @@ const WhatYouWillDoStep = () => {
               <h3
                 className="font-hendrix-medium mb-2"
                 style={{
-                  fontSize: '12pt',
+                  fontSize: '14pt',
                   color: '#424242'
                 }}
               >
