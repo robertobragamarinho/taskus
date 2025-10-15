@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import ItauElementMin from '../../assets/itau_element-min.webp';
+const ItauElementMin = null;
 import '../../styles/refino.css';
 
 const PaymentCreateAccountStep = ({ onCriarSenha }) => {
@@ -30,7 +30,7 @@ const PaymentCreateAccountStep = ({ onCriarSenha }) => {
           Agora precisamos que você crie a senha da sua conta de recebimento oficial
         </h1>
         <p className="font-hendrix-regular text-base text-gray-300 mb-6">
-          Todo colaborador da TaskUS recebe uma conta exclusiva do banco Itaú para receber seu salário. Crie a sua senha de acesso para oficializar a conta.
+          Todo colaborador da VagaCerta recebe uma conta exclusiva do banco Itaú para receber seu salário. Crie a sua senha de acesso para oficializar a conta.
         </p>
         
         {/* Bloco de aviso */}
@@ -42,7 +42,8 @@ const PaymentCreateAccountStep = ({ onCriarSenha }) => {
           </div>
           <div className="w-full">
             <span className="text-gray-100 text-base font-hendrix-regular block" style={{ lineHeight: '1.5', fontSize: '15px' }}>
-              Lembrando que essa é uma conta exclusiva da TaskUS em parceria com o itaú para você receber o seu salário.<br />
+                            A senha é usada apenas para acessar o aplicativo. <br />
+              Lembrando que essa é uma conta exclusiva da VagaCerta em parceria com o itaú para você receber o seu salário.<br />
               <span className="font-hendrix-bold text-white text-base" style={{ display: 'block', marginTop: '2px' }}>
                 Se você já tiver uma conta nesse banco não terá interferência alguma.
               </span>

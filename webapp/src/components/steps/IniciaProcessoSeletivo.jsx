@@ -12,7 +12,7 @@ const IniciaProcessoSeletivo = () => {
       description: ''
     },
     {
-      title: 'Benefícios de trabalhar com a TaskUs',
+      title: 'Benefícios de trabalhar com a VagaCerta',
       description: ''
     }
   ];
@@ -26,7 +26,7 @@ const IniciaProcessoSeletivo = () => {
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
           <span className="block sm:inline">
-            Bem-vindo(a) ao processo seletivo online da TaskUs!
+            Bem-vindo(a) ao processo seletivo online da VagaCerta!
           </span>
         </h1>
 

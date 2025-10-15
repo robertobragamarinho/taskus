@@ -2,7 +2,7 @@ import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { ChevronRight, Clock } from 'lucide-react';
-import InfoIconMin from '../../assets/info_icon-min.webp';
+const InfoIconMin = null;
 import '../../styles/refino.css';
 
 const TesteRapidoAtendimentoStep = ({ onStart }) => {

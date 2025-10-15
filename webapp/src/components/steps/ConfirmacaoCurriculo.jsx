@@ -5,8 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useProcess } from '@/hooks/useProcess.js';
-import InfoIconMin from '../../assets/info_icon-min.webp';
-import Alert_Icon_Min from '../../assets/alert_icon-min.webp';
+const InfoIconMin = null;
+const Alert_Icon_Min = null;
 import '../../styles/refino.css';
 
 // eslint-disable-next-line no-unused-vars
@@ -197,9 +197,9 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
 
       {/* Vídeo explicativo */}
       <div className="mt-6">
-        <span className="font-hendrix-medium text-gray-800 text-sm mb-2 block">
-          Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a TaskUS.
-        </span>
+        <p className="font-hendrix-medium text-gray-300 text-base mb-8" style={{ fontSize: '13.5pt' }}>
+          Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a VagaCerta.
+        </p>
         <div className="w-full h-40 bg-gray-300 rounded-xl flex items-center justify-center">
           <span className="font-hendrix-medium text-gray-500">Vídeo institucional</span>
         </div>

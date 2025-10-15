@@ -12,7 +12,7 @@ import ContratacaoFinalStep from '../components/steps/ContratacaoFinalStep.jsx';
 import ContratacaoEquipamentosStep from '../components/steps/ContratacaoEquipamentosStep.jsx';
 import ContratacaoPreparacaoStep from '../components/steps/ContratacaoPreparacaoStep.jsx';
 
-import LogoTaskUs from '../assets/logo-min.webp';
+const LogoVagaCerta = null;
 
 
 // eslint-disable-next-line no-unused-vars
@@ -94,10 +94,10 @@ const ContratacaoPage = () => {
       <div className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
+            {/* Logo VagaCerta */}
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1">
-                <img className='h-5' src={LogoTaskUs} />
+                <img className='h-5' src={LogoVagaCerta} />
               </div>
             </div>
             {/* Logo Recrutamento Online */}

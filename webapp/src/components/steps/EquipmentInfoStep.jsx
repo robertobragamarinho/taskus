@@ -132,7 +132,7 @@ const EquipmentInfoStep = () => {
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
           <span className="block sm:inline">
-            A TaskUS envia tudo o que você precisa para trabalhar
+            A VagaCerta envia tudo o que você precisa para trabalhar
           </span>
         </h1>
 
@@ -248,7 +248,7 @@ const EquipmentInfoStep = () => {
               className="font-hendrix-medium text-gray-700"
               style={{ fontSize: '8pt' }}
             >
-              Todos os equipamentos enviados são de propriedade da TaskUs e devem ser usados exclusivamente para o trabalho. Cuide deles como se fossem seus e, em caso de desligamento, será necessário devolvê-los.
+              Todos os equipamentos enviados são de propriedade da VagaCerta e devem ser usados exclusivamente para o trabalho. Cuide deles como se fossem seus e, em caso de desligamento, será necessário devolvê-los.
             </p>
           </div>
         </div>

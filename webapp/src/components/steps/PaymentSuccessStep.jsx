@@ -1,4 +1,4 @@
-import CreditCardImage from '../../assets/credit_card-min.webp';
+const CreditCardImage = null;
 import { useState, useContext, useMemo } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';

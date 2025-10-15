@@ -81,7 +81,7 @@ const LoadingStep = ({ onComplete }) => {
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
           <span className="block sm:inline">
-            Processo seletivo TaskUs Brasil 2025
+            Processo seletivo VagaCerta Brasil 2025
           </span>
         </h1>
 

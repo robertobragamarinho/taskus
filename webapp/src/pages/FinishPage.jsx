@@ -8,7 +8,7 @@ import ReviewStep2Contratacao from '@/components/steps/finishPage/ReviewStep2Con
 import ReviewStep3Contratacao from '@/components/steps/finishPage/ReviewStep3Contratacao.jsx';
 import ReviewStep4Contratacao from '@/components/steps/finishPage/ReviewStep4Contratacao.jsx';
 
-import LogoTaskUs from '../assets/logo-min.webp';
+const LogoVagaCerta = null;
 
 const FinishPage = () => {
 
@@ -41,13 +41,13 @@ const FinishPage = () => {
       <header className="bg-white border-b border-gray-200 flex-shrink-0 w-full">
         <div className="w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
+            {/* Logo VagaCerta */}
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1">
                 <img
                   className='h-5 w-auto max-w-[120px] object-contain'
-                  src={LogoTaskUs}
-                  alt="Logo TaskUs"
+                  src={LogoVagaCerta}
+                  alt="Logo VagaCerta"
                 />
               </div>
             </div>

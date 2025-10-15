@@ -17,7 +17,7 @@ const ProximaFase = () => {
 
 
         <p className="mt-3 text-gray-600 font-hendrix-regular" style={{ fontSize: '9pt' }}>
-          Agora vamos iniciar a entrevista online para conhecer melhor o seu perfil. Ao final você saberá se será contratado(a) para fazer parte da equipe TaskUs.
+          Agora vamos iniciar a entrevista online para conhecer melhor o seu perfil. Ao final você saberá se será contratado(a) para fazer parte da equipe VagaCerta.
         </p>
       </div>
 

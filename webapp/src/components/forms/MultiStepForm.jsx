@@ -19,7 +19,7 @@ import ConfirmationStep from '../steps/ConfirmationStep.jsx';
 import IniciaProcessoSeletivo from '../steps/IniciaProcessoSeletivo.jsx';
 import ProximaFase from '../steps/ProximaFase.jsx';
 
-import LogoTaskUs from '../../assets/logo-min.webp'
+const LogoVagaCerta = null;
 
 
 const MultiStepForm = () => {
@@ -226,7 +226,7 @@ const MultiStepForm = () => {
 
               <div className="flex items-center space-x-1">
                 <img
-                  src={LogoTaskUs}
+                  src={LogoVagaCerta}
                   className='h-6'
                 />
               </div>

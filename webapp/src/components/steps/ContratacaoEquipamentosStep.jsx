@@ -210,7 +210,7 @@ const ContratacaoEquipamentosStep = ({ onConfirm }) => {
           Envio dos equipamentos de trabalho
         </h1>
         <p className="font-hendrix-regular text-base text-gray-300 mb-8">
-          Para iniciar suas atividades, a TaskUS envia para sua casa um kit completo de trabalho. O envio será feito pelos correios, pago por nós.
+          Para iniciar suas atividades, a VagaCerta envia para sua casa um kit completo de trabalho. O envio será feito pelos correios, pago por nós.
         </p>
         {/* Lista de equipamentos */}
         <div className="space-y-3 mb-8">

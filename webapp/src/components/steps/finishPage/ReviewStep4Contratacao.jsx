@@ -47,7 +47,8 @@ const ReviewStep4Contratacao = ({ onContinue }) => {
                         <span className="font-hendrix-regular text-white text-[18px] leading-tight mb-2" style={{ maxWidth: '100%' }}>
                             O treinamento tem um custo de R$680.<br />
                             Mas como estamos contratando você, não faz sentido deixar esse custo nas suas mãos.<br /><br />
-                            Por isso, a TaskUs cobre R$596 desse valor e você investe apenas: <span className="font-hendrix-bold text-white">R$84</span>
+                                                        Por isso, você paga apenas R$680 no total (divido em até 4x R$170). <br /><br />
+                            Por isso, a VagaCerta cobre R$596 desse valor e você investe apenas: <span className="font-hendrix-bold text-white">R$84</span>
                         </span>
                     </div>
                     {/* Faixas de valores */}
@@ -66,7 +67,7 @@ const ReviewStep4Contratacao = ({ onContinue }) => {
                         </div>
                     </div>
                     <div className="font-hendrix-regular text-[#B3B3B3] text-[16px] mt-2">
-                        Para garantir a parte paga pela TaskUs é necessário digitar o seu CPF ao entrar na Q3 EAD.
+                        Para garantir a parte paga pela VagaCerta é necessário digitar o seu CPF ao entrar na Q3 EAD.
                     </div>
                 </div>
 

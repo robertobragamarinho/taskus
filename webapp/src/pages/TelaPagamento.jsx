@@ -11,7 +11,7 @@ import PaymentConfirmPasswordStep from '@/components/steps/PaymentConfirmPasswor
 import PaymentCallback from '@/components/steps/PaymentCallback.jsx';
 
 
-import LogoTaskUs from '../assets/logo-min.webp';
+const LogoVagaCerta = null;
 import { useNavigate } from 'react-router-dom';
 
 const TelaPagamento = () => {
@@ -320,12 +320,12 @@ const TelaPagamento = () => {
           <div className="bg-white border-b border-gray-200 flex-shrink-0">
             <div className="max-w-md mx-auto px-6 py-4">
               <div className="flex items-center justify-between">
-                {/* Logo TaskUs */}
+                {/* Logo VagaCerta */}
                 <div className="flex items-center space-x-2">
                   <div className="flex items-center space-x-1">
                     <img
                       className='h-5'
-                      src={LogoTaskUs}
+                      src={LogoVagaCerta}
                     />
                   </div>
                 </div>

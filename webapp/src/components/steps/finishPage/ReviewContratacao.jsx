@@ -4,7 +4,7 @@
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import gerenteImg from "../../../assets/manager-min.webp";
+const gerenteImg = null;
 import { ProcessContext } from '../../../contexts/ProcessContextDefinition.js';
 
 const equipamentos = [
@@ -182,7 +182,9 @@ const ReviewContratacao = ({ onContinue }) => {
                                 <span className="font-hendrix-regular text-[#B3B3B3] text-base" style={{ lineHeight: 1.1 }}>Team manager</span>
                             </div>
                         </div>
-                        <span className="bg-[#1655ff] text-white rounded-full px-5 py-2 font-hendrix-semibold text-base" style={{ fontSize: '15pt' }}>TaskUs Brasil</span>
+                        <div className="flex justify-center">
+                            <span className="bg-[#1655ff] text-white rounded-full px-5 py-2 font-hendrix-semibold text-base" style={{ fontSize: '15pt' }}>VagaCerta Brasil</span>
+                        </div>
                     </div>
                 </div>
             </div>

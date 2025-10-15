@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import '../../styles/refino.css';
-import LogoTaskUs from '../../assets/logo-min.webp';
+const LogoVagaCerta = null;
 
 
 const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoReferencia, total, currentIndex }) => {
@@ -71,8 +71,8 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
               <div className="flex items-center space-x-1">
                 < img
                   className='h-3'
-                  src={LogoTaskUs}
-                  alt="Logo taskUs"
+                  src={LogoVagaCerta}
+                  alt="Logo VagaCerta"
 
                 />
               </div>

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import '../../styles/refino.css';
-import ItauLogo from '../../assets/itau_logo-min.webp';
+const ItauLogo = null;
 
 const PaymentItauLoadingStep = ({ onLoadingComplete }) => {
   useEffect(() => {

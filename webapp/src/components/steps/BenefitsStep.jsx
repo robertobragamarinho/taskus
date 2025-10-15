@@ -39,7 +39,7 @@ const PreferencesStep = () => {
           style={{ fontSize: '12pt', lineHeight: '1.2' }}
         >
           <span className="block sm:inline">
-            Essas são as vantagens exclusivas de trabalhar na TaskUs
+            Essas são as vantagens exclusivas de trabalhar na VagaCerta
           </span>
         </h1>
 

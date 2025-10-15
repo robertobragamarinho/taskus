@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronRight, Clock, ChevronUp } from 'lucide-react';
-import InfoIconMin from '../../assets/info_icon-min.webp';
+const InfoIconMin = null;
 import '../../styles/refino.css';
 
 const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {

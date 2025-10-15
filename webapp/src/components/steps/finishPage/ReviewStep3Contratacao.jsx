@@ -40,7 +40,7 @@ const ReviewStep3Contratacao = ({ onContinue }) => {
                 {/* Card 1 */}
                 <div className="bg-[#232323] rounded-2xl px-7 py-7 mb-6" style={{ boxShadow: '0 2px 8px 0 rgba(22,85,255,0.08)' }}>
                     <div className="font-hendrix-bold text-white text-4xl mb-2">1</div>
-                    <div className="font-hendrix-bold text-white text-lg mb-2">Vamos direcionar você para Q3 EAD, você irá digitar o seu CPF e o sistema já vincula ao seu perfil de colaborador(a) TaskUs.</div>
+                    <div className="font-hendrix-bold text-white text-lg mb-2">Vamos direcionar você para Q3 EAD, você irá digitar o seu CPF e o sistema já vincula ao seu perfil de colaborador(a) VagaCerta.</div>
                 </div>
 
                 {/* Card 2 */}

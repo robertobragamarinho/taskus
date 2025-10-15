@@ -25,7 +25,7 @@ const LastAnswerLoadingStep = ({ seconds = 15, onFinish }) => {
 
   // Mensagens que serão exibidas a cada 25%
   const mensagens = [
-    'Registrando suas respostas no sistema da TaskUs…',
+    'Registrando suas respostas no sistema da VagaCerta…',
     'Vinculando ao seu perfil…',
     'Enviando respostas a equipe de RH...',
     'Registrado com sucesso.'

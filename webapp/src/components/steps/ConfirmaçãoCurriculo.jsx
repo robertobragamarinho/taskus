@@ -1,12 +1,13 @@
+/* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useProcess } from '@/hooks/useProcess.js';
-import InfoIconMin from '../../assets/info_icon-min.webp';
-import Alert_Icon_Min from '../../assets/alert_icon-min.webp';
+const InfoIconMin = null;
+const Alert_Icon_Min = null;
 
 // eslint-disable-next-line no-unused-vars
-const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onContinuar }) => {
+const ConfirmaçãoCurriculo = ({ dadosUsuario, onContinuar }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleContinuar = async () => {
@@ -51,7 +52,7 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
     const [progress, setProgress] = useState(0);
     // Tempo total em segundos (ajuste conforme necessário)
     const totalSeconds = 20;
-    // eslint-disable-next-line no-unused-vars
+     
     const [elapsed, setElapsed] = useState(0);
 
     // Mensagem dinâmica conforme progresso
@@ -180,7 +181,7 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
 
                 {/* Vídeo explicativo */}
                 <div className="mt-6">
-                    <span className="font-hendrix-medium text-gray-800 text-sm mb-2 block">Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a TaskUS.</span>
+                    <span className="font-hendrix-medium text-gray-800 text-sm mb-2 block">Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a VagaCerta.</span>
                     <div className="w-full h-40 bg-gray-300 rounded-xl flex items-center justify-center">
                         {/* Aqui pode ser um iframe ou vídeo real */}
                         <span className="font-hendrix-medium text-gray-500">Vídeo institucional</span>

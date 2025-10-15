@@ -29,7 +29,7 @@ const CustomerServiceProcessStep = () => {
 
         {/* Texto descritivo */}
         <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-6" style={{ fontSize: '9pt' }}>
-          Empresas como Amazon, Shopee e Netshoes tem uma alta demanda de suporte ao cliente, por isso para manter a qualidade e não deixar clientes sem resposta, elas contratam a TaskUs como parceira especializada.
+          Empresas como Amazon, Shopee e Netshoes tem uma alta demanda de suporte ao cliente, por isso para manter a qualidade e não deixar clientes sem resposta, elas contratam a VagaCerta como parceira especializada.
         </p>
 
         {/* Subtítulo */}

@@ -6,13 +6,13 @@ import TesteRapidoAtendimentoStep from '../components/steps/TesteRapidoAtendimen
 import SimulacaoConversaStep from '../components/steps/SimulacaoConversaStep.jsx';
 import LastAnswerLoadingStep from '../components/steps/LastAnswerLoadingStep.jsx';
 
-import LogoTaskUs from '../assets/logo-min.webp';
+const LogoVagaCerta = null;
 
 
-import ClaudioLemosFoto from '../assets/person_2-min.webp';
-import MarcelaFonsecaFoto from '../assets/person_3-min.webp';
-import JoanaBarrosFoto from '../assets/person_4-min.webp';
-import MariaMadalenaFoto from '../assets/person_1-min.webp';
+const ClaudioLemosFoto = null;
+const MarcelaFonsecaFoto = null;
+const JoanaBarrosFoto = null;
+const MariaMadalenaFoto = null;
 
 const TesteHabilidadesPage = () => {
   const navigate = useNavigate();
@@ -330,12 +330,12 @@ const TesteHabilidadesPage = () => {
       <div className="bg-white border-b border-gray-200 flex-shrink-0">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo TaskUs */}
+            {/* Logo VagaCerta */}
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1">
                 <img
                   className='h-5'
-                  src={LogoTaskUs}
+                  src={LogoVagaCerta}
                 />
               </div>
             </div>

@@ -1,8 +1,12 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useMemo } from "react";
 import { useProcess } from '@/hooks/useProcess.js';
 import '../../styles/refino.css';
 
-import logoTaskUs from '../../assets/logo-min.webp';
+import { motion } from 'framer-motion'
+import { BadgeCheck, Video } from 'lucide-react'
+const logoVagaCerta = null;
 
 import { useState } from 'react';
 
@@ -33,7 +37,7 @@ const ContratacaoIntroStep = ({ onStart }) => {
 
       {/* Título */}
       <h1 className="font-hendrix-bold text-2xl text-white mb-2 leading-tight text-left w-full mb-5">
-        Parabéns! {nome}, você foi selecionado(a) para trabalhar aqui na TASKUS
+        Parabéns! {nome}, você foi selecionado(a) para trabalhar aqui na VagaCerta
       </h1>
       <p className="font-hendrix-regular text-base text-gray-200 mb-10 text-left w-full">
         Você foi selecionado entre  <span className="font-hendrix-bold text-white">{totalCandidatos} candidatos</span> com melhor desempenho e perfil para a vaga.
@@ -43,7 +47,7 @@ const ContratacaoIntroStep = ({ onStart }) => {
       <div className="w-full flex justify-center mb-10">
         <div className="bg-white rounded-2xl shadow-lg p-4 flex flex-col items-start w-[320px]">
           <div className="flex items-center mb-2">
-            <img src={logoTaskUs} alt="TaskUs" className="w-15 mr-2" />
+            <img src={logoVagaCerta} alt="VagaCerta" className="w-15 mr-2" />
           </div>
           <span className="font-hendrix-bold text-lg text-[#181A1B] mb-1">{nome}</span>
           <span className="font-hendrix-regular text-xs text-[#0ecb7b] mb-2">Suporte ao cliente</span>
@@ -66,7 +70,7 @@ const ContratacaoIntroStep = ({ onStart }) => {
             Vamos validar suas informações para registrar sua contratação corretamente.
           </li>
           <li className="font-hendrix-regular text-base text-gray-200 mb-3">
-            Você fará o treinamento inicial obrigatório da TaskUs, que garante seu certificado de capacitação.
+            Você fará o treinamento inicial obrigatório da VagaCerta, que garante seu certificado de capacitação.
           </li>
           <li className="font-hendrix-regular text-base text-gray-200 mb-3">
             Após o treinamento, seu gerente de equipe entrará em contato para alinhar os últimos detalhes da contratação.

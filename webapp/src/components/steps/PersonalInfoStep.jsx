@@ -102,8 +102,8 @@ const PersonalInfoStep = ({ data, updateData, errors, onComplete } = {}) => {
         <h1 className="titulodaetapa font-hendrix-semibold text-xl text-gray-900 mb-3" style={{ fontSize: '12pt' }}>
           Entrevista Inicial
         </h1>
-        <p className="subtitulodaetapa font-hendrix-light text-gray-600 leading-relaxed" style={{ fontSize: '9pt' }}>
-          Preencha seus dados abaixo com atenção para seguir no processo seletivo da TaskUs.
+                <p className="font-hendrix-medium text-gray-300 text-base mb-6" style={{ fontSize: '13.5pt' }}>
+          Preencha seus dados abaixo com atenção para seguir no processo seletivo da VagaCerta.
         </p>
       </div>
 

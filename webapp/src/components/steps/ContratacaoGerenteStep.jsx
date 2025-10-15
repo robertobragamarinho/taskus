@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useProcess } from '../../hooks/useProcess.js';
 import { motion } from 'framer-motion';
-import gerenteImg from "../../assets/manager-min.webp";
+const gerenteImg = null;
 import '../../styles/refino.css';
 
 const ContratacaoGerenteStep = ({ onContinuar }) => {
@@ -72,7 +73,9 @@ const ContratacaoGerenteStep = ({ onContinuar }) => {
                 <span className="font-hendrix-regular text-gray-300 text-xs leading-tight" style={{ marginTop: '-2px' }}>Team manager</span>
               </div>
             </div>
-            <span className="bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white font-hendrix-medium text-xs px-5 py-2 rounded-full shadow" style={{ fontSize: '15px', fontWeight: 500 }}>TaskUs Brasil</span>
+            <div className="flex items-center justify-center">
+              <span className="bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white font-hendrix-medium text-xs px-5 py-2 rounded-full shadow" style={{ fontSize: '15px', fontWeight: 500 }}>VagaCerta Brasil</span>
+            </div>
           </div>
         </div>
         {/* Bloco de texto destacado */}
@@ -88,7 +91,7 @@ const ContratacaoGerenteStep = ({ onContinuar }) => {
                 Olá, {nomeUsuario || 'candidato'}!
                 <br />
                 <br />
-                Bem-vindo(a) à TaskUs Brasil.
+                Bem-vindo(a) à VagaCerta Brasil.
                 
               </span>
               Eu sou o Antônio, seu gerente de equipe, e estarei ao seu lado neste início. Meu papel é garantir que você esteja pronto(a) para começar com confiança.

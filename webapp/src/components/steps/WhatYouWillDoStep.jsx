@@ -33,7 +33,7 @@ const WhatYouWillDoStep = () => {
 
         {/* Primeira descrição */}
         <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-3" >
-          Como atendente, você será o responsável por ajudar os clientes das empresas parceiras da TaskUs a resolver problemas e esclarecer dúvidas.
+          Como atendente, você será o responsável por ajudar os clientes das empresas parceiras da VagaCerta a resolver problemas e esclarecer dúvidas.
         </p>
 
         {/* Segunda descrição */}

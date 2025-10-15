@@ -7,8 +7,8 @@ import { useProcess } from '../hooks/useProcess.js';
 import ProfileAnalysisStep from '../components/steps/ProfileAnalysisStep.jsx';
 import FinalQuestionStep from '../components/steps/FinalQuestionStep.jsx';
 
-import LogoTaskUs from '../assets/logo-min.webp';
-import InfoIconMin from '../assets/info_icon-min.webp';
+const LogoVagaCerta = null;
+const InfoIconMin = null;
 
 
 
@@ -199,7 +199,7 @@ const AnálisePerfilPage = () => {
             <div className="flex items-center space-x-2">
               <img
                 className='h-6'
-                src={LogoTaskUs}
+                src={LogoVagaCerta}
               />
             </div>
 
