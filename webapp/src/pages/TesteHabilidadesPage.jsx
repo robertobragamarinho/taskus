@@ -8,7 +8,7 @@ import SimulacaoConversaStep from '../components/steps/SimulacaoConversaStep.jsx
 import LastAnswerLoadingStep from '../components/steps/LastAnswerLoadingStep.jsx';
 
 import LogoTaskUs from '../assets/logo-min.webp';
-
+import FooterFinal, { FooterFinalReduzida } from '../components/modules/FooterFinal.jsx';
 
 import ClaudioLemosFoto from '../assets/person_2-min.webp';
 import MarcelaFonsecaFoto from '../assets/person_3-min.webp';
@@ -383,6 +383,7 @@ const TesteHabilidadesPage = () => {
           </div>
         </div>
       </div>
+      
     </div>
   );
 };

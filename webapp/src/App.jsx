@@ -7,6 +7,7 @@ import CurriculoPage from './pages/CurriculoPage.jsx';
 import TelaPagamento from './pages/TelaPagamento.jsx';
 import TelaContratacao from './pages/ContratacaoPage.jsx';
 import TelaFinal from './pages/FinishPage.jsx';
+import RealTimeAnalysisPage from './pages/RealTimeAnalysisPage.jsx';
 
 
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/analisePerfil" element={<AnalisePerfilPage />} />
             <Route path="/testeHabilidades" element={<TesteHabilidadesPage />} />
             <Route path="/curriculo" element={<CurriculoPage />} />
+            <Route path="/realTimeAnalysis" element={<RealTimeAnalysisPage />} />
             <Route path="/onConfirm" element={<TelaContratacao />} />
             <Route path="/payment" element={<TelaPagamento />} />
             <Route path="/finally" element={<TelaFinal />} />

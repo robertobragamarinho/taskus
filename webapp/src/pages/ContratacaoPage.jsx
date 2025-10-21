@@ -12,6 +12,8 @@ import ContratacaoFinalStep from '../components/steps/ContratacaoFinalStep.jsx';
 import ContratacaoEquipamentosStep from '../components/steps/ContratacaoEquipamentosStep.jsx';
 import ContratacaoPreparacaoStep from '../components/steps/ContratacaoPreparacaoStep.jsx';
 
+import T15 from '../components/steps/T15.jsx';
+
 import LogoTaskUs from '../assets/logo-min.webp';
 
 
@@ -44,6 +46,11 @@ const ContratacaoPage = () => {
   // Step 1: Introdução
   const handleStart = async () => {
     await safeUpdateProcessStep('contratacao', 1, {}, 'intro_finalizada');
+    setCurrentStep(8);
+  };
+
+  const handleContiue = async () => {
+    await safeUpdateProcessStep('contratacao', 8, {}, 'intro_finalizada');
     setCurrentStep(2);
   };
 
@@ -122,6 +129,11 @@ const ContratacaoPage = () => {
         {currentStep === 1 && (
           <ContratacaoIntroStep onStart={handleStart} />
         )}
+
+        {currentStep === 8 && (
+          <T15 onContinue={handleContiue} />
+        )}
+
         {/* Step 2: Dados do candidato */}
         {currentStep === 2 && (
           <ContratacaoDadosStep onConfirm={handleDadosConfirmados} dados={contratacaoData} />

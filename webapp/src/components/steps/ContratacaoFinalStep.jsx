@@ -1,9 +1,12 @@
-/* eslint-disable no-unused-vars */
-
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import { ProcessContext } from '../../contexts/ProcessContextDefinition.js';
-import { Loader2 } from 'lucide-react';
 import '../../styles/refino.css';
+
+// Importações adicionadas conforme solicitado
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Alternatives from "@/components/modules/Alternatives";
 
 const areas = [
     {
@@ -25,72 +28,60 @@ const ContratacaoFinalStep = ({ onFinalizar }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { updateUserData } = useContext(ProcessContext);
 
-    const handleSelect = (value) => {
-        setSelected(value);
-    };
+    // Converte o array 'areas' para o formato que o componente 'Alternatives' espera.
+    // useMemo garante que a conversão só ocorra se 'areas' mudar.
+    const areaOptions = useMemo(() => areas.map(area => ({
+        id: area.value, // 'id' é o identificador único para 'Alternatives'
+        text: area.label // 'text' é o conteúdo exibido no botão
+    })), []);
 
-    const handleConfirm = async (e) => {
-        e.preventDefault();
-        if (!selected) return;
+    // A função de confirmação é agora chamada pelo 'onConfirm' do 'Alternatives'.
+    const handleConfirm = async (selectedValue) => {
+        if (!selectedValue) return;
+
         setIsLoading(true);
-        // Salva a área escolhida em userData
-        const areaLabel = areas.find(a => a.value === selected)?.label || '';
+        const areaLabel = areas.find(a => a.value === selectedValue)?.label || '';
+        
         if (updateUserData) {
             await updateUserData({ areaAtuacao: { label: areaLabel } });
         }
+
         await new Promise(res => setTimeout(res, 2000));
+
         if (onFinalizar) {
             try {
-                await Promise.resolve(onFinalizar(selected));
+                // O 'selectedValue' (ex: "email") é passado para a função onFinalizar.
+                await Promise.resolve(onFinalizar(selectedValue));
             } catch (error) {
-                // erro silencioso
+                console.error("Erro ao finalizar o passo:", error);
             }
         }
         setIsLoading(false);
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-8 pb-10">
-            <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={handleConfirm}>
-                {/* Código de aprovação */}
-           
-
-                {/* Título */}
-                <h1 className="headlines font-hendrix-bold text-3xl text-white mb-3 leading-tight">
+        <div className="min-h-screen bloco_principal">
+            {/* Utilizando os componentes de texto para manter a consistência */}
+            <Maintexts>
+                <Headlines variant="white">
                     Em qual área de atendimento você deseja trabalhar?
-                </h1>
-                <p className="subheadlines font-hendrix-regular text-base text-gray-300 mb-8">
+                </Headlines>
+                <Paragraphs variant="white">
                     Você só vai atuar na área escolhida. Selecione aquela em que se sente mais à vontade para garantir o melhor desempenho.
-                </p>
+                </Paragraphs>
+            </Maintexts>
 
-                {/* Botões de área */}
-                <div className="space-y-3 mb-10">
-                    {areas.map((a) => (
-                        <button
-                            key={a.value}
-                            type="button"
-                            className={`w-full flex items-center justify-between px-6 py-4 rounded-2xl bg-white font-hendrix-semibold text-gray-900 text-lg shadow-lg transition-all border-2 focus:outline-none ${selected === a.value ? 'border-[#1655ff]' : 'border-transparent'}`}
-                            onClick={() => handleSelect(a.value)}
-                            style={{ boxShadow: selected === a.value ? '0 0 0 2px #1655ff' : undefined }}
-                            disabled={isLoading}
-                        >
-                            <span className="flex items-center gap-2">
-                                {a.label}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Botão de confirmação */}
-                <button
-                    type="submit"
-                    disabled={!selected || isLoading}
-                    className={`w-full py-5 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${!selected || isLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
-                >
-                    {isLoading ? <Loader2 className="animate-spin mr-2" size={22} /> : null}
-                    {isLoading ? 'Enviando...' : 'Confirmar'} 
-                </button>
-            </form>
+            <div className="w-full max-w-md mx-auto bg-transparent">
+                {/* Componente Alternatives substituindo os botões manuais */}
+                <Alternatives
+                    answers={areaOptions}
+                    selectedId={selected}
+                    onChange={setSelected}
+                    onConfirm={handleConfirm}
+                    isLoading={isLoading}
+                    confirmText={isLoading ? 'Enviando...' : 'Confirmar'}
+                />
+            </div>
         </div>
     );
 };

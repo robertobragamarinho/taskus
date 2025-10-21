@@ -1,25 +1,52 @@
-import { useState } from 'react';
+// SimulacaoConversaStep.jsx
+import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import '../../styles/refino.css';
 import LogoTaskUs from '../../assets/logo-min.webp';
+import Continuity from "../modules/Continuity";
 
+import Alternatives from "../modules/Alternatives"; // << usar o componente novo
 
-const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoReferencia, total, currentIndex }) => {
+const SimulacaoConversaStep = ({
+  conversaData,
+  onResposta,
+  isLoading,
+  fotoReferencia,
+  total,
+  currentIndex
+}) => {
   const [respostaSelecionada, setRespostaSelecionada] = useState(null);
 
-  const handleSelecionarResposta = (opcaoId) => {
-    setRespostaSelecionada(opcaoId);
+  // 👉 Sempre que a "pergunta" mudar, sobe pro topo
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // limpa seleção ao trocar de conversa
+    setRespostaSelecionada(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, conversaData?.numeroConversa]);
+
+  const handleContinuar = (answerIdFromAlternatives) => {
+    // sobe pro topo já no disparo, antes de trocar a próxima tela
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const id = answerIdFromAlternatives ?? respostaSelecionada;
+    if (!id || !onResposta) return;
+
+    const opcaoSelecionada = conversaData.opcoes.find(op => op.id === id);
+    onResposta(id, opcaoSelecionada?.texto);
   };
 
-  const handleContinuar = () => {
-    if (respostaSelecionada && onResposta) {
-      const opcaoSelecionada = conversaData.opcoes.find(opcao => opcao.id === respostaSelecionada);
-      
-      onResposta(respostaSelecionada, opcaoSelecionada?.texto);
-    }
-  };
+  // mapeia as opções do seu payload para o formato do Alternatives
+  const answers = (conversaData?.opcoes || []).map(op => ({
+    id: op.id,
+    text: op.texto,
+  }));
+
+  const atual = currentIndex ?? conversaData?.numeroConversa ?? 1;
+  const totalConversas = total ?? 5;
+  const progress = Math.min(100, Math.max(0, (atual / totalConversas) * 100));
 
   return (
     <div className="space-y-6">
@@ -29,128 +56,82 @@ const SimulacaoConversaStep = ({ conversaData, onResposta, isLoading, fotoRefere
           <span className="font-hendrix-bold text-gray-800" style={{ fontSize: '10pt' }}>
             Teste prático
           </span>
-          <span className="font-hendrix-medium text-gray-400" style={{ fontSize: '10pt', letterSpacing: '0.02em' }}>
-            {currentIndex ?? conversaData.numeroConversa} de {total ?? 5}
+          <span
+            className="font-hendrix-medium text-gray-400"
+            style={{ fontSize: '10pt', letterSpacing: '0.02em' }}
+          >
+            {atual} de {totalConversas}
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className="w-full bg-gray-200 rounded-full h-2"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress)}
+        >
           <motion.div
             className="h-2 rounded-full"
             style={{ background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)' }}
             initial={{ width: 0 }}
-            animate={{ width: `${((currentIndex ?? conversaData.numeroConversa) / (total ?? 5)) * 100}%` }}
+            animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           />
         </div>
       </div>
 
       {/* Área da conversa */}
-      <div className="bg-white rounded-2xl p-5  border border-gray-200 space-y-4" style={{ minHeight: '220px' }}>
+      <div className="bg-white rounded-2xl p-5 border border-gray-200 space-y-4" style={{ minHeight: '220px' }}>
         <div className="flex items-start space-x-4">
           {/* Avatar do cliente */}
           <div className="flex-shrink-0">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-              <img
-                className='h-12'
-                src={fotoReferencia}
-                alt="Foto do cliente"
-              />
+              <img className="h-12" src={fotoReferencia} alt="Foto do cliente" />
             </div>
           </div>
+
           {/* Informações do cliente e mensagem */}
           <div className="flex- space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2 flex-wrap">
                 <span className="font-hendrix-semibold text-gray-900" style={{ fontSize: '12pt', letterSpacing: '0.01em' }}>
-                  {conversaData.cliente.nome}
+                  {conversaData?.cliente?.nome}
                 </span>
                 <span className="text-gray-500 font-hendrix-regular" style={{ fontSize: '9pt', letterSpacing: '0.01em' }}>
-                  {conversaData.cliente.id}
+                  {conversaData?.cliente?.id}
                 </span>
               </div>
-      
             </div>
+
             {/* Mensagem do cliente */}
             <div className="bg-gray-50 rounded-xl rounded-tl-none p-4 shadow-sm border border-gray-100">
               <p
                 className="font-hendrix-regular text-gray-900"
                 style={{ fontSize: '11pt', lineHeight: '1.5', letterSpacing: '0.01em' }}
               >
-                {conversaData.mensagemCliente}
+                {conversaData?.mensagemCliente}
               </p>
-              
             </div>
           </div>
         </div>
       </div>
 
-      {/* Pergunta de resposta */}
-      <div className="pt-2">
-        <div className="flex items-center space-x-2 mb-3">
-          <span className="font-hendrix-semibold text-gray-900" style={{ fontSize: '12pt', letterSpacing: '0.01em' }}>
-            Qual resposta você usaria?
-          </span>
-        </div>
-        {/* Opções de resposta */}
-        <div className="space-y-3">
-          {conversaData.opcoes.map((opcao) => (
-            <motion.button
-              key={opcao.id}
-              onClick={() => handleSelecionarResposta(opcao.id)}
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: respostaSelecionada === opcao.id ? 1.03 : 1.01 }}
-              className={`w-full p-4 rounded-xl border-2 text-left transition-all duration-200 font-hendrix-regular ${respostaSelecionada === opcao.id ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}
-              style={{ fontSize: '11pt', letterSpacing: '0.01em' }}
-            >
-              <div className="flex items-start space-x-3">
-                <ChevronRight
-                  className={`w-4 h-4 mt-1 flex-shrink-0 ${respostaSelecionada === opcao.id ? 'text-blue-500' : 'text-gray-400'}`}
-                />
-                <p className="font-hendrix-regular text-gray-900" style={{ fontSize: '11pt', lineHeight: '1.5', letterSpacing: '0.01em' }}>
-                  {opcao.texto}
-                </p>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      </div>
+      <Continuity variant="black">
+        Qual resposta você usaria?
+      </Continuity>
 
-      {/* Botão Continuar */}
-      {respostaSelecionada && (
-        <div className="pt-4">
-          <motion.button
-            onClick={handleContinuar}
-            disabled={isLoading}
-            whileTap={{ scale: 0.97 }}
-            whileHover={{ scale: isLoading ? 1 : 1.03 }}
-            className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full font-hendrix-medium text-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${isLoading ? 'cursor-not-allowed' : ''}`}
-            style={{
-              background: isLoading ? 'linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%)' : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-              fontSize: '11pt',
-              boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
-              border: 'none',
-              opacity: isLoading ? 0.7 : 1
-            }}
-          >
-            {isLoading ? (
-              <>
-                <motion.div
-                  className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-                  style={{ borderTopColor: 'transparent', borderRightColor: 'white', borderBottomColor: 'white', borderLeftColor: 'white' }}
-                />
-                <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Salvando...</span>
-              </>
-            ) : (
-              <>
-                <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Continuar</span>
-               
-              </>
-            )}
-          </motion.button>
-        </div>
-      )}
+      {/* Alternativas + Confirmar (controlado) */}
+      <Alternatives
+        answers={answers}
+        selectedId={respostaSelecionada}
+        onChange={setRespostaSelecionada}
+        onConfirm={handleContinuar}
+        isLoading={isLoading}
+        icon={ChevronRight}
+        confirmText="Continuar"
+        autoConfirm={false}     // false para exibir botão "Continuar"
+        size={20}
+      />
     </div>
   );
 };

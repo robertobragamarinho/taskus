@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
+import FooterFinal from "../modules/FooterFinal";
 
 // Importar componentes das etapas
 import LoadingStep from '../steps/LoadingStep.jsx';
@@ -222,7 +223,7 @@ const MultiStepForm = () => {
           <div className="flex items-center justify-between">
 
             {/* Logo ToskUs */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2"> 
 
               <div className="flex items-center space-x-1">
                 <img
@@ -401,8 +402,13 @@ const MultiStepForm = () => {
             </div>
           </div>
         </div>
+        
       </div>
+
+       <FooterFinal />
+       
     </div>
+    
   );
 };
 

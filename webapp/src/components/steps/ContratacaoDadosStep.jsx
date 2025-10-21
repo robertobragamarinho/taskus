@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import '../../styles/refino.css';
 import { useProcess } from "@/hooks/useProcess.js";
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Continuity from "../modules/Continuity";
 
 const ContratacaoDadosStep = ({ onConfirm, dados = {} }) => {
   const { processData, updateUserData } = useProcess();
@@ -12,6 +16,7 @@ const ContratacaoDadosStep = ({ onConfirm, dados = {} }) => {
   const [cpf, setCpf] = useState(formatCPF(cpfContexto || dados.cpf || ""));
   const [cpfError, setCpfError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  
 
   // Máscara CPF
   function formatCPF(value) {
@@ -80,18 +85,18 @@ const ContratacaoDadosStep = ({ onConfirm, dados = {} }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-8 pb-10">
-      <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={handleSubmit}>
-        {/* Código de aprovação */}
-   
+    <div className="min-h-screen bloco_principal">
 
-        {/* Título */}
-        <h1 className="headlines font-hendrix-bold text-3xl text-white mb-3 leading-tight">
+      <Maintexts>
+        <Headlines variant="white">
           Preencha seus dados pessoais com atenção!
-        </h1>
-        <p className="subheadlines font-hendrix-regular text-base text-gray-300 mb-8">
+        </Headlines>
+        <Paragraphs variant="white">
           Para formalizar o contrato trabalhista e assinar sua carteira precisamos do seu CPF.
-        </p>
+        </Paragraphs>
+      </Maintexts>
+      <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={handleSubmit}>
+
 
         {/* CPF */}
         <div className="space-y-6 mb-10">

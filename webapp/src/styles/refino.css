@@ -117,23 +117,46 @@
 /* Contratando */
 
 .headlines {
-  font-size: 18pt !important;
+  font-size: 22pt !important;
   line-height: 3.3vh !important;
   text-align: left;
+  margin-bottom: 3vw;
 }
 
 .subheadlines {
   font-size: 12pt !important;
   line-height: 2.3vh !important;
   text-align: left;
+  margin-bottom: 7vw;
 }
 
 .aviso {
   font-size: 14pt !important;
   line-height: 2.6vh !important;
   text-align: left;
+  
 }
 
 .koap {
   line-height: 2vh !important;
 }
+
+.alinjj {
+  line-height: 2vh !important;
+}
+
+.fontechat {
+  font-size: 4vw;
+}
+
+
+
+
+/* Blocos */ 
+
+.bloco_principal {
+  padding: 2vw;
+  padding-top: 5vw;
+}
+
+

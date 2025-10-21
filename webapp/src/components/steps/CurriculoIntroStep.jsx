@@ -3,15 +3,34 @@ import { ChevronRight, Clock, ChevronUp } from 'lucide-react';
 import InfoIconMin from '../../assets/info_icon-min.webp';
 import '../../styles/refino.css';
 
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import LoadingBar from "../modules/LoadingBar";
+import Continuity from "../modules/Continuity";
+import Icons from "../modules/Icons";
+import { IconMessage } from "../modules/SvgIcons";
+import CardTime from "../modules/CardTime";
+import PaymentItauLoadingStep from '../../modules/PaymentItauLoadingStep.jsx';
+
 const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
+  // ⬇️ Mostra o overlay ao entrar na tela
+  // 'intro' -> mostra overlay; null -> esconde overlay
+  const [overlayPhase, setOverlayPhase] = useState('intro');
   const [isLoading, setIsLoading] = useState(false);
   const [tipoAcao, setTipoAcao] = useState(null);
+
+  const showOverlay = overlayPhase === 'intro';
+
+  const handleOverlayDone = async () => {
+    // terminou a animação inicial -> libera o conteúdo
+    setOverlayPhase(null);
+  };
 
   const handleEnviarArquivo = async () => {
     setIsLoading(true);
     setTipoAcao('enviar');
     try {
-      // Simular seleção de arquivo
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.pdf,.doc,.docx,image/*';
@@ -34,91 +53,105 @@ const CurriculoIntroStep = ({ onEnviarArquivo, onCriarCurriculo }) => {
     setTipoAcao('criar');
     try {
       if (onCriarCurriculo) {
+        // Aguarda 1s para mostrar o spinner antes de avançar
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         await onCriarCurriculo();
       }
     } catch (error) {
       console.error('Erro ao criar currículo:', error);
-    } finally {
       setIsLoading(false);
     }
+    // O setIsLoading(false) será chamado na próxima tela, não aqui
   };
 
+  // Mensagens/headlines do overlay inicial (step 3)
+  const messagesByPhase = {
+    2: ['Sincronizando dados…', 'Registrando Informações…', 'Liberando Candidato'],
+    3: ['Redirecionando…', 'Quase lá...', 'Liberando formulário…']
+  };
+  const headline = 'Processo Seletivo';
+  const subline = 'Estamos preparando as próximas etapas para você preencher.';
+
   return (
-    <div className="">
-      {/* Título principal */}
-      <div className="pt-6">
-        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="#1655ff"><g fill="none" stroke="#1655ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M4 3H3a1 1 0 0 0-1 1v14l1.5 3L5 18V4a1 1 0 0 0-1-1m17 9.001v-4c0-2.358 0-3.536-.732-4.269C19.535 3 18.357 3 16 3h-3c-2.357 0-3.536 0-4.268.732C8 4.465 8 5.643 8 8.001v8c0 2.358 0 3.537.732 4.27c.62.62 1.561.714 3.268.729m0-14h5m-5 4h5"/><path d="M14 19s1.5.5 2.5 2c0 0 1.5-4 5.5-6M2 7h3"/></g></svg>
-        <h1 className="tituloquest font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt'}}>
-          Precisamos ter um <br />currículo vinculado ao processo seletivo 
-        </h1>
-      </div>
+    <div className="bloco_principal">
+      {/* Overlay ao abrir a tela (stepIndex=3) */}
+      {showOverlay && (
+        <PaymentItauLoadingStep
+          stepIndex={3}
+          animateFromPrevious
+          autoAdvanceMs={3000}
+          onLoadingComplete={handleOverlayDone}
+          headline={headline}
+          subline={subline}
+          rotatingMessages={messagesByPhase}
+        />
+      )}
 
-      {/* Descrição */}
-      <div className="">
-        <p className="subtituloquest font-hendrix-regular text-gray-600" style={{ fontSize: '10pt'}}>
-          Vamos criar um em 6 etapas rápidas, após isso, a equipe de RH irá finalizar a análise da sua entrevista e você saberá se será contratado (a).
-        </p>
-      </div>
+      {/* Conteúdo principal aparece quando overlay sumir */}
+      {!showOverlay && (
+        <>
+          <Icons Icon={IconMessage} size={60} color="#1655ff" />
 
-      {/* Aviso de tempo */}
-      <div className="bg-yellow-50 mb-10 border border-yellow-200 rounded-xl p-4">
-        <div className="flex items-center space-x-3">
-          <div className="flex-shrink-0">
-            <img 
-              className='h-6'
-              src={InfoIconMin}
-            />
+          <Maintexts>
+            <Headlines variant="black">
+              Para continuar no processo, precisamos <br/>criar o seu currículo.
+            </Headlines>
+
+            <Paragraphs variant="black">
+              Vamos criar seu currículo em 6 etapas rápidas. Depois, o RH vai analisar
+              seus dados para seguir no processo.
+            </Paragraphs>
+          </Maintexts>
+
+          <CardTime text="Esta etapa leva menos de 3 minutos." icon={InfoIconMin} />
+
+          <div className="">
+            {/* Se quiser reativar o botão de enviar arquivo, descomente o bloco abaixo */}
+            {/*
+            <button
+              onClick={handleEnviarArquivo}
+              disabled={isLoading && tipoAcao === 'enviar'}
+              className={`
+                w-full mt-3 px-6 py-4 rounded-full font-hendrix-medium text-[#1655ff] border border-[#1655ff]
+                transition-all duration-300
+                ${isLoading && tipoAcao === 'enviar' ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+              `}
+              style={{ fontSize: '11pt' }}
+            >
+              {isLoading && tipoAcao === 'enviar' ? 'Enviando…' : 'Enviar meu currículo (PDF/Word)'}
+            </button>
+            */}
+
+            <button
+              onClick={handleCriarCurriculo}
+              disabled={isLoading && tipoAcao === 'criar'}
+              className={`
+                w-full mt-4 px-6 py-4 rounded-full font-hendrix-medium text-white 
+                shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 
+                transition-all duration-300
+                ${isLoading && tipoAcao === 'criar'
+                  ? 'bg-gradient-to-r from-gray-300 to-gray-400 opacity-70 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#1655ff] to-[#4285f4] hover:scale-105 active:scale-95'
+                }
+              `}
+              style={{ fontSize: '11pt', boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)' }}
+            >
+              <div className="flex items-center justify-center space-x-2">
+                {isLoading && tipoAcao === 'criar' ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span className="font-hendrix-medium tracking-wide text-[11pt]">Aguarde…</span>
+                  </>
+                ) : (
+                  <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                    Criar meu currículo agora
+                  </span>
+                )}
+              </div>
+            </button>
           </div>
-          <div className="flex-1">
-            <p className="font-hendrix-medium text-yellow-800" style={{ fontSize: '9pt' }}>
-              Criar o currículo leva menos de 5 minutos.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Botões de ação */}
-      <div className="space-y-4">
-        {/* Botão Enviar Arquivo */}
-        <button
-          onClick={handleEnviarArquivo}
-          disabled={isLoading && tipoAcao === 'enviar'}
-          className={`
-          `}
-          style={{ fontSize: '11pt' }}
-        >
-         
-        </button>
-
-        {/* Botão Criar Currículo */}
-        
-        <button
-          onClick={handleCriarCurriculo}
-          disabled={isLoading && tipoAcao === 'criar'}
-          className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            ${isLoading && tipoAcao === 'criar'
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg hover:shadow-xl'
-            }
-          `}
-          style={{ fontSize: '11pt' }}
-        >
-          <div className="flex items-center justify-center space-x-2">
-            {isLoading && tipoAcao === 'criar' ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Iniciando...</span>
-              </>
-            ) : (
-              <>
-                <span>Criar meu currículo agora</span>
-              </>
-            )}
-          </div>
-        </button>
-      </div>
+        </>
+      )}
     </div>
   );
 };
