@@ -1,37 +1,38 @@
-name: Build and deploy Python app to Azure Web App - fluxo-api
+# Deploy do backend FastAPI (pasta serverapp) para o Azure App Service fluxo-api
+
+name: Deploy FastAPI backend to Azure Web App - fluxo-api
 
 on:
   push:
-    branches:
+    branches: 
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write        # necessário pro azure/login com OIDC
+      contents: read         # necessário pro actions/checkout
 
     steps:
+      # 1. Baixar o código do repositório
       - name: Checkout código
         uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v5
+      # 2. Login na Azure usando as credenciais que o portal criou pra você
+      - name: Login na Azure
+        uses: azure/login@v2
         with:
-          python-version: '3.12'
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_ED0CAA8E465B47F990CCEF74C285B971 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A9B02DF08DE64A0BB11778AA96533B2D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DA2F26561F5D468CB82B2AB5AF5F78BA }}
 
-      # Instalar dependências dentro da pasta serverapp
-      - name: Instalar dependências
-        working-directory: ./serverapp
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # Opcional: rodar testes aqui se quiser
-
-      # Deploy para o App Service
+      # 3. Deploy direto da pasta serverapp
+      # O Azure (Oryx) vai detectar o requirements.txt e instalar tudo lá.
       - name: Deploy para Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: fluxo-api
-          slot-name: production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_XXXX }}
-          package: ./serverapp
+          app-name: fluxo-api          # nome do App Service que você criou
+          slot-name: production        # slot padrão
+          package: ./serverapp         # <<< ESSENCIAL: aponta pra pasta do backend
