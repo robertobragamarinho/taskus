@@ -6,34 +6,38 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  AZURE_WEBAPP_NAME: fluxo-api
-  AZURE_WEBAPP_PACKAGE_PATH: ./serverapp
-  PYTHON_VERSION: '3.12'
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
+      id-token: write
 
     steps:
+      # 1) Baixar o código
       - name: Checkout código
         uses: actions/checkout@v4
 
+      # 2) Configurar Python
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.12'
 
-      # Aqui ele só testa se as libs instalam de boa
-      - name: Instalar dependências (serverapp)
-        working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      # 3) Instalar dependências do backend (dentro de serverapp)
+      - name: Instalar dependências do backend
+        working-directory: ./serverapp
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # 4) Compactar apenas a pasta serverapp para mandar pra Azure
+      - name: Criar pacote do backend
+        run: |
+          cd serverapp
+          zip -r ../backend.zip .
+
+      # 5) Login na Azure (usa os secrets que o portal criou pra você)
       - name: Login na Azure
         uses: azure/login@v2
         with:
@@ -41,9 +45,10 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A9B02DF08DE64A0BB11778AA96533B2D }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DA2F26561F5D468CB82B2AB5AF5F78BA }}
 
+      # 6) Deploy do pacote backend.zip pro App Service fluxo-api
       - name: Deploy para Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: 'fluxo-api'
           slot-name: 'production'
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: 'backend.zip'
