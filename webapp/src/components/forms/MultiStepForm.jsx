@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
+import FooterFinal from "../modules/FooterFinal";
 
 // Importar componentes das etapas
 import LoadingStep from '../steps/LoadingStep.jsx';
@@ -18,8 +19,8 @@ import ConfirmationStep from '../steps/ConfirmationStep.jsx';
 
 import IniciaProcessoSeletivo from '../steps/IniciaProcessoSeletivo.jsx';
 import ProximaFase from '../steps/ProximaFase.jsx';
-
-const LogoVagaCerta = null;
+import Header from '../modules/Header';
+import LogoTaskUs from '../../assets/logo-min.webp'
 
 
 const MultiStepForm = () => {
@@ -146,8 +147,8 @@ const MultiStepForm = () => {
     const prev = Math.max(currentStep - 1, 0);
     setIsLoading(true);
     try {
-  // apenas atualiza localmente sem backend
-  setCurrentStep(prev);
+      // apenas atualiza localmente sem backend
+      setCurrentStep(prev);
     } catch (error) {
       console.error('Erro ao voltar etapa:', error);
     } finally {
@@ -215,181 +216,183 @@ const MultiStepForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-md mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+    <div className="flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+     
 
-            {/* Logo ToskUs */}
-            <div className="flex items-center space-x-2">
+     <section className='min-h-[220vw]'>
 
-              <div className="flex items-center space-x-1">
-                <img
-                  src={LogoVagaCerta}
-                  className='h-6'
-                />
+          {/* Header */}
+           <Header rightText="Processo Seletivo Brasil 2025" />
+
+          {/* Main Content */}
+          <div className="flex items-center justify-center px-4 py-5">
+            <div className="w-full max-w-md rounded-3xl bg-white shadow-sm border overflow-hidden">
+              <div className="p-5 pb-8">
+                {/* Renderizar etapa atual */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentStep}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                  >
+                    {renderCurrentStep()}
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Botões de navegação */}
+                <div className="mt-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    {([2, 3, 4, 5, 6, 7].includes(currentStep)) ? (
+                      <div className="flex gap-1">
+                        {/* Botão voltar (esquerda) */}
+                        <button
+                          onClick={handleBack}
+                          disabled={isLoading}
+                          className={`h-14 w-30 flex font-bold items-center gap-2 px-2 py-5 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                          style={{
+                            background: '#000',
+                            color: '#fff',
+                            fontSize: '10pt'
+                          }}
+                        >
+                          <ChevronLeft className="w-5 h-5 text-white" />
+                          Voltar
+                        </button>
+
+                        {/* Botão continuar / finalizar (direita) */}
+                        {currentStep < steps.length - 1 ? (
+                          <button
+                            onClick={nextStep}
+                            disabled={isLoading}
+                            className={`h-14 flex-1 flex items-center justify-end gap-2 px-2 py-5 font-bold text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                            style={{
+                              background: isLoading
+                                ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                                : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                              fontSize: '12pt'
+                            }}
+                          >
+                            {isLoading ? (
+                              <>
+                                Salvando...
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              </>
+                            ) : (
+                              <>
+                                {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
+                                <ChevronRight className="w-5 h-5" />
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={handleSubmit}
+                            disabled={isLoading}
+                            className={`flex-1 flex items-center font-bold justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                            style={{
+                              background: isLoading
+                                ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                                : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                              fontSize: '12pt'
+                            }}
+                          >
+                            {isLoading ? (
+                              <>
+                                Finalizando...
+                                <Loader2 className="w-4 h-4 font-bold animate-spin" />
+                              </>
+                            ) : (
+                              <>
+                                {currentStep === 7
+                                  ? 'Iniciar Entrevista'
+                                  : currentStep === 1
+                                    ? 'Iniciar Agora'
+                                    : 'Continuar'}
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      // Para steps 0,1,2 mostramos apenas o botão direito em largura total
+                      <div>
+                        {currentStep < steps.length - 1 ? (
+                          <button
+                            onClick={nextStep}
+                            disabled={isLoading}
+                            className={`h-14 w-full flex items-center font-hendrix-medium justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                            style={{
+                              background: isLoading
+                                ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                                : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                              fontSize: '14pt',
+
+                            }}
+                          >
+                            {isLoading ? (
+                              <>
+                                Salvando...
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              </>
+                            ) : (
+                              <>
+                                {currentStep === 7
+                                  ? 'Iniciar Entrevista'
+                                  : currentStep === 1
+                                    ? 'Iniciar Agora'
+                                    : 'Continuar'}
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={handleSubmit}
+                            disabled={isLoading}
+                            className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
+                            style={{
+                              background: isLoading
+                                ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
+                                : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+                              fontSize: '9pt'
+                            }}
+                          >
+                            {isLoading ? (
+                              <>
+                                Finalizando...
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              </>
+                            ) : (
+                              <>
+                                {currentStep === 7
+                                  ? 'Iniciar Entrevista'
+                                  : currentStep === 1
+                                    ? 'Iniciar Agora'
+                                    : 'Continuar'}
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
               </div>
             </div>
-
-
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600">{'Recrutamento Online'}</span>
-            </div>
+            
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-5">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 pb-8">
-            {/* Renderizar etapa atual */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                {renderCurrentStep()}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Botões de navegação */}
-            <div className="mt-8">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-              >
-                {([3,4,5,6,7].includes(currentStep)) ? (
-                  <div className="flex gap-3">
-                    {/* Botão voltar (esquerda) */}
-                    <button
-                      onClick={handleBack}
-                      disabled={isLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-gray-800 rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                      style={{
-                        background: '#111827',
-                        color: '#fff',
-                        fontSize: '9pt'
-                      }}
-                    >
-                      <ChevronLeft className="w-4 h-4 text-white" />
-                      Voltar
-                    </button>
-
-                    {/* Botão continuar / finalizar (direita) */}
-                    {currentStep < steps.length - 1 ? (
-                      <button
-                        onClick={nextStep}
-                        disabled={isLoading}
-                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                        style={{
-                          background: isLoading
-                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
-                        }}
-                      >
-                        {isLoading ? (
-                          <>
-                            Salvando...
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </>
-                        ) : (
-                          <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                            <ChevronRight className="w-4 h-4" />
-                          </>
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                        style={{
-                          background: isLoading
-                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
-                        }}
-                      >
-                        {isLoading ? (
-                          <>
-                            Finalizando...
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </>
-                        ) : (
-                          <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  // Para steps 0,1,2 mostramos apenas o botão direito em largura total
-                  <div>
-                    {currentStep < steps.length - 1 ? (
-                      <button
-                        onClick={nextStep}
-                        disabled={isLoading}
-                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                        style={{
-                          background: isLoading
-                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
-                        }}
-                      >
-                        {isLoading ? (
-                          <>
-                            Salvando...
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </>
-                        ) : (
-                          <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                          </>
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                        className={`w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full transition-all duration-300 hover:opacity-90 ${isLoading ? 'cursor-not-allowed opacity-60' : ''}`}
-                        style={{
-                          background: isLoading
-                            ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)'
-                            : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                          fontSize: '9pt'
-                        }}
-                      >
-                        {isLoading ? (
-                          <>
-                            Finalizando...
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </>
-                        ) : (
-                          <>
-                            {currentStep === 1 ? 'Iniciar Agora' : 'Continuar'}
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                )}
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </div>
+     </section>
+         
+    
+       
     </div>
+    
   );
 };
 

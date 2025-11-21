@@ -1,0 +1,5 @@
+.pin-safe {
+  overflow: visible !important;
+  transform: none !important;
+  filter: none !important;
+}

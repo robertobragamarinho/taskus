@@ -1,10 +1,19 @@
-import { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { UserCircle2, SunMedium, ScanFace } from 'lucide-react';
 import '../../styles/refino.css';
+
+import Maintexts from "../modules/Main-texts";
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import ListTopics from "../modules/ListTopics";
 
 const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tipoAcao, setTipoAcao] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleEnviarAgora = async () => {
     setIsLoading(true);
@@ -15,135 +24,158 @@ const CurriculoFotoPadroesStep = ({ onEnviarAgora, onPular }) => {
       input.type = 'file';
       input.accept = 'image/*';
       input.onchange = async (e) => {
-        const file = e.target.files[0];
-        if (file && onEnviarAgora) {
+        const file = e.target.files?.[0];
+        if (file && typeof onEnviarAgora === 'function') {
           await onEnviarAgora(file);
         }
         setIsLoading(false);
+        setTipoAcao(null);
       };
       input.click();
     } catch (error) {
       console.error('Erro ao enviar foto:', error);
       setIsLoading(false);
+      setTipoAcao(null);
     }
   };
 
   const handlePular = async () => {
+    setIsLoading(true);
+    setTipoAcao('pular');
     try {
-      if (onPular) {
-        setIsLoading(true);
-        setTipoAcao('pular');
+      if (typeof onPular === 'function') {
+        // atraso suave apenas para feedback visual
         setTimeout(async () => {
           try {
             await onPular();
-          } catch (error) {
-            console.error('Erro ao pular:', error);
           } finally {
             setIsLoading(false);
+            setTipoAcao(null);
           }
-        }, 2000);
+        }, 800);
+      } else {
+        setIsLoading(false);
+        setTipoAcao(null);
       }
     } catch (error) {
       console.error('Erro ao pular:', error);
+      setIsLoading(false);
+      setTipoAcao(null);
     }
   };
 
+  const topics = [
+    {
+      icon: UserCircle2,
+      name: 'Rosto centralizado',
+      value: 'Mantenha o rosto no centro da imagem.',
+      hint:
+        'Enquadre dos ombros para cima. Evite cortes na cabeça ou muito espaço acima. Segure o celular na altura dos olhos.',
+    },
+    {
+      icon: SunMedium,
+      name: 'Local bem iluminado',
+      value: 'Prefira luz natural, sem sombras fortes.',
+      hint:
+        'Fique de frente para a janela ou uma luz difusa. Evite luz atrás de você (contra-luz) e ambientes muito escuros.',
+    },
+    {
+      icon: ScanFace,
+      name: 'Expressão neutra',
+      value: 'Sem exageros, aparência natural.',
+      hint:
+        'Olhe para a câmera, relaxe o rosto e mantenha uma expressão amigável. Evite óculos escuros, bonés e filtros.',
+    },
+  ];
+
+  const enviarDisabled = isLoading && tipoAcao === 'enviar';
+  const pularDisabled = isLoading && tipoAcao === 'pular';
+
   return (
-    <div className="space-y-8">
-      
+    <div className="bloco_principal">
+      <Maintexts>
+        <section id='ETP4T8'/>
+        <Headlines variant="black">
+          Siga estes padrões para enviar a sua foto
+        </Headlines>
+        <Paragraphs variant="black">
+          A foto é opcional, mas ajuda na identificação. Se preferir, você pode pular esta etapa agora e adicionar depois.
+        </Paragraphs>
+      </Maintexts>
 
-      {/* Conteúdo principal */}
-      <div className="bg-gray-100 rounded-2xl p-6">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-6" style={{ fontSize: '15pt', lineHeight: '1.3' }}>
-          Siga estes padrões para a enviar a sua foto
-        </h1>
-
-        {/* Imagem de exemplo */}
-        <div className="flex justify-center items-center">
-          <div className=" rounded-3xl shadow-md p-10 w-full max-w-md">
-            <ul className="space-y-6 mb-2">
-              <li className="flex items-start space-x-3">
-                <svg className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                <div>
-                  <span className="font-hendrix-semibold text-gray-900">Rosto centralizado</span>
-                  <div className="text-gray-400 font-hendrix-regular text-sm">Seu rosto deve estar no centro da imagem.</div>
-                </div>
-              </li>
-              <li className="flex items-start space-x-3">
-                <svg className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                <div>
-                  <span className="font-hendrix-semibold text-gray-900">Local bem iluminado</span>
-                  <div className="text-gray-400 font-hendrix-regular text-sm">Tire a foto perto de uma janela, sem sombras fortes</div>
-                </div>
-              </li>
-              <li className="flex items-start space-x-3">
-                <svg className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                <div>
-                  <span className="font-hendrix-semibold text-gray-900">Expressão neutra</span>
-                  <div className="text-gray-400 font-hendrix-regular text-sm">Mantenha o semblante natural, sem sorrisos exagerados.</div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+      {/* Lista de tópicos com descrição + drawer */}
+      <div className="gap-3 flex  rounded-2xl  ">
+        <ListTopics topics={topics} withDescription enableDrawer={false} />
       </div>
 
       {/* Botões de ação */}
       <div className="space-y-4">
-        {/* Botão Enviar agora */}
+        {/* Enviar agora — primário (gradiente azul) */}
         <button
           onClick={handleEnviarAgora}
-          disabled={isLoading && tipoAcao === 'enviar'}
+          disabled={enviarDisabled}
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            flex justify-center items-center
-            ${isLoading && tipoAcao === 'enviar'
-              ? 'bg-gray-800 cursor-not-allowed'
-              : 'bg-gray-900 hover:bg-gray-800 active:bg-gray-700 shadow-lg hover:shadow-xl'
-            }
+            w-full px-6 py-4  rounded-full font-hendrix-medium text-white
+            shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400
+            transition-all duration-300
+            ${enviarDisabled
+              ? 'bg-gradient-to-r from-gray-300  to-gray-400 opacity-70 cursor-not-allowed'
+              : 'hover:scale-105 active:scale-95'}
           `}
-          style={{ fontSize: '11pt' }}
+          style={{
+            fontSize: '11pt',
+            background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+            boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
+          }}
         >
-          <div className="flex items-center justify-center space-x-2 w-full">
-            {isLoading && tipoAcao === 'enviar' ? (
+          <div className="flex items-center justify-center space-x-2">
+            {enviarDisabled ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Enviando...</span>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="font-hendrix-medium tracking-wide text-[10pt]">
+                  Enviando...
+                </span>
               </>
             ) : (
-              <>
-                <span>Enviar agora</span>
-              </>
+              <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                Enviar Foto
+              </span>
             )}
           </div>
         </button>
 
-        {/* Botão Pular */}
+        {/* Pular — secundário (fundo branco, borda azul) */}
         <button
           onClick={handlePular}
-          disabled={isLoading && tipoAcao === 'pular'}
+          disabled={pularDisabled}
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            flex justify-center items-center
-            ${isLoading && tipoAcao === 'pular'
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg hover:shadow-xl'
-            }
+            w-full px-6 py-4 rounded-full font-hendrix-medium
+            shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400
+            transition-all duration-300
+            ${pularDisabled
+              ? 'opacity-70 cursor-not-allowed'
+              : 'hover:bg-blue-50 hover:scale-[1.02] active:scale-95'}
           `}
-          style={{ fontSize: '11pt' }}
+          style={{
+            fontSize: '11pt',
+            background: '#ffffff',
+            color: '#000000',
+            border: '1px solid #1655ff',
+            boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
+          }}
         >
-          <div className="flex items-center justify-center space-x-2 w-full">
-            {isLoading && tipoAcao === 'pular' ? (
+          <div className="flex items-center justify-center space-x-2">
+            {pularDisabled ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Pulando...</span>
+                <div className="w-4 h-4 border-2 border-[#1655ff] border-t-transparent rounded-full animate-spin" />
+                <span className="font-hendrix-medium tracking-wide text-[10pt]">
+                  Pulando...
+                </span>
               </>
             ) : (
-              <>
-                <span>Pular</span>
-              </>
+              <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                Pular
+              </span>
             )}
           </div>
         </button>

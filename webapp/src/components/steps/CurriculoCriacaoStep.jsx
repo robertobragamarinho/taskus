@@ -1,39 +1,126 @@
 /* eslint-disable no-unused-vars */
 
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Pencil } from 'lucide-react';
 import '../../styles/refino.css';
 import { useProcess } from '@/hooks/useProcess.js';
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Imputs from "../modules/Imputs"; // ⬅️ componente reutilizável
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const CurriculoCriacaoStep = ({ onContinue }) => {
   const { updateUserData, processData } = useProcess();
   const userData = processData?.userData || {};
 
   // Estado local para inputs editáveis
-  const [nome, setNome] = useState(userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : userData.firstName || '');
+  const [nome, setNome] = useState(
+    userData.firstName && userData.lastName
+      ? `${userData.firstName} ${userData.lastName}`
+      : userData.firstName || ''
+  );
   const [email, setEmail] = useState(userData.email || '');
-  const [phone, setPhone] = useState(userData.phone || '');
-  const [idade, setIdade] = useState(userData.age || userData.idade ||'');
+  const [phone, setPhone] = useState(userData.phone || ''); // armazenado como dígitos
+  const [idade, setIdade] = useState(userData.age || userData.idade || '');
   const [isLoading, setIsLoading] = useState(false);
   const [tipoAcao, setTipoAcao] = useState(null);
 
-  // Formatar telefone para exibição
-  const formatPhone = (value) => {
-    const digits = value.replace(/\D/g, '').slice(0, 11);
-    if (digits.length <= 2) return digits;
-    if (digits.length <= 7) return `(${digits.slice(0,2)}) ${digits.slice(2)}`;
-    return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+  // ── Scroll topo ao montar
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // ── Máscara telefone (00) 0 0000-0000
+  const formatPhone = (raw) => {
+    const v = (raw || '').replace(/\D/g, '').slice(0, 11); // guarda até 11 dígitos
+    const ddd = v.slice(0, 2);
+    const dig9 = v.slice(2, 3);
+    const bloco1 = v.slice(3, 7);
+    const bloco2 = v.slice(7, 11);
+
+    if (!v.length) return '';
+    if (v.length <= 2) return `(${ddd}`;
+    if (v.length <= 3) return `(${ddd}) ${dig9}`;
+    if (v.length <= 7) return `(${ddd}) ${dig9} ${bloco1}`;
+    return `(${ddd}) ${dig9} ${bloco1}-${bloco2}`;
   };
 
-  // Validação de idade
-  const idadeNum = parseInt(idade, 10);
-  const idadeInvalida = isNaN(idadeNum) || idadeNum < 18 || idadeNum > 80;
+  const formattedPhone = formatPhone(phone);
+  const phoneLooksValid =
+    /^\(\d{2}\)\s\d\s\d{4}-\d{4}$/.test(formattedPhone) || formattedPhone === '';
 
-  // Detecta se houve alteração em algum campo
+  // ── Validações + popups (mesmo padrão do PersonalInfoStep)
+
+  // E-mail
+  const emailWrapperRef = useRef(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+
+  const validateEmail = (val) => {
+    if (!val || !val.trim()) return 'Digite seu e-mail.';
+    if (!EMAIL_REGEX.test(val)) return 'Digite um e-mail válido (ex.: nome@dominio.com).';
+    return '';
+  };
+
+  const onEmailChange = (val) => {
+    setEmail(val);
+    if (emailTouched) {
+      const err = validateEmail(val);
+      setEmailError(err);
+      setShowEmailPopup(!!err);
+    }
+  };
+
+  const onEmailBlur = () => {
+    setEmailTouched(true);
+    const err = validateEmail(email || '');
+    setEmailError(err);
+    setShowEmailPopup(!!err);
+  };
+
+  const onEmailFocus = () => setShowEmailPopup(false);
+
+  // Idade
+  const ageWrapperRef = useRef(null);
+  const [ageTouched, setAgeTouched] = useState(false);
+  const [ageError, setAgeError] = useState('');
+  const [showAgePopup, setShowAgePopup] = useState(false);
+
+  const validateAge = (val) => {
+    if (!val) return 'Digite sua idade.';
+    const n = parseInt(val, 10);
+    if (Number.isNaN(n)) return 'Digite apenas números.';
+    if (n < 18 || n > 80) return 'Idade mínima 18, idade máxima 80.';
+    return '';
+  };
+
+  const onAgeChange = (val) => {
+    const onlyDigits = (val || '').replace(/\D/g, '').slice(0, 2);
+    setIdade(onlyDigits);
+    if (ageTouched) {
+      const err = validateAge(onlyDigits);
+      setAgeError(err);
+      setShowAgePopup(!!err);
+    }
+  };
+
+  const onAgeBlur = () => {
+    setAgeTouched(true);
+    const err = validateAge(idade || '');
+    setAgeError(err);
+    setShowAgePopup(!!err);
+  };
+
+  const onAgeFocus = () => setShowAgePopup(false);
+
+  const idadeInvalida = !!validateAge(idade || '') && (idade || '').length > 0;
+
+  // ── Detecta se houve alteração em algum campo
   const dadosAlterados = () => {
-    const nomeSplit = nome.trim().split(/\s+/);
+    const nomeSplit = (nome || '').trim().split(/\s+/);
     const firstName = nomeSplit[0] || '';
     const lastName = nomeSplit.slice(1).join(' ') || '';
     return (
@@ -45,29 +132,43 @@ const CurriculoCriacaoStep = ({ onContinue }) => {
     );
   };
 
-  // Atualiza contexto/banco se alterou, depois chama onContinue
-  
-  
+  // ── Envio
   const handleDadosCorretos = async () => {
+    // força validação local antes de salvar
+    const eErr = validateEmail(email || '');
+    const aErr = validateAge(idade || '');
+    setEmailTouched(true);
+    setAgeTouched(true);
+    setEmailError(eErr);
+    setAgeError(aErr);
+    setShowEmailPopup(!!eErr);
+    setShowAgePopup(!!aErr);
+
+    if (eErr) {
+      emailWrapperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (aErr) {
+      ageWrapperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     setIsLoading(true);
     setTipoAcao('confirmar');
     try {
       if (dadosAlterados()) {
-        // Atualiza contexto e banco
-        const nomeSplit = nome.trim().split(/\s+/);
+        const nomeSplit = (nome || '').trim().split(/\s+/);
         const firstName = nomeSplit[0] || '';
         const lastName = nomeSplit.slice(1).join(' ') || '';
         await updateUserData({
           firstName,
           lastName,
           email,
-          phone,
+          phone, // mantemos apenas dígitos
           age: idade
         });
       }
-      if (typeof onContinue === 'function') {
-        onContinue();
-      }
+      if (typeof onContinue === 'function') onContinue();
     } catch (error) {
       console.error('Erro ao confirmar dados:', error);
     } finally {
@@ -76,122 +177,173 @@ const CurriculoCriacaoStep = ({ onContinue }) => {
   };
 
   return (
-    <div className="space-y-8">
-
-
-      {/* Título principal */}
-      <div className="bg-gray-100 rounded-2xl p-5">
-        <h1 className="font-hendrix-semibold text-gray-800 mb-10 mt-5" style={{ fontSize: '17pt', lineHeight: '0.9', textAlign: 'center' }}>
+    <div className="bloco_principal">
+      <Maintexts>
+        <section id='ETP4T2'/>
+        <Headlines variant="black">
           Essas são as informações que já temos salvas
-        </h1>
+        </Headlines>
+        <Paragraphs variant="black">
+          Confira se estão corretas, toque para editar caso necessário.
+        </Paragraphs>
+      </Maintexts>
 
-        {/* Dados do usuário */}
-        <div className="space-y-4">
+      {/* Formulário */}
+      <div className="rounded-2xl mt-10 mb-10">
+        <div className="space-y-5">
           {/* Nome */}
-          <div className="bg-white rounded-xl p-4 flex items-center gap-2">
-            <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
-              Nome
-            </span>
-            <div className="flex-1 flex items-center">
-              <textarea
-                className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1 resize-none"
-                style={{ fontSize: '10pt', minWidth: 80, paddingRight: '1rem', minHeight: '38px', maxHeight: '90px', overflowY: 'auto', lineHeight: '1.3' }}
-                value={nome}
-                onChange={e => setNome(e.target.value)}
-                placeholder="Nome Usuário"
-                rows={1}
-                spellCheck={false}
-              />
-              <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0 ml-1" />
-            </div>
+          <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
+            Seu nome
+          </span>
+          <div className="relative">
+            <Imputs
+              id="nome"
+              type="text"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Digite seu nome"
+              className="bg-white border-gray-200"
+              style={{ minHeight: '48px' }}
+              spellCheck={false}
+            />
+            <Pencil className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
 
           {/* E-mail */}
-          <div className="bg-white rounded-xl p-4 flex items-center gap-2">
-            <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
-              E-mail
-            </span>
-            <div className="flex-1 flex items-center gap-3">
-              <input
-                type="email"
-                className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1"
-                style={{ fontSize: '10pt', minWidth: 0, marginLeft: '1rem' }}
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="email@email.com.br"
-              />
-              <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            </div>
+          <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
+            E-mail
+          </span>
+          <div className="relative" ref={emailWrapperRef}>
+            {showEmailPopup && emailError && (
+              <div
+                role="alert"
+                className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 bg-red-600 text-white text-[10px] px-3 py-2 rounded shadow-md pointer-events-none"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                {emailError}
+                <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-red-600" />
+              </div>
+            )}
+
+            <Imputs
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => onEmailChange(e.target.value)}
+              onBlur={onEmailBlur}
+              onFocus={onEmailFocus}
+              placeholder="email@email.com.br"
+              className={`bg-white border-gray-2 00 ${emailTouched && emailError ? 'border-red-500 bg-red-50' : 'border-gray-200'}`}
+              style={{ minHeight: '48px' }}
+              spellCheck={false}
+              inputMode="email"
+              aria-invalid={emailTouched && !!emailError}
+              aria-describedby={emailTouched && emailError ? 'email-error' : undefined}
+            />
+            {emailTouched && emailError && (
+              <span id="email-error" className="sr-only">
+                {emailError}
+              </span>
+            )}
+            <Pencil className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
 
           {/* Telefone */}
-          <div className="bg-white rounded-xl p-4 flex items-center gap-2">
-            <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
-              Telefone
-            </span>
-            <div className="flex-1 flex items-center gap-3">
-              <input
-                type="text"
-                className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1"
-                style={{ fontSize: '10pt', minWidth: 0, marginLeft: '1rem' }}
-                value={formatPhone(phone)}
-                onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))}
-                placeholder="(99) 99999-9999"
-                maxLength={16}
-              />
-              <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            </div>
+          <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
+            Telefone
+          </span>
+          <div className="relative">
+            <Imputs
+              id="phone"
+              type="tel"
+              value={formattedPhone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 11))}
+              placeholder="(00) 0 0000-0000"
+              className={`bg-white ${phoneLooksValid ? 'border-gray-200' : 'border-red-500 bg-red-50'}`}
+              style={{ minHeight: '48px' }}
+              spellCheck={false}
+              inputMode="numeric"
+              title="Formato: (00) 0 0000-0000"
+            />
+            <Pencil className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
 
           {/* Idade */}
-          <div className="bg-white rounded-xl p-4 flex items-center gap-2">
-            <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
-              Idade
-            </span>
-            <div className="flex-1 flex items-center gap-3">
-              <input
-                type="text"
-                className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1"
-                style={{ fontSize: '10pt', minWidth: 0, marginLeft: '1rem' }}
-                value={idade}
-                onChange={e => setIdade(e.target.value.replace(/\D/g, '').slice(0, 2))}
-                placeholder="21 anos"
-                maxLength={2}
-              />
-              <Pencil className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            </div>
+          <span className="font-hendrix-medium text-gray-700" style={{ fontSize: '10pt', minWidth: 80 }}>
+            Idade
+          </span>
+          <div className="relative" ref={ageWrapperRef}>
+            {showAgePopup && ageError && (
+              <div
+                role="alert"
+                className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 bg-red-600 text-white text-[10px] px-3 py-2 rounded shadow-md pointer-events-none"
+                style={{ whiteSpace: 'nowrap' }}
+              >
+                {ageError}
+                <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-red-600" />
+              </div>
+            )}
+
+            <Imputs
+              id="idade"
+              type="tel"
+              value={idade}
+              onChange={(e) => onAgeChange(e.target.value)}
+              onBlur={onAgeBlur}
+              onFocus={onAgeFocus}
+              placeholder="Digite sua idade"
+              className={`bg-white ${ageTouched && ageError ? 'border-red-500 bg-red-50' : 'border-gray-200'}`}
+              style={{ minHeight: '48px' }}
+              spellCheck={false}
+              inputMode="numeric"
+              maxLength={2}
+              aria-invalid={ageTouched && !!ageError}
+              aria-describedby={ageTouched && ageError ? 'age-error' : undefined}
+            />
+            {ageTouched && ageError && (
+              <span id="age-error" className="sr-only">
+                {ageError}
+              </span>
+            )}
+            <Pencil className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
           </div>
-          {/* Aviso de idade inválida */}
-          {idadeInvalida && (
-            <div className="text-red-600 font-hendrix-medium text-xs mt-1 ml-2">idade inválida</div>
-          )}
         </div>
       </div>
+
+      {/* Botão confirmar */}
       <div className="space-y-4">
-        {/* Botão Os dados estão corretos */}
         <button
           onClick={handleDadosCorretos}
-          disabled={(isLoading && tipoAcao === 'confirmar') || idadeInvalida}
+          disabled={
+            (isLoading && tipoAcao === 'confirmar') ||
+            !!validateEmail(email || '') ||
+            !!validateAge(idade || '')
+          }
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            ${(isLoading && tipoAcao === 'confirmar') || idadeInvalida
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg hover:shadow-xl'
+            w-full px-6 py-4 rounded-full font-hendrix-medium text-white 
+            shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 
+            transition-all duration-300
+            ${(isLoading && tipoAcao === 'confirmar') ||
+            !!validateEmail(email || '') ||
+            !!validateAge(idade || '')
+              ? 'bg-gradient-to-r from-gray-300 to-gray-400 opacity-70 cursor-not-allowed'
+              : 'bg-gradient-to-r from-[#1655ff] to-[#4285f4] hover:scale-105 active:scale-95'
             }
           `}
-          style={{ fontSize: '11pt' }}
+          style={{ fontSize: '11pt', boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)' }}
         >
           <div className="flex items-center justify-center space-x-2">
             {isLoading && tipoAcao === 'confirmar' ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Confirmando...</span>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="font-hendrix-medium tracking-wide text-[10pt]">
+                  Confirmando...
+                </span>
               </>
             ) : (
-              <>
-                <span>Os dados estão corretos</span>
-              </>
+              <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                Estão corretas
+              </span>
             )}
           </div>
         </button>

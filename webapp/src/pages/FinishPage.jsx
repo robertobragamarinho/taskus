@@ -7,8 +7,8 @@ import ReviewContratacao from '@/components/steps/finishPage/ReviewContratacao.j
 import ReviewStep2Contratacao from '@/components/steps/finishPage/ReviewStep2Contratacao.jsx';
 import ReviewStep3Contratacao from '@/components/steps/finishPage/ReviewStep3Contratacao.jsx';
 import ReviewStep4Contratacao from '@/components/steps/finishPage/ReviewStep4Contratacao.jsx';
-
-const LogoVagaCerta = null;
+import Header from '@/components/modules/Header.jsx';
+import LogoTaskUs from '../assets/logo-min.webp';
 
 const FinishPage = () => {
 
@@ -36,28 +36,10 @@ const FinishPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#181A1B]">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 flex-shrink-0 w-full">
-        <div className="w-full max-w-md md:max-w-2xl lg:max-w-3xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo VagaCerta */}
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                <img
-                  className='h-5 w-auto max-w-[120px] object-contain'
-                  src={LogoVagaCerta}
-                  alt="Logo VagaCerta"
-                />
-              </div>
-            </div>
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600 whitespace-nowrap">Contratação</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+             {/* Header */}
+             <Header rightText="Contratação" />
+   
 
       {/* Main Content */}
       <main className="">

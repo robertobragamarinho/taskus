@@ -1,63 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import '../../styles/refino.css';
 
-const FinalQuestionStep = ({ seconds = 30, onCountdownFinish }) => {
-  const [remaining, setRemaining] = useState(seconds);
-
+const FinalQuestionStep = ({ onCountdownFinish }) => {
+  // Deixa o body totalmente branco enquanto este step está ativo
   useEffect(() => {
-    setRemaining(seconds);
-    const timer = setInterval(() => {
-      setRemaining(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          if (typeof onCountdownFinish === 'function') onCountdownFinish();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    const prevBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = '#ffffff';
+    return () => {
+      document.body.style.backgroundColor = prevBg;
+    };
+  }, []);
 
-    return () => clearInterval(timer);
-  }, [seconds, onCountdownFinish]);
+  // Dispara o finish no menor tempo possível (próximo tick)
+  useEffect(() => {
+    const id = setTimeout(() => {
+      if (typeof onCountdownFinish === 'function') onCountdownFinish();
+    }, 0);
+    return () => clearTimeout(id);
+  }, [onCountdownFinish]);
 
-  const elapsed = seconds - remaining;
-  const percent = Math.max(0, Math.min(100, Math.round((elapsed / seconds) * 100)));
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-[360px] py-10">
-      <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-sm">
-        <div className="text-center">
-          <h1 className="tituloinicial font-hendrix-bold text-2xl text-gray-900 leading-tight">
-            Carregando entrevista...
-          </h1>
-
-          <div
-            className="subtituloinicial font-hendrix-regular text-base text-gray-600 leading-relaxed max-w-sm mx-auto mt-3"
-            style={{ minHeight: '56px' }}
-          >
-            <p className="transition-opacity duration-300 opacity-100">Aguarde enquanto preparamos tudo.</p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-            <div
-              className="h-2.5 rounded-full"
-              style={{
-                width: `${percent}%`,
-                background: 'linear-gradient(135deg, #1655ff 0%, #60a5fa 100%)',
-                transition: 'width 0.9s linear'
-              }}
-            />
-          </div>
-
-          <div className="text-center mt-3">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '10pt' }}>{percent}%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  // Página totalmente branca e sem conteúdo
+  return <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }} />;
 };
 
 export default FinalQuestionStep;

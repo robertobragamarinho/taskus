@@ -1,0 +1,132 @@
+/* Estilos Gerais */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+}
+
+.scroll-component-wrapper {
+    text-align: center;
+    padding: 20px;
+}
+
+.main-scroll-container {
+    /* Define a altura do container principal para ocupar a tela inteira */
+    height: 100vh;
+    overflow-y: scroll;
+    /* Aplica o efeito de Snap Scroll no eixo Y */
+    scroll-snap-type: y proximity;
+}
+
+/* Estilos para todas as Seções */
+.section {
+    min-height: 100vh; /* Garante que cada seção ocupe pelo menos a altura da viewport */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 50px 20px;
+    box-sizing: border-box;
+    position: relative; /* Necessário para o z-index e posicionamento interno */
+}
+
+.section-content {
+    max-width: 800px;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.next-button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff9800;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.next-button:hover {
+    background-color: #e68900;
+}
+
+/* --- 1. Snap Scroll (Rolagem Completa) --- */
+.section-snap {
+    background-color: #2196F3; /* Azul */
+    /* Faz com que a rolagem "grude" no início da seção */
+    scroll-snap-align: start;
+}
+
+#secao-1 { background-color: #2196F3; }
+#secao-5 { background-color: #03A9F4; }
+
+
+/* --- 2. Sticky Scroll com Cards Internos --- */
+.section-sticky-cards {
+    background-color: #9C27B0; /* Roxo */
+    /* Adiciona o snap-align para que a rolagem pare nesta seção */
+    scroll-snap-align: start;
+    /* A altura precisa ser maior que 100vh para permitir a rolagem interna */
+    height: 300vh; /* Exemplo: 3x a altura da viewport para rolar o conteúdo */
+    display: block; /* Volta para o display padrão para melhor controle de layout */
+    padding-top: 100px;
+}
+
+.section-sticky-cards .section-content {
+    text-align: left;
+    margin: 0 auto;
+}
+
+.sticky-container {
+    position: relative;
+    margin-top: 50px;
+    padding-bottom: 500px; /* Espaço extra para a rolagem */
+}
+
+.sticky-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Aplica o efeito sticky */
+    position: sticky;
+    /* O 'top' define onde o card vai parar e ficar fixo */
+    /* O valor é ajustado no JSX para simular o empilhamento */
+    top: 100px; /* Posição inicial de fixação */
+}
+
+/* Ajuste para as seções Sticky */
+#secao-2 { background-color: #9C27B0; }
+#secao-6 { background-color: #673AB7; }
+
+
+/* --- 3. Overlay Scroll (Seção de Baixo para Cima) --- */
+.section-overlay {
+    /* Garante que o snap funcione para a transição */
+    scroll-snap-align: start;
+    background-color: #FF5722; /* Laranja */
+}
+
+#secao-3 {
+    background-color: #FF5722;
+    z-index: 1; /* Base */
+}
+
+#secao-4 {
+    background-color: #4CAF50; /* Verde */
+    z-index: 2; /* Sobrepõe a seção 3 */
+    /* Para o efeito de sobreposição, a seção 4 precisa estar no fluxo normal
+       e o scroll-snap garante que ela ocupe a tela. O z-index faz a sobreposição visual. */
+}

@@ -25,7 +25,7 @@
     return telefone; // Retorna como está se não bater os padrões
   }
 
-import { User } from 'lucide-react';
+import { User, Mail, Phone, Calendar, MapPin, GraduationCap, Briefcase, Star } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -93,27 +93,13 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
 
   return (
     <div className="space-y-6">
-      {/* Título da etapa */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-hendrix-medium text-blue-600" style={{ fontSize: '10pt' }}>
-            Recrutamento Online
-          </h2>
-        </div>
-      </div>
-
-      {/* Título principal */}
-      <div className="text-center mb-6">
-        <h1 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt', lineHeight: '1.3' }}>
-          Currículo Finalizado
-        </h1>
-      </div>
-
       {/* Card do currículo */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
-        {/* Foto de perfil */}
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center overflow-hidden">
+      <div className="bg-white border border-gray-400 rounded-2xl p-6 space-y-6 shadow-sm">
+
+        {/* Foto + Nome alinhados lado a lado */}
+        <div className="flex bg-gray-50 rounded-xl p-3 items-center gap-3 mb-10">
+          {/* Foto de perfil */}
+          <div className="w-15 h-15 bg-gray-800  rounded-full flex items-center justify-center overflow-hidden">
             {fotoUrl ? (
               <img
                 src={fotoUrl}
@@ -124,44 +110,55 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
               <User className="w-10 h-10 text-white" />
             )}
           </div>
-        </div>
 
-        {/* Nome */}
-        <div className="text-center">
-          <h2 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '14pt' }}>
-            {nome}
-          </h2>
+          {/* Nome */}
+          <div>
+            <h2
+                className="font-hendrix-semibold text-gray-800 text-[12pt] leading-tight"
+              >
+                {nome}
+              </h2>
+          </div>
         </div>
 
         {/* Informações pessoais */}
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>E-mail</span>
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-gray-500" />
+              <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>E-mail</span>
+            </div>
             <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{email}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Telefone</span>
-            <input
-              type="text"
-              className="font-hendrix-regular text-gray-800 bg-transparent border-none focus:ring-0 outline-none text-right flex-1"
-              style={{ fontSize: '9pt', minWidth: 0, marginLeft: '1rem' }}
-              value={telefone}
-              readOnly
-            />
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-gray-500" />
+              <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Telefone</span>
+            </div>
+            <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{telefone}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Idade</span>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-gray-500" />
+              <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Idade</span>
+            </div>
             <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{idade}</span>
           </div>
           {/* Só mostra Estado e Cidade se NÃO houver nome do arquivo */}
           {!(dados && dados.arquivo && dados.arquivo.nome) && (
             <>
               <div className="flex justify-between items-center">
-                <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Estado</span>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Estado</span>
+                </div>
                 <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{estado}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Cidade</span>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '9pt' }}>Cidade</span>
+                </div>
                 <span className="font-hendrix-regular text-gray-800" style={{ fontSize: '9pt' }}>{cidade}</span>
               </div>
             </>
@@ -179,15 +176,26 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
           <>
             {/* Escolaridade */}
             <div className="space-y-3">
-              <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Escolaridade</h3>
-              <p className="font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>{escolaridade}</p>
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-gray-700" />
+                <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Escolaridade</h3>
+              </div>
+              <p className="font-hendrix-regular text-gray-600 pl-7" style={{ fontSize: '9pt' }}>{escolaridade}</p>
             </div>
 
-            {/* Experiência Profissional */}
-            <div className="space-y-4">
-              <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Experiência Profissional</h3>
-              {experiencias.length > 0 ? (
-                experiencias.map((exp, index) => (
+            {/* Experiência Profissional - só exibe se houver experiências válidas */}
+            {experiencias.length > 0 && experiencias.some(exp => 
+              (exp.nomeEmpresa || exp.nome) || 
+              (exp.funcao || exp.cargo) || 
+              (exp.dataInicio || exp.inicio) || 
+              (exp.dataFim || exp.fim)
+            ) && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5 text-gray-700" />
+                  <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Experiência Profissional</h3>
+                </div>
+                {experiencias.map((exp, index) => (
                   <div key={index} className="bg-gray-50 rounded-xl p-4 space-y-2">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
@@ -208,23 +216,25 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
                       <span className="font-hendrix-regular">{formatarDataBR(getValue(exp.dataFim || exp.fim))}</span>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-center text-gray-400 font-hendrix-regular" style={{ fontSize: '9pt' }}>
-                  Sem experiências profissionais.
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Habilidades em destaque */}
             <div className="space-y-4">
-              <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Habilidades em destaque</h3>
-              <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-gray-700" />
+                <h3 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '11pt' }}>Habilidades em destaque</h3>
+              </div>
+              <div className="space-y-2 pl-7">
                 {habilidades.length > 0 ? (
                   habilidades.map((hab, idx) => (
-                    <p key={idx} className="font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-                      {getValue(hab)}
-                    </p>
+                    <div key={idx} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-600 rounded-full"></div>
+                      <p className="font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
+                        {getValue(hab)}
+                      </p>
+                    </div>
                   ))
                 ) : (
                   <p className="font-hendrix-regular text-gray-400" style={{ fontSize: '9pt' }}>
@@ -261,11 +271,11 @@ const CurriculoFinalizadoStep = ({ curriculoData, fotoUrl, onEnviarParaAvaliacao
                 transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
                 style={{ borderTopColor: 'transparent', borderRightColor: 'white', borderBottomColor: 'white', borderLeftColor: 'white' }}
               />
-              <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Enviando...</span>
+              <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '12pt' }}>Enviando...</span>
             </>
           ) : (
             <>
-              <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>Enviar para análise</span>
+              <span className="font-hendrix-bold tracking-wide" style={{ fontSize: '12pt' }}>Enviar para análise</span>
             </>
           )}
         </motion.button>

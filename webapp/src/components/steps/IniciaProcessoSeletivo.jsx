@@ -1,84 +1,57 @@
 import { Check } from 'lucide-react';
+import { useEffect } from 'react';
 import '../../styles/refino.css';
 
-const IniciaProcessoSeletivo = () => {
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Continuity from "../modules/Continuity";
+import VerifiedList from "../modules/VerifiedList";
+import ExplanatoryCards from "../modules/ExplanatoryCards";
+import { IconAlert, IconChatLike, IconMailEditLike } from "../modules/SvgIcons";
+
+const IniciaProcessoSeletivo = ({ scrollToTopOnMount = true }) => {
+  // 👇 Faz o scroll subir ao abrir a página
+  useEffect(() => {
+    if (scrollToTopOnMount) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+  }, [scrollToTopOnMount]);
+
   const resources = [
+    { title: 'O que faz um atendente de suporte', description: '' },
+    { title: 'Como funciona a rotina de trabalho', description: '' },
+    { title: 'Benefícios de trabalhar na TaskUs', description: '' }
+  ];
+
+  const supportTypes = [
     {
-      title: 'O que faz um atendente de suporte',
-      description: ''
-    },
-    {
-      title: 'Como funciona a rotina de trabalho',
-      description: ''
-    },
-    {
-      title: 'Benefícios de trabalhar com a VagaCerta',
-      description: ''
+      id: 'phone',
+      icon: IconAlert,
+      title: 'Entrevista Online',
+      description:
+        'Devido à alta demanda de candidatos, a entrevista online é feita pelo formulário, com perguntas fechadas e respostas rápidas. Você não vai precisar falar com ninguém.'
     }
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Título principal */}
-      <div className="mb-6">
-        <h1
-          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
-          style={{ fontSize: '12pt', lineHeight: '1.2' }}
-        >
-          <span className="block sm:inline">
-            Bem-vindo(a) ao processo seletivo online da VagaCerta!
-          </span>
-        </h1>
+    <div className="bloco_principal">
+      <section id='ETP1T2'/>
+      <Maintexts>
+        <Headlines variant="black">
+          Vaga para atendente <br />de suporte ao cliente
+        </Headlines>
 
-        {/* Primeira descrição */}
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-600 mb-3" >
-          Em poucos minutos você vai saber se essa vaga é realmente para você
-        </p>
+        <Paragraphs variant="black">
+           Em menos de 2 minutos vamos<br/> te mostrar, de forma simples, os <br/>principais detalhes da vaga e como <br/>o trabalho funciona na prática.
+        </Paragraphs>
+      </Maintexts>
 
-        {/* Segunda descrição */}
-        <p className="textocontinuidade font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-          Você verá agora:
-        </p>
-      </div>
+      <Continuity variant="black">Você verá agora:</Continuity>
 
-      {/* Lista de recursos com checkmarks */}
-      <div className="space-y-4">
-        {resources.map((resource, index) => (
-          <div key={index} className="flex items-start space-x-3">
-            {/* Ícone de check */}
-            <div className="flex-shrink-0 mt-1">
-              <Check
-                className="w-5 h-5"
-                style={{ color: '#1655ff' }}
-              />
-            </div>
-
-            {/* Conteúdo */}
-            <div className="flex-1">
-              <h3
-                className="font-hendrix-medium mb-2"
-                style={{
-                  fontSize: '12pt',
-                  color: '#424242'
-                }}
-              >
-                {resource.title}
-              </h3>
-              <p
-                className="font-hendrix-regular leading-relaxed"
-                style={{
-                  fontSize: '11pt',
-                  lineHeight: '4vw',
-                  marginTop: '-2vw',
-                  color: '#969696'
-                }}
-              >
-                {resource.description}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <VerifiedList resources={resources} withDescription={false} />
+      <div className="mb-10"></div>
+      <ExplanatoryCards supportTypes={supportTypes} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import '../../styles/refino.css';
 
-const LogoVagaCerta = null;
+import LogoTaskUs from '../../assets/logo-min.webp';
 
 const PaymentCallback = ({ onContinue }) => {
 
@@ -41,7 +41,7 @@ const PaymentCallback = ({ onContinue }) => {
         <div className="text-center space-y-3 w-full">
           <img
             className="mx-auto"
-            src={LogoVagaCerta}
+            src={LogoTaskUs}
             style={{
               width: "100%",
               maxWidth: "250px",
@@ -49,7 +49,7 @@ const PaymentCallback = ({ onContinue }) => {
               opacity: blink ? 1 : 0.5,
               transition: "opacity 0.2s"
             }}
-            alt="VagaCerta Logo"
+            alt="TaskUs Logo"
           />
           <p
             className="font-hendrix-regular text-gray-600"
@@ -71,7 +71,7 @@ const PaymentCallback = ({ onContinue }) => {
               transition: "opacity 0.4s"
             }}
           >
-            Retornando para a plataforma da VagaCerta
+            Retornando para a plataforma da TaskUs
           </p>
         </div>
       </div>

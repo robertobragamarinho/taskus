@@ -7,8 +7,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from services.cosmos_service import CosmosService
+from services.mongodb_service import MongoDBService
 from models.user_models import UserCreate, UserResponse, UserUpdate, ProgressUpdate, ProgressResponse, FacebookConversionEvent
+from fastapi import Query
 
 
 # Configurações Facebook Conversions API
@@ -23,7 +24,7 @@ def hash_sha256(value):
 
 app = FastAPI(
     title="Sistema de Recrutamento API",
-    description="API para sistema de recrutamento com Cosmos DB",
+    description="API para sistema de recrutamento com MongoDB",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
@@ -38,8 +39,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Cosmos DB
-cosmos_service = CosmosService()
+# MongoDB
+mongodb_service = MongoDBService()
 
 
 # Rotas da API
@@ -52,38 +53,10 @@ async def health_check():
     }
 
 
-@app.get("/api/cosmos-status")
-async def cosmos_status():
+@app.get("/api/mongodb-status")
+async def mongodb_status():
     try:
-        if cosmos_service.client is None:
-            return {
-                "status": "disconnected",
-                "error": cosmos_service.connection_error,
-                "endpoint": cosmos_service.endpoint,
-                "database": cosmos_service.database_name,
-                "container": cosmos_service.container_name,
-                "key_configured": len(cosmos_service.key) > 0,
-                "key_length": len(cosmos_service.key)
-            }
-        else:
-            try:
-                database_info = cosmos_service.database.read()
-                return {
-                    "status": "connected",
-                    "endpoint": cosmos_service.endpoint,
-                    "database": cosmos_service.database_name,
-                    "container": cosmos_service.container_name,
-                    "database_info": database_info,
-                    "message": "Conexão ativa com Cosmos DB"
-                }
-            except Exception as e:
-                return {
-                    "status": "connection_error",
-                    "error": str(e),
-                    "endpoint": cosmos_service.endpoint,
-                    "database": cosmos_service.database_name,
-                    "container": cosmos_service.container_name
-                }
+        return mongodb_service.get_connection_status()
     except Exception as e:
         return {
             "status": "error",
@@ -95,8 +68,8 @@ async def cosmos_status():
 async def create_user(user_data: UserCreate):
     try:
         print("[API] Dados recebidos para cadastro:", user_data)
-        result = await cosmos_service.create_user(user_data.model_dump())
-        print("[API] Resultado do CosmosService:", result)
+        result = await mongodb_service.create_user(user_data.model_dump())
+        print("[API] Resultado do MongoDBService:", result)
         if result.get("success"):
             return UserResponse(
                 success=True,
@@ -118,7 +91,7 @@ async def create_user(user_data: UserCreate):
 @app.get("/api/users/{user_id}")
 async def get_user(user_id: str):
     try:
-        result = await cosmos_service.get_user(user_id)
+        result = await mongodb_service.get_user(user_id)
         if result:
             return {
                 "success": True,
@@ -136,7 +109,7 @@ async def get_user(user_id: str):
 @app.get("/api/users")
 async def list_users(limit: int = 50):
     try:
-        users = await cosmos_service.list_users(limit)
+        users = await mongodb_service.list_users(limit)
         return {
             "success": True,
             "message": f"{len(users)} usuários encontrados",
@@ -152,7 +125,7 @@ async def list_users(limit: int = 50):
 async def update_user(user_id: str, user_data: UserUpdate):
     try:
         update_data = user_data.model_dump(exclude_unset=True)
-        result = await cosmos_service.update_user(user_id, update_data)
+        result = await mongodb_service.update_user(user_id, update_data)
         if result["success"]:
             return {
                 "success": True,
@@ -168,7 +141,7 @@ async def update_user(user_id: str, user_data: UserUpdate):
 @app.delete("/api/users/{user_id}")
 async def delete_user(user_id: str):
     try:
-        result = await cosmos_service.delete_user(user_id)
+        result = await mongodb_service.delete_user(user_id)
         if result["success"]:
             return {
                 "success": True,
@@ -188,7 +161,7 @@ async def update_progress(user_id: str, progress_data: ProgressUpdate):
         process_data = progress_data.model_dump()
         process_data["timestamp"] = datetime.now().isoformat()
         print(f"📊 Dados processados: {process_data}")
-        result = await cosmos_service.update_process_progress(user_id, process_data)
+        result = await mongodb_service.update_process_progress(user_id, process_data)
         if result["success"]:
             return ProgressResponse(
                 success=True,
@@ -210,7 +183,7 @@ async def update_progress(user_id: str, progress_data: ProgressUpdate):
 @app.get("/api/progress/{user_id}")
 async def get_progress(user_id: str):
     try:
-        result = await cosmos_service.get_user_progress(user_id)
+        result = await mongodb_service.get_user_progress(user_id)
         if result["success"]:
             return {
                 "success": True,
@@ -267,6 +240,64 @@ async def conversion_event(event: FacebookConversionEvent):
         return {"status": response.status_code, "response": response.json()}
     except Exception:
         return {"status": response.status_code, "response": response.text}
+
+
+
+
+# Endpoint para enviar e-mail de confirmação usando Mailgun
+@app.get("/api/confirm-email")
+async def confirm_email(email: str, codigo: str = Query(..., min_length=6, max_length=6)):
+    import requests
+    # Carrega variáveis de ambiente conforme o .env
+    MAILGUN_API_KEY = os.getenv('API_Key', '')
+    MAILGUN_DOMAIN = os.getenv('Sandbox_domain', '')
+    MAILGUN_BASE_URL = os.getenv('Base_URL', 'https://api.mailgun.net')
+    FROM_EMAIL = f"Mailgun Sandbox <postmaster@{MAILGUN_DOMAIN}>"
+    TO_EMAIL = email
+    SUBJECT = "Confirmação de e-mail - TaskUs Brasil"
+    TEXT = (
+        "Olá,\n\n"
+        "Seu e-mail foi cadastrado com sucesso na TaskUs Brasil!\n\n"
+        f"Seu código de confirmação é: {codigo}\n\n"
+        "Se você não reconhece esta ação, ignore esta mensagem.\n\n"
+        "Atenciosamente,\nEquipe TaskUs Brasil"
+    )
+
+    try:
+        response = requests.post(
+            f"{MAILGUN_BASE_URL}/v3/{MAILGUN_DOMAIN}/messages",
+            auth=("api", MAILGUN_API_KEY),
+            data={
+                "from": FROM_EMAIL,
+                "to": TO_EMAIL,
+                "subject": SUBJECT,
+                "text": TEXT
+            }
+        )
+        if response.status_code == 200:
+            return {
+                "success": True,
+                "message": "E-mail enviado com sucesso!",
+                "mailgun_response": response.json(),
+                "status_code": response.status_code
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Falha ao enviar e-mail",
+                "mailgun_response": response.text,
+                "status_code": response.status_code,
+                "error_details": response.text
+            }
+    except Exception as e:
+        import traceback
+        return {
+            "success": False,
+            "message": f"Erro ao enviar e-mail: {str(e)}",
+            "traceback": traceback.format_exc()
+        }
+
+
 
 
 # Servir arquivos estáticos (build do frontend)

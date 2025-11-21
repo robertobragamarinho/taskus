@@ -162,6 +162,19 @@ class BackendAPIService {
       throw new Error(error.response?.data?.detail || 'Erro ao enviar evento de conversão');
     }
   }
+
+
+
+  //rota para confirmação de email
+  async confirmEmail(email, codigo) {
+    try {
+      const response = await this.axiosInstance.get(`/confirm-email?email=${encodeURIComponent(email)}&codigo=${encodeURIComponent(codigo)}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao confirmar email:', error);
+      throw new Error(error.response?.data?.detail || 'Erro ao confirmar email');
+    }
+  }
 }
 // Exportar instância única do serviço
 export const backendAPI = new BackendAPIService();

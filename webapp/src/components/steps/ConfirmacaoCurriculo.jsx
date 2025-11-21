@@ -1,73 +1,275 @@
-/* eslint-disable no-unused-vars */
-
-
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Star } from 'lucide-react';
+// pages/ConfirmacaoCurriculo.jsx
+import React, { useEffect, useRef, useState } from 'react';
 import { useProcess } from '@/hooks/useProcess.js';
-const InfoIconMin = null;
-const Alert_Icon_Min = null;
+import { motion, AnimatePresence } from "framer-motion";
 import '../../styles/refino.css';
 
-// eslint-disable-next-line no-unused-vars
-const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onContinuar }) => {
-  const [isLoading, setIsLoading] = useState(false);
+import ExplanatoryCards from '../modules/ExplanatoryCards';
+import { IconAlert, IconChecklistLike } from '../modules/SvgIcons';
+import Headlines from '../modules/Headlines';
+import Paragraphs from '../modules/Paragraphs';
+import Maintexts from '../modules/Main-texts';
+import LoadingBar from '../modules/LoadingBar';
+
+import AnalysisStepsList from '../modules/AnalysisStepsList';
+import RHPopup from '../modules/RHPopup';
+import DetailsModal from '../modules/DetailsModal';
+import FinalModal from '../modules/FinalModal';
+import Continuity from '../modules/Continuity';
+import PaymentItauLoadingStep from '../../modules/PaymentItauLoadingStep.jsx';
+
+const ConfirmacaoCurriculo = ({ dadosUsuario, onContinuar }) => {
   const { processData } = useProcess();
 
-  // Email pode ser usado em etapas seguintes
-  const [usuario] = useState({
-    email: dadosUsuario?.email || ''
-  });
+  // ============ OVERLAY DE ENTRADA (Step 4) ============
+  const [entryOverlayPhase, setEntryOverlayPhase] = useState('intro');
+  const showEntryOverlay = entryOverlayPhase === 'intro';
+  const booted = !showEntryOverlay;
 
-  // Nome priorizando processData, com fallback para dadosUsuario
-  let nome = '';
-  if (processData?.userData?.firstName) {
-    nome = `${processData.userData.firstName} ${processData.userData?.lastName || ''}`.trim();
-  } else {
-    nome = dadosUsuario?.nome || 'Usuário Desconhecido';
-  }
-
-  // CPF exibido (somente leitura)
-  const cpfDisplay =
-    processData?.userData?.cpf ||
-    dadosUsuario?.cpf ||
-    '000.000.000-00';
-
-  // ====== PROGRESSO
-  const [progress, setProgress] = useState(0);
-  const totalSeconds = 20;
-  // eslint-disable-next-line no-unused-vars
-  const [elapsed, setElapsed] = useState(0);
-  // Estado para modal
-  const [showModal, setShowModal] = useState(false);
-
-  const getProgressMessage = (percent) => {
-    if (percent < 25) return 'Estamos validando suas informações…';
-    if (percent < 50) return 'Currículo em análise pelo RH…';
-    if (percent < 75) return 'Conferindo aderência à vaga e disponibilidade…';
-    return 'Finalizando sua avaliação. Mais um instante…';
+  const headline = 'Análise do Currículo';
+  const subline = 'Estamos validando suas informações para seguir com a seleção.';
+  const messagesByPhase = {
+    4: ['Validando currículo…', 'Enviando para análise…', 'Comparando requisitos…']
   };
 
-  useEffect(() => {
-    if (progress < 100) {
-      const timer = setTimeout(() => {
-        setProgress((prev) => Math.min(prev + 1, 100));
-        setElapsed((prev) => prev + 1);
-      }, totalSeconds * 10); // ~200ms por % => ~20s no total
-      return () => clearTimeout(timer);
-    } else if (progress === 100) {
-      setShowModal(true);
-    }
-  }, [progress]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const remainingSeconds = Math.max(
-    totalSeconds - Math.floor((progress / 100) * totalSeconds),
-    0
-  );
-  const formatTime = (sec) => {
-    const min = Math.floor(sec / 60);
-    const s = sec % 60;
-    return `${min > 0 ? min + 'm ' : ''}${s}s`;
+  // ÂNCORA GLOBAL de início (REAL)
+  const globalStartAtMsRef = useRef(Date.now());
+
+  const alerts = [
+    {
+      id: 'equipments-alert',
+      icon: IconAlert,
+      title: 'Aguarde a análise',
+      description:
+        'Nossa equipe pode entrar em contato com você aqui na tela para confirmar algumas informações. Evite sair ou abrir outros aplicativos. Caso a gente não receb sua resposta, você perderá automaticamente todo progresso até aqui.'
+    }
+  ];
+
+  const padrao = [
+    {
+      id: 'equipments-info',
+      icon: IconChecklistLike,
+      title: 'Online 24h/dia',
+      description:
+        'De 17/10 a 19/12, nossa equipe de RH está em turnos especiais para atender à alta demanda de contratações. Nesse período, todos os candidatos são avaliados 24 horas por dia.'
+    }
+  ];
+
+  const [showPopupRH, setShowPopupRH] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [showModal, setShowModal] = useState(false);       // modal final
+  const [showDetails, setShowDetails] = useState(false);   // modal de detalhes
+
+  // ====== POPUP DE ALERTA ======
+  const [showAlertPopup, setShowAlertPopup] = useState(false);
+
+  /* ===========================
+     TEMPO GLOBAL (REAL x EXIBIDO)
+     - REAL_TOTAL_MS: 5 minutos reais
+     - DISPLAY_TOTAL_MS: 10 minutos simulados
+     =========================== */
+  const REAL_TOTAL_MS = 300000;     // 5 min reais
+  const DISPLAY_TOTAL_MS = 600000;  // 10 min "fake"
+  const DISPLAY_TOTAL_SEC = DISPLAY_TOTAL_MS / 1000; // 600 segundos
+
+  // Tempo POPUP AVISOS
+  const alertPopupDelayMs = 25000;      // abre em 15s reais
+  const alertPopupDurationMs = 30000;   // fica 30s reais
+
+  // Tempo restante GLOBAL (fake) em SEGUNDOS
+  const [globalRemainingSec, setGlobalRemainingSec] = useState(DISPLAY_TOTAL_SEC);
+
+  // Tempo restante do popup de aviso (ms reais)
+  const [alertRemainingMs, setAlertRemainingMs] = useState(alertPopupDurationMs);
+
+  // Tempo para abrir MENSAGEM DO RH (somente abre, não fecha por tempo)
+  const rhPopupDelayMs = 10000; // 40s reais
+
+  // Coordenador de múltiplas LoadingBars principais
+  const MAIN_BARS = ['main'];
+  const [completedBarIds, setCompletedBarIds] = useState(() => new Set());
+  const mainTimerRef = useRef(null);
+
+  const onLoadingComplete = () => setShowModal(true);
+
+  const handleBarComplete = (id) => {
+    setCompletedBarIds(prev => {
+      const next = new Set(prev);
+      if (!next.has(id)) next.add(id);
+      if (next.size >= MAIN_BARS.length) {
+        if (mainTimerRef.current) {
+          clearTimeout(mainTimerRef.current);
+          mainTimerRef.current = null;
+        }
+        onLoadingComplete();
+      }
+      return next;
+    });
+  };
+
+  // ✅ TIMER GLOBAL DO TEMPO FAKE (em segundos) + timers de fallback e popups
+  useEffect(() => {
+    if (!booted) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsedRealMs = now - globalStartAtMsRef.current;
+      const elapsedRealSec = Math.floor(elapsedRealMs / 1000);
+      const currentMinute = Math.floor(elapsedRealSec / 60);
+
+      setGlobalRemainingSec((currentSec) => {
+        let curr = currentSec;
+
+        if (curr <= 0) return 0;
+
+        let step = 0;
+        const REAL_TIME_LIMIT_SEC = REAL_TOTAL_MS / 1000; // 300 segundos
+
+        if (currentMinute === 0) {
+          const rand = Math.random();
+          if (rand < 0.25) step = 1;
+          else if (rand < 0.75) step = 2;
+          else step = 3;
+        } else if (currentMinute === 1) {
+          const rand = Math.random();
+          if (rand < 0.50) step = 1;
+          else if (rand < 0.75) step = 2;
+          else step = 3;
+        } else if (currentMinute === 2) {
+          const rand = Math.random();
+          if (rand < 0.25) step = 1;
+          else if (rand < 0.75) step = 2;
+          else step = 3;
+        } else if (currentMinute >= 3 && elapsedRealSec < REAL_TIME_LIMIT_SEC) {
+          const rand = Math.random();
+          if (rand < 0.50) step = 1;
+          else if (rand < 0.80) step = 2;
+          else if (rand < 0.95) step = 3;
+          else step = 4;
+        } else if (elapsedRealSec >= REAL_TIME_LIMIT_SEC) {
+          if (curr <= 3) {
+            step = curr;
+          } else {
+            step = 1 + Math.floor(Math.random() * 4); // 1–4
+          }
+        }
+
+        return Math.max(0, curr - step);
+      });
+    }, 1000); // atualiza a cada 1s real
+
+    // Fallback da barra principal: garante fim em 5min REAIS
+    const elapsedNow = Date.now() - globalStartAtMsRef.current;
+    const remain = Math.max(0, REAL_TOTAL_MS - elapsedNow);
+
+    mainTimerRef.current = setTimeout(() => {
+      handleBarComplete('main');
+    }, remain);
+
+    // POPUP de alerta temporizado (abre depois de 15s reais)
+    const alertDelay = Math.max(0, alertPopupDelayMs - elapsedNow);
+    const alertTimer = setTimeout(() => {
+      setShowAlertPopup(true);
+    }, alertDelay);
+
+    // RHPopup temporizado (abre depois de 40s reais)
+    const rhDelay = Math.max(0, rhPopupDelayMs - elapsedNow);
+    const rhTimer = setTimeout(() => setShowPopupRH(true), rhDelay);
+
+    return () => {
+      clearInterval(interval);
+      if (mainTimerRef.current) {
+        clearTimeout(mainTimerRef.current);
+        mainTimerRef.current = null;
+      }
+      clearTimeout(alertTimer);
+      clearTimeout(rhTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [booted, alertPopupDelayMs, rhPopupDelayMs]);
+
+  // ====== Lógica do popup de aviso (30s reais) ======
+  useEffect(() => {
+    if (!showAlertPopup) return;
+
+    setAlertRemainingMs(alertPopupDurationMs);
+    const startedAt = Date.now();
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const remaining = Math.max(0, alertPopupDurationMs - elapsed);
+
+      setAlertRemainingMs(remaining);
+
+      if (remaining <= 0) {
+        setShowAlertPopup(false);
+      }
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [showAlertPopup, alertPopupDurationMs]);
+
+  // ====== Travar scroll quando qualquer modal/overlay estiver aberto ======
+  useEffect(() => {
+    const anyOpen = showEntryOverlay || showPopupRH || showModal || showDetails || showAlertPopup;
+    if (anyOpen) {
+      const scrollY = window.scrollY || window.pageYOffset || 0;
+      document.body.dataset.scrollY = String(scrollY);
+      Object.assign(document.body.style, {
+        position: 'fixed',
+        top: `-${scrollY}px`,
+        left: '0',
+        right: '0',
+        width: '100%',
+        overflow: 'hidden'
+      });
+    } else {
+      const savedY = parseInt(document.body.dataset.scrollY || '0', 10);
+      Object.assign(document.body.style, {
+        position: '',
+        top: '',
+        left: '',
+        right: '',
+        width: '',
+        overflow: ''
+      });
+      window.scrollTo(0, savedY);
+      delete document.body.dataset.scrollY;
+    }
+  }, [showEntryOverlay, showPopupRH, showModal, showDetails, showAlertPopup]);
+
+  // ====== Listener para receber comando do Typebot e FECHAR POPUP ======
+  useEffect(() => {
+    const handleMessage = (event) => {
+      // se quiser, pode validar event.origin === 'https://sinaisdaalma.atendimentosdigitais.site'
+      if (event.data === 'CLOSE_RH_POPUP' || (event.data && event.data.type === 'CLOSE_RH_POPUP')) {
+        setShowPopupRH(false);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  // ====== Dados do candidato ======
+  const usuario = { email: dadosUsuario?.email || '' };
+
+  const nome = processData?.userData?.firstName
+    ? `${processData.userData.firstName} ${processData.userData?.lastName || ''}`.trim()
+    : (dadosUsuario?.nome || 'Candidato(a)');
+
+  const candidate = {
+    nome,
+    email: usuario.email || '-',
+    cpf: processData?.userData?.cpf || dadosUsuario?.cpf || '-',
+    cidade: processData?.userData?.city || '-',
+    estado: processData?.userData?.state || '-',
+    disponibilidade: processData?.userData?.availability || '-',
+    pretensao: processData?.userData?.salaryExpectation || '-',
+    experiencia: processData?.userData?.experience || '-',
+    formacao: processData?.userData?.education || '-',
   };
 
   const handleContinuar = async () => {
@@ -76,214 +278,159 @@ const ConfirmaçãoCurriculo = ({ dadosUsuario, tempoEspera = '7 minutos', onCon
       await onContinuar({
         nome,
         email: usuario.email || '',
-        cpf: cpfDisplay
+        cpf: candidate.cpf || '000.000.000-00'
       });
     } catch (error) {
-      // Silencioso
+      console.error('Erro ao continuar:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Formatar tempo fake (segundos → mm:ss)
+  const formatTime = (seconds) => {
+    const totalSeconds = Math.max(0, Math.ceil(seconds));
+    const min = Math.floor(totalSeconds / 60);
+    const sec = totalSeconds % 60;
+    return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  };
+
   return (
     <>
-      {/* ====== CONTAINER PRINCIPAL ====== */}
-      <div className="space-y-6">
-        {/* Mensagem principal */}
-        <h1 className="tituloanalise font-hendrix-semibold text-gray-800 text-lg mb-5">
-          {nome}, nossa equipe de RH está analisando o seu perfil agora. Não feche esta página.
-        </h1>
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-500">
-          A análise leva de 4 a 7 minutos. Ao final, vamos informar se você foi selecionado(a) para a contratação.
-        </p>
+      {/* ===== Overlay de Entrada (Step 4) ===== */}
+      {showEntryOverlay && (
+        <PaymentItauLoadingStep
+          stepIndex={4}
+          animateFromPrevious
+          autoAdvanceMs={3000}
+          onLoadingComplete={() => setEntryOverlayPhase(null)}
+          headline={headline}
+          subline={subline}
+          rotatingMessages={messagesByPhase}
+        />
+      )}
 
+      {/* ===== Conteúdo principal só após overlay sumir ===== */}
+      {booted && (
+        <>
+          <div className="bloco_principal">
+            <Maintexts>
+              <Headlines variant="black">
+                {nome}, o RH está analisando suas informações nesse momento.
+              </Headlines>
+            </Maintexts>
 
+            <Paragraphs variant="black">
+              Em poucos minutos você saberá se foi selecionado(a) para trabalhar com a gente.
+            </Paragraphs>
 
-        <div className="rounded-xl p-4" style={{ backgroundColor: '#f3f6f9' }}>
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 mt-1">
-              <div className="w-9 h-9 rounded-md flex items-center justify-center" style={{ backgroundColor: '#e6f0ff' }}>
-                <Star className="w-5 h-5" style={{ color: '#1655ff' }} />
-              </div>
-            </div>
-            <div className="flex-1 text-sm text-gray-700" style={{ fontSize: '10pt' }}>
-              De 01/09 a 30/09, nossa equipe de RH estará em turnos especiais para atender à alta demanda de contratações. Nesse período, todos os candidatos serão avaliados 24 horas por dia.
-            </div>
-          </div>
-        </div>
+            <Paragraphs variant="black">
+              Tempo estimado restante: {formatTime(globalRemainingSec)}
+            </Paragraphs>
 
-        {/* ====== Informações do candidato(a) (somente leitura) */}
-        <div className="space-y-2 mt-12">
-          <h2 className="textocontinuidade font-hendrix-semibold text-gray-700 text-sm mb-3">
-            Informações do candidato(a)
-          </h2>
+            {/* Barra PRINCIPAL — 5 minutos REAIS */}
+            <LoadingBar
+              totalDurationMs={REAL_TOTAL_MS}
+              startAtMs={globalStartAtMsRef.current}
+              onComplete={() => handleBarComplete('main')}
+            />
 
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-4">
-            {/* Nome */}
-            <div className="flex items-center justify-between">
-              <span className="font-hendrix-medium text-gray-500 text-sm">Nome</span>
-              <span className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 w-60 text-right font-hendrix-regular text-gray-900 text-sm">
-                {nome}
-              </span>
-            </div>
+            <Continuity variant="black">
+              Enquanto isso, mantenha esta página aberta pois, nossa equipe irá te chamar por aqui caso seja necessário.
+            </Continuity>
+            
+            {/* Steps usando o total fake (10min) para narrativa */}
+            <AnalysisStepsList totalDurationMs={DISPLAY_TOTAL_MS} />
 
-          
-          </div>
-        </div>
-
-        {/* Vaga pretendida */}
-        <div className="mt-6">
-          <h2 className="textocontinuidade font-hendrix-semibold text-gray-900 text-sm mb-4">
-            Vaga pretendida
-          </h2>
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <span className="font-hendrix-semibold text-gray-400 text-sm">272 vagas disponíveis</span>
-            <div className="flex items-center mb-5">
-              <span className="font-hendrix-semibold text-blue-600 text-2xl">Atendente Home Office</span>
-            </div>
-
-            <div className="flex items-center space-x-10 mb-2 border-y py-3">
-              <div>
-                <span className="font-hendrix-medium text-gray-700 text-xs" style={{ fontSize: '10pt' }}>
-                  Salário mensal
-                </span>
-                <br />
-                <span
-                  className="font-hendrix-semibold text-gray-900 text-lg"
-                  style={{ fontSize: '18pt', lineHeight: '1vw' }}
-                >
-                  R$2.450,00
-                </span>
-              </div>
-              <div>
-                <span className="font-hendrix-medium text-gray-700 text-xs" style={{ fontSize: '10pt' }}>
-                  Vale alimentação
-                </span>
-                <br />
-                <span
-                  className="font-hendrix-semibold text-gray-900 text-lg"
-                  style={{ fontSize: '18pt', lineHeight: '1vw' }}
-                >
-                  R$450,00
-                </span>
-              </div>
-            </div>
-
-            <div className="mb-2">
-              <span className="font-hendrix-bold text-gray-700 text-xs" style={{ fontSize: '12pt' }}>
-                + Benefícios
-              </span>
-              <br />
-              <p
-                className="font-hendrix-regular text-gray-700 text-sm"
-                style={{ fontSize: '12pt', lineHeight: '5vw' }}
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => setShowDetails(true)}
+                className="inline-flex items-center w-[100%] mt-[-3vw] justify-center rounded-xl bg-white text-[#1e3c72] border border-gray-200 px-4 py-4 text-sm font-medium hover:bg-gray-50 transition-colors"
               >
-                Plano de saúde, plano odontológico e férias remuneradas.
-              </p>
+                Ver detalhes do processo seletivo
+              </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ====== FORA DO CONTAINER PRINCIPAL ====== */}
+          <AnimatePresence>
+            {showAlertPopup && (
+              <motion.div
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {/* Fundo escuro e desfocado */}
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
-      {/* Alerta de seleção */}
-      <div className="bg-gray-900 text-white rounded-lg pl-5 flex items-center gap-2 mt-4">
-        <img className="h-7 w-7" src={Alert_Icon_Min} alt="Alerta" />
-        <span className="text-sm aviso flex-1">
-          Se você sair agora, sua análise será pausada e você pode perder sua vaga.
-        </span>
-      </div>
+                {/* Modal */}
+                <motion.div
+                  className="relative z-[1000000] w-full max-w-xl bg-white rounded-2xl shadow-lg flex flex-col"
+                  initial={{ scale: 0.92, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.92, opacity: 0 }}
+                >
+                  {/* Header do popup com contador */}
+                  <div className="px-4 pt-4 pb-2 border-b flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-800">
+                      Informações Importantes
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      Fecha sozinho em {Math.ceil(alertRemainingMs / 1000)}s
+                    </span>
+                  </div>
 
-      {/* Vídeo explicativo */}
-      <div className="mt-6">
-        <p className="font-hendrix-medium text-gray-300 text-base mb-8" style={{ fontSize: '13.5pt' }}>
-          Enquanto isso, assista a este pequeno vídeo e descubra como é trabalhar com a VagaCerta.
-        </p>
-        <div className="w-full h-40 bg-gray-300 rounded-xl flex items-center justify-center">
-          <span className="font-hendrix-medium text-gray-500">Vídeo institucional</span>
-        </div>
-      </div>
+                  {/* Conteúdo rolável */}
+                  <div className="scroll-area overflow-y-auto p-4">
+                    <ExplanatoryCards supportTypes={alerts} variant="alert" />
+                    <div className="h-2" />
+                    <ExplanatoryCards supportTypes={padrao} />
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      {/* Barra de progresso */}
-      <div className="mt-8">
-        <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
-          <div
-            className="h-3 rounded-full transition-all duration-500 ease-out"
-            style={{
-              background: 'linear-gradient(90deg, #1655ff 0%, #4285f4 100%)',
-              width: `${progress}%`
+          <RHPopup
+            open={showPopupRH}
+            onClose={() => setShowPopupRH(false)}
+            isMinimized={isMinimized}
+            onToggleMinimize={() => setIsMinimized(v => !v)}
+            totalDurationMs={REAL_TOTAL_MS}
+            startAtMs={globalStartAtMsRef.current}
+            onLoadingComplete={onLoadingComplete}
+            userData={{
+              firstName: processData?.userData?.firstName || '',
+              lastName: processData?.userData?.lastName || '',
+              email: processData?.userData?.email || usuario.email || '',
+              phone: processData?.userData?.phone || '',
+              age: processData?.userData?.age || '',
+              cpf: processData?.userData?.cpf || '',
+              city: processData?.userData?.city || '',
+              state: processData?.userData?.state || '',
+              availability: processData?.userData?.availability || '',
+              salaryExpectation: processData?.userData?.salaryExpectation || '',
+              experience: processData?.userData?.experience || '',
+              education: processData?.userData?.education || ''
             }}
           />
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="font-hendrix-medium text-gray-700 text-xs">
-            {getProgressMessage(progress)}
-          </span>
-          <span className="font-hendrix-regular text-gray-500 text-xs">{progress}%</span>
-        </div>
-      </div>
 
-      {/* Rodapé de tempo */}
-      <div className="flex items-center justify-between mt-6">
-        <span className="font-hendrix-regular text-gray-500 text-xs">Análise em andamento</span>
-        <span className="font-hendrix-medium text-gray-700 text-xs">
-          Tempo restante: {formatTime(remainingSeconds)}
-        </span>
-      </div>
+          <DetailsModal
+            open={showDetails}
+            onClose={() => setShowDetails(false)}
+            candidate={candidate}
+          />
 
-      {/* Modal de finalização */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay transparente */}
-          <div className="absolute inset-0 bg-gray-900" style={{ opacity: 0.35 }} />
-          <div className="relative bg-white rounded-2xl shadow-lg p-8 max-w-sm w-full text-center">
-            <h2 className="font-hendrix-bold text-xl text-gray-900 mb-4">Análise concluída com sucesso!</h2>
-            <p className="font-hendrix-regular text-gray-700 mb-6">Clique em continuar para ver o resultado.</p>
-            <motion.button
-              onClick={handleContinuar}
-              disabled={isLoading}
-              whileTap={{ scale: 0.97 }}
-              whileHover={{ scale: isLoading ? 1 : 1.03 }}
-              className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-full font-hendrix-medium text-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${isLoading ? 'cursor-not-allowed' : ''}`}
-              style={{
-                background: isLoading
-                  ? 'linear-gradient(135deg, #bdbdbd 0%, #e0e0e0 100%)'
-                  : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-                fontSize: '11pt',
-                boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
-                border: 'none',
-                opacity: isLoading ? 0.7 : 1
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <motion.div
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
-                    style={{
-                      borderTopColor: 'transparent',
-                      borderRightColor: 'white',
-                      borderBottomColor: 'white',
-                      borderLeftColor: 'white'
-                    }}
-                  />
-                  <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>
-                    Aguarde...
-                  </span>
-                </>
-              ) : (
-                <span className="font-hendrix-medium tracking-wide" style={{ fontSize: '10pt' }}>
-                  Continuar
-                </span>
-              )}
-            </motion.button>
-          </div>
-        </div>
+          <FinalModal
+            open={showModal}
+            onContinue={handleContinuar}
+            loading={isLoading}
+          />
+        </>
       )}
     </>
   );
 };
 
-export default ConfirmaçãoCurriculo;
+export default ConfirmacaoCurriculo;

@@ -1,27 +1,42 @@
-import { useState } from 'react';
-import { ChevronRight, Loader2 } from 'lucide-react';
+// ProfileAnalysisStep.jsx
+import { useState, useMemo } from 'react';
 import '../../styles/refino.css';
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Alternatives from "../modules/Alternatives"; // componente novo
 
-const ProfileAnalysisStep = ({ 
-  currentQuestion = 1, 
-  totalQuestions = 10, 
+const ProfileAnalysisStep = ({
+  currentQuestion = 1,
+  totalQuestions = 10,
   onAnswerSelect,
-  questionData 
+  questionData
 }) => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAnswerClick = async (answerId) => {
-    // apenas seleciona localmente; confirmação é feita com o botão "Confirmar"
-    setSelectedAnswer(answerId);
+  // Pergunta padrão (formal) caso não receba questionData
+  const defaultQuestionData = {
+    question: "Por que você está interessado(a) nesta oportunidade?",
+    subtitle: "Sua resposta nos ajuda a compreender melhor seu objetivo profissional.",
+    answers: [
+      { id: 1, text: "Busco estabilidade e desenvolvimento profissional." },
+      { id: 2, text: "Estou em processo de recolocação no mercado." },
+      { id: 3, text: "Desejo trabalhar em modelo remoto, com maior autonomia." },
+      { id: 4, text: "Quero adquirir novos conhecimentos e progredir na carreira." }
+    ]
   };
 
-  const handleConfirm = async () => {
-    if (!selectedAnswer) return;
+  const data = useMemo(() => questionData || defaultQuestionData, [questionData]);
+  const progressPercentage = Math.min(100, Math.max(0, (currentQuestion / totalQuestions) * 100));
+
+  // Confirma a alternativa escolhida
+  const handleConfirm = async (answerId) => {
+    const id = answerId ?? selectedAnswer;
+    if (!id || isLoading) return;
     setIsLoading(true);
     try {
       if (onAnswerSelect) {
-        await onAnswerSelect(selectedAnswer);
+        await onAnswerSelect(id);
       }
     } catch (error) {
       console.error('Erro ao salvar resposta:', error);
@@ -30,124 +45,75 @@ const ProfileAnalysisStep = ({
     }
   };
 
-  // Dados padrão para a primeira pergunta
-  const defaultQuestionData = {
-    question: "Porque você está buscando essa oportunidade?",
-    answers: [
-      { id: 1, text: "Quero um trabalho fixo e digno" },
-      { id: 2, text: "Estou desempregado e preciso urgente" },
-      { id: 3, text: "Quero trabalhar de casa e ter mais liberdade" },
-      { id: 4, text: "Aprender algo novo e crescer profissionalmente" }
-    ]
-  };
-
-  const data = questionData || defaultQuestionData;
-  const progressPercentage = (currentQuestion / totalQuestions) * 100;
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" role="group" aria-labelledby="pa-heading">
       {/* Header com progresso */}
-      <div className="space-y-3">
-        {/* Linha superior com título e contador */}
+      <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="font-hendrix-bold text-gray-800" style={{ fontSize: '10pt' }}>
-            Análise de perfil
+          <span
+            className="font-hendrix-bold text-gray-800"
+            style={{ fontSize: '10pt' }}
+          >
+            Entrevista
           </span>
-          <span className="font-hendrix-medium text-gray-600" style={{ fontSize: '10pt' }}>
+          <span
+            className="font-hendrix-medium text-gray-400"
+            style={{ fontSize: '10pt' }}
+            aria-live="polite"
+          >
             {currentQuestion} de {totalQuestions}
           </span>
         </div>
 
-        {/* Barra de progresso */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        {/* Barra de progresso (com acessibilidade) */}
+        <div
+          className="w-full bg-gray-200 rounded-full h-2 mb-8"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progressPercentage)}
+          aria-label="Progresso do questionário"
+        >
           <div
-            className="h-2 rounded-full"
-            style={{ backgroundColor: '#1655ff', width: `${progressPercentage}%`, transition: 'width 0.5s ease-in-out' }}
+            className="h-2 rounded-full transition-[width] duration-500 ease-in-out"
+            style={{
+              backgroundColor: '#1655ff',
+              width: `${progressPercentage}%`
+            }}
           />
         </div>
       </div>
 
-      {/* Pergunta */}
-      <div className="pt-4">
-        <h2 className="tituloquest font-hendrix-semibold text-gray-800" style={{ fontSize: '12pt' }}>
-          {data.question}
-        </h2>
-        {data.subtitle && (
-          <p className="subtituloquest font-hendrix-light text-gray-600 mt-2" style={{ fontSize: '9pt'}}>
-            {data.subtitle}
-          </p>
-        )}
-      </div>
+      {/* Pergunta / Subtítulo */}
+      <Headlines variant="black" id="pa-heading">
+        {data.question}
+      </Headlines>
 
-      {/* Alternativas */}
-      <div className="space-y-3 pt-2">
-        {data.answers.map((answer) => (
-          <button
-            key={answer.id}
-            onClick={() => handleAnswerClick(answer.id)}
-            className={`w-full p-6 rounded-2xl transition-all duration-300 text-left flex items-center space-x-3 ${
-              selectedAnswer === answer.id
-                ? 'border-transparent'
-                : 'border-[0.5px] border-[#1655ff] hover:border-blue-300 bg-white'
-            }`}
-            style={
-              selectedAnswer === answer.id
-                ? {
-                    background: 'linear-gradient(90deg, #1655ff 0%, #60a5fa 100%)',
-                    color: '#fff',
-                    boxShadow: '0 2px 8px 0 rgba(22,85,255,0.08)',
-                  }
-                : {
-                    borderWidth: '0.5px',
-                    borderColor: '#1655ff',
-                  }
-            }
-            disabled={isLoading}
-          >
-            {/* Ícone à esquerda */}
-            <ChevronRight 
-              className="flex-shrink-0" 
-              style={{ 
-                color: selectedAnswer === answer.id ? '#fff' : '#1655ff',
-                fontSize: '11pt'
-              }}
-              size={25}
-            />
-            <span 
-              className="font-hendrix-medium"
-              style={{ 
-                fontSize: '11pt', 
-                color: selectedAnswer === answer.id ? '#fff' : '#4d4d4d',
-                fontWeight: 500
-              }}
-            >
-              {answer.text}
-            </span>
-          </button>
-        ))}
+      {data.subtitle && (
+        <Paragraphs variant="black">
+          {data.subtitle}
+        </Paragraphs>
+      )}
 
-        {/* Botão Confirmar que envia a resposta selecionada */}
-        <div className="pt-4">
-          <button
-            onClick={handleConfirm}
-            disabled={!selectedAnswer || isLoading}
-            className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-white transition-all duration-200 ${(!selectedAnswer || isLoading) ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'}`}
-            style={{
-              background: isLoading ? 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)' : 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
-              fontSize: '10pt'
-            }}
-          >
-            {isLoading ? (
-              <>
-                Confirmando...
-                <Loader2 className="w-4 h-4 animate-spin" />
-              </>
-            ) : (
-              'Confirmar'
-            )}
-          </button>
-        </div>
-      </div>
+
+      {/* Alternativas + Botão Confirmar */}
+      <Alternatives
+        answers={data.answers || []}
+        selectedId={selectedAnswer}          // controlado
+        onChange={setSelectedAnswer}         // atualiza seleção
+        onConfirm={() => handleConfirm()}    // confirma resposta
+        isLoading={isLoading}
+        // Caso seu componente aceite, você pode passar rótulos formais:
+        // confirmLabel="Confirmar"
+        // loadingLabel="Enviando..."
+        // aria-describedby para acessibilidade da dica
+        ariaDescribedBy="hint-selection"
+        // Caso aceite prop para desabilitar confirmar, envie:
+        // disableConfirm={!selectedAnswer || isLoading}
+      />
+
+      {/* Rodapé opcional com um aviso formal (mostrado apenas se nada estiver selecionado) */}
+
     </div>
   );
 };

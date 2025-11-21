@@ -11,8 +11,10 @@ import ContratacaoFinalStep from '../components/steps/ContratacaoFinalStep.jsx';
 
 import ContratacaoEquipamentosStep from '../components/steps/ContratacaoEquipamentosStep.jsx';
 import ContratacaoPreparacaoStep from '../components/steps/ContratacaoPreparacaoStep.jsx';
+import Header from '@/components/modules/Header.jsx';
+import T15 from '../components/steps/T15.jsx';
 
-const LogoVagaCerta = null;
+import LogoTaskUs from '../assets/logo-min.webp';
 
 
 // eslint-disable-next-line no-unused-vars
@@ -44,6 +46,11 @@ const ContratacaoPage = () => {
   // Step 1: Introdução
   const handleStart = async () => {
     await safeUpdateProcessStep('contratacao', 1, {}, 'intro_finalizada');
+    setCurrentStep(8);
+  };
+
+  const handleContiue = async () => {
+    await safeUpdateProcessStep('contratacao', 8, {}, 'intro_finalizada');
     setCurrentStep(2);
   };
 
@@ -89,32 +96,22 @@ const ContratacaoPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-md mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo VagaCerta */}
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                <img className='h-5' src={LogoVagaCerta} />
-              </div>
-            </div>
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="font-hendrix-medium text-xs text-gray-600">Contratação</span>
-            </div>
-          </div>
-        </div>
-      </div>
+     <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
+          {/* Header */}
+          <Header rightText="Contratação" />
 
       {/* Main Content */}
-      <div className="w-full max-w-md bg-[#222426] shadow-lg px-5 py-2 flex flex-col items-center">
+      <div className="w-full max-w-md bg-[#0a0026] shadow-lg px-5 py-2 flex flex-col items-center">
 
         {/* Step 1: Introdução */}
         {currentStep === 1 && (
           <ContratacaoIntroStep onStart={handleStart} />
         )}
+
+        {currentStep === 8 && (
+          <T15 onContinue={handleContiue} />
+        )}
+
         {/* Step 2: Dados do candidato */}
         {currentStep === 2 && (
           <ContratacaoDadosStep onConfirm={handleDadosConfirmados} dados={contratacaoData} />

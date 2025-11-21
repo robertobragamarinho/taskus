@@ -1,18 +1,20 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProcess } from '../hooks/useProcess.js';
 import TesteRapidoAtendimentoStep from '../components/steps/TesteRapidoAtendimentoStep.jsx';
 import SimulacaoConversaStep from '../components/steps/SimulacaoConversaStep.jsx';
-import LastAnswerLoadingStep from '../components/steps/LastAnswerLoadingStep.jsx';
+// ⛔ Removido o LastAnswerLoadingStep
+// import LastAnswerLoadingStep from '../components/steps/LastAnswerLoadingStep.jsx';
 
-const LogoVagaCerta = null;
-
-
-const ClaudioLemosFoto = null;
-const MarcelaFonsecaFoto = null;
-const JoanaBarrosFoto = null;
-const MariaMadalenaFoto = null;
+import LogoTaskUs from '../assets/logo-min.webp';
+import FooterFinal, { FooterFinalReduzida } from '../components/modules/FooterFinal.jsx';
+import Header from '@/components/modules/Header.jsx';
+import ClaudioLemosFoto from '../assets/person_2-min.webp';
+import MarcelaFonsecaFoto from '../assets/person_3-min.webp';
+import JoanaBarrosFoto from '../assets/person_4-min.webp';
+import MariaMadalenaFoto from '../assets/person_1-min.webp';
 
 const TesteHabilidadesPage = () => {
   const navigate = useNavigate();
@@ -22,7 +24,8 @@ const TesteHabilidadesPage = () => {
   const [conversaAtual, setConversaAtual] = useState(1);
   const [respostasSimulacao, setRespostasSimulacao] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [showFinalLoading, setShowFinalLoading] = useState(false);
+  // ⛔ Não precisamos mais do showFinalLoading
+  // const [showFinalLoading, setShowFinalLoading] = useState(false);
 
   // Dados das simulações de conversa
   const simulacoesConversa = [
@@ -35,6 +38,7 @@ const TesteHabilidadesPage = () => {
       },
       mensagemCliente: "Precisava que minha encomenda chegasse até amanhã, você sabe se vai chegar no prazo?",
       urgente: true,
+      tituloPergunta: "Qual resposta você usaria?",
       opcoes: [
         {
           id: 1,
@@ -63,6 +67,7 @@ const TesteHabilidadesPage = () => {
       },
       mensagemCliente: "Fiz uma compra ontem mas e estou com dúvida sobre o pagamento",
       urgente: false,
+      tituloPergunta: "Qual resposta você usaria para orientar a cliente sobre o pagamento com clareza e segurança?",
       opcoes: [
         {
           id: 1,
@@ -91,10 +96,11 @@ const TesteHabilidadesPage = () => {
       },
       mensagemCliente: "Não gostei do streaming, quero cancelar minha assinatura",
       urgente: false,
+      tituloPergunta: "Qual resposta você usaria para cancelar a assinatura?",
       opcoes: [
         {
           id: 1,
-          texto: "Entendo, posso cancelar. Me passa o e-mail da conta, por favor? Assim que localizar, confirmo o cancelamento e aviso por aqui."
+          texto: "Claro, Joana! Posso fazer o cancelamento pra você. Pode me informar o e-mail usado na assinatura?"
         },
         {
           id: 2,
@@ -106,7 +112,7 @@ const TesteHabilidadesPage = () => {
         },
         {
           id: 4,
-          texto: "Não é possível cancelar agora. Você contratou plano anual e terá que esperar até o fim."
+          texto: "Não é possível fazer o cancelamento!"
         }
       ]
     },
@@ -119,6 +125,7 @@ const TesteHabilidadesPage = () => {
       },
       mensagemCliente: "Achei o atendimento muito ruim se não resolverem o meu problema vou abrir uma reclamação no reclame aqu",
       urgente: true,
+      tituloPergunta: "Qual resposta você usaria?",
       opcoes: [
         {
           id: 1,
@@ -134,37 +141,22 @@ const TesteHabilidadesPage = () => {
         },
         {
           id: 4,
-          texto: "Oi! Sinto muito pela experiência até aqui não é o padrão que buscamos. Vou assumir seu caso agora para resolver. Pode me informar o nº do pedido ou CPF/e-mail? Abro o protocolo e te retorno em até 30 minutos com a solução ou próximo passo."
+          texto: "Oi! Sinto muito pela experiência até aqui não é o padrão que buscamos. Vou assumir seu caso agora para resolver. Pode me informar o nº do pedido ou CPF/e-mail? Abro o protocolo e te retono em até 30 minutos com a solução ou próximo passo."
         }
       ]
-    }
-    // João Amâncio (nova)
-    ,{
-      numeroConversa: 5,
-      cliente: {
-        nome: "João Amâncio",
-        id: "#J998877",
-        foto: ClaudioLemosFoto // reutilizando foto existente
-      },
-      mensagemCliente: "Fiz uma compra ontem mas e estou com dúvida sobre o pagamento",
-      urgente: false,
-      opcoes: [
-        { id: 1, texto: "Aguarde 48 horas úteis que o sistema atualiza. Se não mudar, entre em contato de novo." },
-        { id: 2, texto: "Oi! Me envie o nº do pedido ou o CPF/e-mail que eu já verifico e te aviso por aqui." },
-        { id: 3, texto: "Oi, tudo bem? Eu verifico pra você agora. Pode me informar o nº do pedido ou o CPF/e-mail usado na compra, e qual foi o método de pagamento (cartão, Pix ou boleto)?" },
-        { id: 4, texto: "Se você está com dúvida, faça o pagamento novamente para garantir. Depois pedimos reembolso do primeiro." }
-      ]
     },
-    // Danilo Ferreira (nova) - pergunta com dados sensíveis, urgência alta
+
+    // Danilo / Marcela - dados sensíveis, urgência alta
     {
       numeroConversa: 6,
       cliente: {
-        nome: "Danilo Ferreira",
+        nome: "Marcela Fonseca",
         id: "#D578921",
         foto: MarcelaFonsecaFoto
       },
       mensagemCliente: "Olá, comprei um celular no pedido #578921 ontem, paguei no cartão de crédito final 4210, mas até agora não recebi confirmação. Meu CPF é 123.456.789-00 e estou começando a ficar preocupado, preciso de ajuda urgente!",
       urgente: true,
+      tituloPergunta: "Qual informação você usaria para localizar o pedido do cliente?",
       opcoes: [
         { id: 1, texto: "Número do pedido (#578921)" },
         { id: 2, texto: "Últimos dígitos do cartão (4210)" },
@@ -172,7 +164,7 @@ const TesteHabilidadesPage = () => {
         { id: 4, texto: "Todos os dados acima" }
       ]
     },
-    // Maria Madalena - pedido de desconto (nova)
+    // Maria Madalena - pedido de desconto
     {
       numeroConversa: 7,
       cliente: {
@@ -182,33 +174,16 @@ const TesteHabilidadesPage = () => {
       },
       mensagemCliente: "Olha, eu adorei o produto, mas vi no site que não tinha desconto. Você consegue me dar 20% de desconto por fora, sem registrar no sistema?",
       urgente: false,
+      tituloPergunta: "O que você faria nessa situação?",
       opcoes: [
         { id: 1, texto: "Daria o desconto, já que é só um cliente pedindo." },
         { id: 2, texto: "Explicaria que não pode conceder descontos fora das regras da empresa, mas ofereceria verificar promoções oficiais ou próximos benefícios." },
         { id: 3, texto: "Ignoraria a mensagem para evitar conflito." }
       ]
-    },
-    // Maria Madalena - múltiplas solicitações (nova)
-    {
-      numeroConversa: 8,
-      cliente: {
-        nome: "Maria Madalena",
-        id: "#C7654321",
-        foto: MariaMadalenaFoto
-      },
-      mensagemCliente: "Oi, tudo bem? Preciso de ajuda com três coisas: 1 - Alterar o endereço da minha entrega. 2 - Saber quando meu pedido vai chegar. 3 - Atualizar o número do meu telefone no cadastro.",
-      urgente: false,
-      opcoes: [
-        { id: 1, texto: "Alterar o endereço da entrega" },
-        { id: 2, texto: "Informar o prazo de entrega" },
-        { id: 3, texto: "Atualizar o número de telefone" }
-      ]
     }
   ];
 
-  // Observação: reutilizei fotos já presentes no projeto para as novas entradas.
-
-  // Função utilitária: embaralhar um array (Fisher-Yates)
+  // (mantendo funções de embaralhar mesmo sem usar, pra não mudar sua estrutura)
   const shuffleArray = (arr) => {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -218,7 +193,6 @@ const TesteHabilidadesPage = () => {
     return a;
   };
 
-  // Embaralhar apenas as entradas que pertencem à mesma pessoa (mesmo nome)
   const shuffleSameClient = (simulations) => {
     const byClient = {};
     simulations.forEach((sim, idx) => {
@@ -240,15 +214,13 @@ const TesteHabilidadesPage = () => {
     return result;
   };
 
-  // Aplicar embaralhamento local para que dúvidas da mesma pessoa apareçam em ordem aleatória
-  const simulacoes = shuffleSameClient(simulacoesConversa);
-
+  // mantendo ordem fixa
+  const simulacoes = simulacoesConversa;
 
   const handleStartTest = async () => {
     try {
       setIsLoading(true);
 
-      // Salvar o início do teste no banco
       await updateProcessStep(
         'testeHabilidades',
         1,
@@ -256,11 +228,7 @@ const TesteHabilidadesPage = () => {
         'inicio_teste'
       );
 
-      console.log('✅ Teste de habilidades iniciado');
-
-      // Avançar para a primeira simulação
       setCurrentStep(2);
-
     } catch (error) {
       console.error('❌ Erro ao iniciar teste de habilidades:', error);
     } finally {
@@ -272,7 +240,6 @@ const TesteHabilidadesPage = () => {
     try {
       setIsLoading(true);
 
-      // Salvar resposta da simulação atual
       const novasRespostas = {
         ...respostasSimulacao,
         [conversaAtual]: {
@@ -284,7 +251,6 @@ const TesteHabilidadesPage = () => {
 
       setRespostasSimulacao(novasRespostas);
 
-      // Salvar no banco
       await updateProcessStep(
         'testeHabilidades',
         currentStep,
@@ -292,25 +258,16 @@ const TesteHabilidadesPage = () => {
         `simulacao_${conversaAtual}`
       );
 
-      console.log(`✅ Resposta da simulação ${conversaAtual} salva:`, textoResposta);
-
-      // Verificar se há mais simulações
       if (conversaAtual < simulacoes.length) {
-        // Avançar para próxima simulação
+        // ainda há perguntas → vai pra próxima
         setConversaAtual(prev => prev + 1);
         setCurrentStep(prev => prev + 1);
       } else {
-        // Todas as simulações foram completadas
-        console.log('✅ Todas as simulações completadas!');
-        // Completar o processo de teste de habilidades
+        // ✅ terminou TODAS as simulações
         await completeProcess('testeHabilidades', novasRespostas);
-
-        // Mostrar o loading final por 15s antes de navegar
-        setShowFinalLoading(true);
-        // onCountdownFinish: navegar quando o componente terminar
-        // Navegação será tratada pelo callback passado ao FinalQuestionStep
+        // 👉 em vez de mostrar o LastAnswerLoadingStep, navega direto:
+        navigate('/curriculo');
       }
-
     } catch (error) {
       console.error('❌ Erro ao salvar resposta da simulação:', error);
     } finally {
@@ -318,63 +275,46 @@ const TesteHabilidadesPage = () => {
     }
   };
 
-  // Obter dados da conversa atual (usa a versão possivelmente embaralhada)
   const getConversaAtual = () => {
     const indiceConversa = conversaAtual - 1;
     return simulacoes[indiceConversa] || simulacoes[0];
   };
 
-  return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#f5f5f5' }}>
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 flex-shrink-0">
-        <div className="max-w-md mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo VagaCerta */}
-            <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-1">
-                <img
-                  className='h-5'
-                  src={LogoVagaCerta}
-                />
-              </div>
-            </div>
+  // 🔹 SEMPRE que mudar de etapa ou de conversa, joga pro topo
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep, conversaAtual]);
 
-            {/* Logo Recrutamento Online */}
-            <div className="flex items-center space-x-2">
-              <span className="textocontinuidade font-hendrix-medium text-xs text-gray-600">Recrutamento Online</span>
-            </div>
-          </div>
-        </div>
-      </div>
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f5' }}>
+      {/* Header */}
+      <Header rightText="Teste Prático" />
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center px-4 py-6">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="px-4 py-5">
+        <div className="w-full max-w-md mx-auto rounded-3xl bg-white shadow-sm border overflow-hidden">
           <div className="p-6 pb-8">
-            {/* Etapa 1: Introdução do teste */}
             {currentStep === 1 && (
               <TesteRapidoAtendimentoStep onStart={handleStartTest} />
             )}
 
-            {/* Etapas das simulações: render dinâmico baseado no número de simulações */}
-            {showFinalLoading ? (
-              <LastAnswerLoadingStep seconds={15} onFinish={() => navigate('/curriculo')} />
-            ) : (currentStep >= 2 && currentStep <= (simulacoes.length + 1) && (
-              <SimulacaoConversaStep
-                key={conversaAtual} // força o reset do estado local ao trocar de simulação
-                conversaData={getConversaAtual()}
-                onResposta={handleRespostaSimulacao}
-                isLoading={isLoading}
-                fotoReferencia={
-                  getConversaAtual().cliente.foto || ClaudioLemosFoto // foto padrão se não houver
-                }
-                total={simulacoes.length}
-                currentIndex={conversaAtual}
-              />
-            ))}
-
-
+            {currentStep >= 2 &&
+              currentStep <= simulacoes.length + 1 && (
+                <SimulacaoConversaStep
+                  key={conversaAtual}
+                  conversaData={getConversaAtual()}
+                  onResposta={handleRespostaSimulacao}
+                  isLoading={isLoading}
+                  fotoReferencia={
+                    getConversaAtual().cliente.foto || ClaudioLemosFoto
+                  }
+                  total={simulacoes.length}
+                  currentIndex={conversaAtual}
+                  tituloPergunta={
+                    getConversaAtual().tituloPergunta || "Qual resposta você usaria?"
+                  }
+                />
+              )}
           </div>
         </div>
       </div>

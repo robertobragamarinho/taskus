@@ -1,9 +1,13 @@
-
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useMemo } from "react";
 import '../../styles/refino.css';
 import { ProcessContext } from '../../contexts/ProcessContextDefinition.js';
 import { Loader2 } from 'lucide-react';
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Alternatives from "@/components/modules/Alternatives";
 
+// Os dados dos turnos permanecem os mesmos
 const turnos = [
     {
         label: "8:00 às 17:30 (1:30 de intervalo)",
@@ -19,79 +23,68 @@ const turnos = [
     }
 ];
 
-
 const ContratacaoDocumentosStep = ({ onEnviar }) => {
+    // O estado agora armazena o 'value' do turno selecionado (ex: "manha")
     const [selected, setSelected] = useState(null);
     const [loading, setLoading] = useState(false);
-    // Não usar updateUserData, pois adiciona ao contexto raiz. Vamos salvar turnoTrabalho dentro de userData.
     const { updateUserData } = useContext(ProcessContext);
 
-    const handleSelect = (value) => {
-        setSelected(value);
-    };
+    // Converte o array 'turnos' para o formato que o componente 'Alternatives' espera.
+    // O useMemo evita que essa conversão seja refeita a cada renderização.
+    const turnoOptions = useMemo(() => turnos.map(turno => ({
+        id: turno.value, // 'id' é usado para identificação no 'Alternatives'
+        text: turno.label // 'text' é o que será exibido no botão
+    })), []);
 
-    const handleConfirm = async () => {
-        if (!selected) return;
+    // A função de confirmação agora é chamada pelo 'onConfirm' do 'Alternatives'
+    const handleConfirm = async (selectedValue) => {
+        if (!selectedValue) return;
+
         setLoading(true);
-        const turnoLabel = turnos.find(t => t.value === selected)?.label || '';
-        // Salva turnoTrabalho dentro de userData
+        // Encontra o label correspondente ao valor selecionado
+        const turnoLabel = turnos.find(t => t.value === selectedValue)?.label || '';
+        
         if (updateUserData) {
             await updateUserData({ turnoTrabalho: { label: turnoLabel } });
         }
+
+        // Simula um tempo de espera para a operação assíncrona
         await new Promise(res => setTimeout(res, 2000));
         setLoading(false);
+
         if (onEnviar) {
             onEnviar(turnoLabel);
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-8 pb-10">
-            <form className="w-full max-w-md mx-auto bg-transparent" onSubmit={e => { e.preventDefault(); handleConfirm(); }}>
-                {/* Código de aprovação */}
-                <div className="mb-4 flex justify-start">
-                    <span className="bg-[#0ecb7b] text-white font-hendrix-medium text-xs px-3 py-1 rounded-full shadow" style={{ letterSpacing: '0.5px' }}>
-                        Código de aprovação: #WST-782411
-                    </span>
-                </div>
-
-                {/* Título */}
-                <h1 className="font-hendrix-bold text-3xl text-white mb-3 leading-tight">
+        <div className="min-h-screen bloco_principal">
+            <Maintexts>
+                <section id='ETP6T4'/>
+                <Headlines variant="white">
                     Agora escolha em qual turno você deseja trabalhar
-                </h1>
-                <p className="font-hendrix-regular text-base text-gray-300 mb-8">
-                    Lembrando que nossa escala de trabalho é de Segunda a Sexta-Feira. A carga horária são de 8 horas por dia.
-                </p>
-
-                {/* Botões de turno */}
-                <div className="space-y-6 mb-10">
-                    {turnos.map((t) => (
-                        <button
-                            key={t.value}
-                            type="button"
-                            className={`w-full flex items-center justify-between px-6 py-5 rounded-2xl bg-white font-hendrix-semibold text-gray-900 text-lg shadow-lg transition-all border-2 focus:outline-none ${selected === t.value ? 'border-[#1655ff]' : 'border-transparent'}`}
-                            onClick={() => handleSelect(t.value)}
-                            style={{ boxShadow: selected === t.value ? '0 0 0 2px #1655ff' : undefined }}
-                        >
-                            <span className="flex items-center gap-2">
-                                {t.label}
-                            </span>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Botão de confirmação */}
-                <button
-                    type="submit"
-                    disabled={!selected || loading}
-                    className={`w-full py-3 rounded-full bg-gradient-to-r from-[#1655ff] to-[#60a5fa] font-hendrix-semibold text-white text-lg shadow-lg transition flex items-center justify-center ${(!selected || loading) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                >
-                    {loading ? (
-                        <Loader2 className="animate-spin mr-2" size={22} />
-                    ) : null}
-                    {loading ? 'Enviando...' : 'Confirmar'}
-                </button>
-            </form>
+                </Headlines>
+                <Paragraphs variant="white">
+                    Lembrando que nossa escala de trabalho é de Segunda a Sexta-Feira.
+                    A carga horária são de 8 horas por dia.
+                </Paragraphs>
+            </Maintexts>
+            
+            {/* 
+              O formulário não é mais estritamente necessário se o botão de submissão
+              estiver dentro do componente Alternatives, mas pode ser mantido por
+              questões de estrutura ou semântica.
+            */}
+            <div className="w-full max-w-md mx-auto bg-transparent">
+                <Alternatives
+                    answers={turnoOptions}      // Passa as opções de turno formatadas
+                    selectedId={selected}       // Controla qual item está selecionado
+                    onChange={setSelected}      // Atualiza o estado quando um item é clicado
+                    onConfirm={handleConfirm}   // Função a ser chamada ao clicar no botão de confirmação
+                    isLoading={loading}         // Desabilita o componente e mostra feedback de carregamento
+                    confirmText={loading ? 'Enviando...' : 'Confirmar'} // Texto do botão de confirmação
+                />
+            </div>
         </div>
     );
 };

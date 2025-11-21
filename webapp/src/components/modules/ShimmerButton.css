@@ -1,0 +1,159 @@
+/*
+ * Core styles for the ShimmerButton component.  This file defines the
+ * appearance and animations of the button.  Two primary animations are
+ * provided: a shimmer effect that plays whenever the button is visible in the
+ * viewport, and variant‑specific click animations that either shrink the
+ * button into a circle (v1) or animate the arrow to hint scrolling (v2).
+ *
+ * CSS animations are defined using the `@keyframes` at‑rule, which
+ * controls intermediate steps in an animation sequence【808248885613594†L188-L236】.  The
+ * shimmer effect is implemented by animating a gradient across a
+ * pseudo‑element.  Timing functions and durations are customisable via
+ * CSS variables set by the component at runtime.
+ */
+
+/* Root variables define base colours and spacing.  Consumers of the
+   component can override these by placing new definitions further up the
+   cascade. */
+:root {
+  --shimmer-color: rgba(255, 255, 255, 0.4);
+  --button-bg-color: #0066cc;
+  --button-text-color: #ffffff;
+  --button-padding-y: 0.75rem; /* 12px */
+  --button-padding-x: 1.25rem; /* 20px */
+  --blink-duration: 600ms;
+  --shrink-duration: 400ms;
+  --scroll-hint-duration: 600ms;
+}
+
+/* Base button styling */
+.shimmer-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--button-padding-y) var(--button-padding-x);
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 9999px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.2s ease, filter 0.2s ease;
+}
+
+/* Text styling */
+.shimmer-button .button-text {
+  flex: 1;
+  text-align: left;
+  padding-right: 0.5rem;
+}
+
+/* Icon styling */
+.shimmer-button .button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Size the SVG icons consistently.  The stroke inherits the current
+   color from the button. */
+.shimmer-button .icon-svg {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem;
+}
+
+/* Shimmer effect.  The shimmer is implemented as a pseudo‑element
+   positioned absolutely over the button.  When the button is visible the
+   element slides a light gradient across it. */
+.shimmer-button.visible::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, var(--shimmer-color), transparent);
+  animation: shimmer 2s linear infinite;
+}
+
+/* Shimmer keyframes.  The gradient translates horizontally across the
+   button to create a sweep of light. */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Blink animation.  The button flashes between brighter and normal
+   colours.  Because CSS animations run on the compositor thread the
+   animation is smooth and performant【399722737050143†L176-L191】. */
+@keyframes blink {
+  0% {
+    filter: brightness(1);
+  }
+  25% {
+    filter: brightness(1.3);
+  }
+  50% {
+    filter: brightness(1.6);
+  }
+  75% {
+    filter: brightness(1.3);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+/* Shrink animation for variant v1.  Using CSS variables allows
+   interpolation between the runtime width of the button and its height
+   captured at click time.  The final shape is a perfect circle. */
+@keyframes shrink {
+  to {
+    width: var(--circle-size);
+    border-radius: 50%;
+  }
+}
+
+/* Scroll hint animation for variant v2.  The arrow moves down and
+   returns to its original position to suggest scrolling. */
+@keyframes scroll-hint {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Combined click animation for variant v1.  The blink plays first,
+   followed by the shrink.  The durations and delays are set via
+   variables defined on the element at click time. */
+.shimmer-button.v1.clicking {
+  animation: blink var(--blink-duration) ease-in-out forwards,
+    shrink var(--shrink-duration) ease-in-out var(--blink-duration) forwards;
+}
+
+/* Combined click animation for variant v2.  The button itself flashes
+   while the arrow animates. */
+.shimmer-button.v2.clicking {
+  animation: blink var(--blink-duration) ease-in-out forwards;
+}
+.shimmer-button.v2.clicking .button-icon .icon-svg {
+  animation: scroll-hint var(--scroll-hint-duration) ease-in-out var(--blink-duration) forwards;
+}
+
+/* Remove the shimmer effect when the button is not visible.  Without
+   this rule the pseudo‑element would persist and cover the button. */
+.shimmer-button::before {
+  content: none;
+}

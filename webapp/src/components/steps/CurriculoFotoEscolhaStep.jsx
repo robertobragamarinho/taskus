@@ -1,94 +1,123 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronRight, Clock, ChevronUp } from 'lucide-react';
 import '../../styles/refino.css';
 
+import Maintexts from "../modules/Main-texts";
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+
 // eslint-disable-next-line no-unused-vars
 const CurriculoFotoEscolha = ({ enviarFoto, pularEnvioFoto }) => {
-  // eslint-disable-next-line no-unused-vars
   const [isLoading, setIsLoading] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [tipoAcao, setTipoAcao] = useState(null);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
-const _pularEnvioFoto = () => {
+  const _pularEnvioFoto = () => {
+    setIsLoading(true);
+    setTipoAcao('pular');
+    setTimeout(() => {
+      if (typeof pularEnvioFoto === 'function') pularEnvioFoto();
+      setIsLoading(false);
+      setTipoAcao(null);
+    }, 2000);
+  };
+
+  const _enviarFoto = () => {
     setIsLoading(true);
     setTipoAcao('enviar');
     setTimeout(() => {
-        pularEnvioFoto();
-        setIsLoading(false);
-        setTipoAcao(null);
+      if (typeof enviarFoto === 'function') enviarFoto();
+      setIsLoading(false);
+      setTipoAcao(null);
     }, 2000);
-};
-
-  const _enviarFoto = () => {
-    setTimeout(() => {
-        enviarFoto();
-    }, 2000)
   };
 
   return (
-    <div className="space-y-8 ">
-      {/* Título principal */}
-      <div className="pt-6">
-        <h1 className="font-hendrix-semibold text-gray-800" style={{ fontSize: '16pt', lineHeight: '1.3' }}>
-          Você gostaria de adicionar uma foto ao seu curriculo? (Opcional)
-        </h1>
-      </div>
+    <div className="bloco_principal space-y-8">
+      {/* Cabeçalho padrão */}
+      <Maintexts>
+        <section id='ETP4T7'/>
+        <Headlines variant="black">
+          Você gostaria de adicionar uma foto ao seu currículo?
+        </Headlines>
+        <Paragraphs variant="black">
+          A foto é opcional e você pode pular esta etapa agora se preferir.
+        </Paragraphs>
+      </Maintexts>
 
       {/* Botões de ação */}
       <div className="space-y-4">
-        {/* Botão PULAR*/}
+        {/* Botão Pular — secundário (fundo branco, borda azul) */}
         <button
           onClick={_pularEnvioFoto}
-          disabled={isLoading && tipoAcao === 'enviar'}
+          disabled={isLoading && tipoAcao === 'pular'}
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            ${isLoading && tipoAcao === 'enviar'
-              ? 'bg-gray-800 cursor-not-allowed' 
-              : 'bg-gray-900 hover:bg-gray-800 active:bg-gray-700 shadow-lg hover:shadow-xl'
+            w-full px-6 py-4 rounded-full font-hendrix-medium
+            shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400
+            transition-all duration-300
+            ${isLoading && tipoAcao === 'pular'
+              ? 'opacity-70 cursor-not-allowed'
+              : 'hover:bg-blue-50 hover:scale-[1.02] active:scale-95'
             }
           `}
-          style={{ fontSize: '11pt' }}
+          style={{
+            fontSize: '11pt',
+            background: '#ffffff',
+            color: '#000000',
+            border: '1px solid #1655ff',
+            boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
+          }}
         >
           <div className="flex items-center justify-center space-x-2">
-            {isLoading && tipoAcao === 'enviar' ? (
+            {isLoading && tipoAcao === 'pular' ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Pulando...</span>
+                <div className="w-4 h-4 border-2 border-[#1655ff] border-t-transparent rounded-full animate-spin" />
+                <span className="font-hendrix-medium tracking-wide text-[10pt]">
+                  Pulando...
+                </span>
               </>
             ) : (
-              <>
-                <span>Pular</span>
-              </>
+              <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                Pular
+              </span>
             )}
           </div>
         </button>
 
-        {/* Botão Enviar foto */}
+        {/* Botão Enviar foto — primário (gradiente azul) */}
         <button
           onClick={_enviarFoto}
-          disabled={isLoading && tipoAcao === 'criar'}
+          disabled={isLoading && tipoAcao === 'enviar'}
           className={`
-            w-full py-4 px-6 rounded-2xl font-hendrix-semibold text-white
-            transition-all duration-300 ease-out
-            ${isLoading && tipoAcao === 'criar'
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg hover:shadow-xl'
+            w-full px-6 py-4 rounded-full font-hendrix-medium text-white
+            shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400
+            transition-all duration-300
+            ${isLoading && tipoAcao === 'enviar'
+              ? 'bg-gradient-to-r from-gray-300 to-gray-400 opacity-70 cursor-not-allowed'
+              : 'hover:scale-105 active:scale-95'
             }
           `}
-          style={{ fontSize: '11pt' }}
+          style={{
+            fontSize: '11pt',
+            background: 'linear-gradient(135deg, #1655ff 0%, #4285f4 100%)',
+            boxShadow: '0 2px 8px 0 rgba(22,85,255,0.10)',
+          }}
         >
           <div className="flex items-center justify-center space-x-2">
-            {isLoading && tipoAcao === 'criar' ? (
+            {isLoading && tipoAcao === 'enviar' ? (
               <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Carregando...</span>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span className="font-hendrix-medium tracking-wide text-[10pt]">
+                  Carregando...
+                </span>
               </>
             ) : (
-              <>
-                <span>Sim, eu quero</span>
-              </>
+              <span className="font-hendrix-medium tracking-wide text-[12pt]">
+                Sim, eu quero
+              </span>
             )}
           </div>
         </button>

@@ -1,56 +1,49 @@
-import { Star } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import '../../styles/refino.css';
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import ExplanatoryCards from "../modules/ExplanatoryCards";
+import { IconInfo, IconClock } from "../modules/SvgIcons";
 
 const ProximaFase = () => {
+  // 👇 Faz a tela rolar para o topo ao montar o componente
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const supportTypes = [
+    {
+      id: 1,
+      icon: IconInfo,
+      title: "Entrevista Online",
+      description:
+        "A entrevista é totalmente online. Você não precisa falar com ninguém, mas cada resposta é revisada pela equipe de RH em tempo real."
+    },
+    {
+      id: 2,
+      icon: IconClock,
+      title: "Avaliação 24h",
+      description:
+        "De 17/10 a 19/12, a equipe de RH atua em turnos especiais para atender à alta demanda de contratações. Todos os candidatos são avaliados 24 horas por dia."
+    }
+  ];
+
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        
-        <h1
-          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
-          style={{ fontSize: '12pt', lineHeight: '1.2' }}
-        >
-          <span className="block sm:inline">
-            Pronto! Você já sabe como tudo funciona, vamos para a próxima fase.
-          </span>
-        </h1>
+    <div className="bloco_principal">
+      <Maintexts>
+        <section id='ETP1T8'/>
+        <Headlines variant="black">
+          Pronto! Você chegou <br/>até aqui, e isso já mostra<br/> muito sobre você.
+        </Headlines>
 
+        <Paragraphs variant="black">
+          Agora vamos fazer a entrevista online. Essa etapa é rápida e muito simples.
+        </Paragraphs>
+      </Maintexts>
 
-        <p className="mt-3 text-gray-600 font-hendrix-regular" style={{ fontSize: '9pt' }}>
-          Agora vamos iniciar a entrevista online para conhecer melhor o seu perfil. Ao final você saberá se será contratado(a) para fazer parte da equipe VagaCerta.
-        </p>
-      </div>
-
-      {/* Cards informativos - estrela em cima, texto embaixo, ambos alinhados à esquerda */}
-      <div className="flex flex-col gap-4">
-        {/* Card 1 */}
-        <div className="rounded-2xl px-6 py-5" style={{ background: '#f3f6f9', minHeight: 90 }}>
-          <div className="flex flex-col items-start">
-            <div className="mb-2">
-              <div className="w-9 h-9 rounded-md flex items-center justify-center mb-5" style={{ backgroundColor: '#e6f0ff' }}>
-                <Star className="w-5 h-5" style={{ color: '#1655ff' }} />
-              </div>
-            </div>
-            <div className="text-sm text-gray-700" style={{ fontSize: '10pt', textAlign: 'left' }}>
-              A entrevista é totalmente online você não irá precisar falar com ninguém, mas cada resposta é revisada pela nossa equipe de RH em tempo real.
-            </div>
-          </div>
-        </div>
-        {/* Card 2 */}
-        <div className="rounded-2xl px-6 py-5" style={{ background: '#f3f6f9', minHeight: 90 }}>
-          <div className="flex flex-col items-start">
-            <div className="mb-2">
-              <div className="w-9 h-9 rounded-md flex items-center justify-center" style={{ backgroundColor: '#e6f0ff' }}>
-                <Star className="w-5 h-5 mb-5" style={{ color: '#1655ff' }} />
-              </div>
-            </div>
-            <div className="text-sm text-gray-700" style={{ fontSize: '10pt', textAlign: 'left' }}>
-              De 01/09 a 30/09, a equipe de RH estará em turnos especiais para atender a alta demanda de contratações. Nesse período, todos os candidatos serão avaliados 24 horas por dia.
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {/* Cards explicativos */}
+      <ExplanatoryCards supportTypes={supportTypes} />
     </div>
   );
 };

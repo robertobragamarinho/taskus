@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Favicon (carinha feliz branca) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formulário de Contratação</title>
+
+    <!-- Lordicon -->
+    <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-TGTRGWKN');
+    </script>
+    <!-- End Google Tag Manager -->
 
     <!-- Meta Pixel Code -->
     <script>
@@ -34,17 +55,36 @@
       fbq("init", "1316947726438130");
       fbq("track", "PageView");
     </script>
-
     <!-- End Meta Pixel Code -->
+
+    <!-- Contentsquare -->
+    <script src="https://t.contentsquare.net/uxa/d65ce47454b50.js"></script>
+    <!-- End Contentsquare -->
   </head>
+
   <body>
-    <noscript
-      ><img
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-TGTRGWKN"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Meta Pixel (noscript) -->
+    <noscript>
+      <img
         height="1"
         width="1"
         style="display: none"
         src="https://www.facebook.com/tr?id=1316947726438130&ev=PageView&noscript=1"
-    /></noscript>
+      />
+    </noscript>
+    <!-- End Meta Pixel (noscript) -->
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

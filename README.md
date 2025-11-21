@@ -1,5 +1,5 @@
 
-# 🚀 Sistema de Recrutamento ProfitSeller
+
 
 Sistema completo de recrutamento com formulário multi-etapas, análise de perfil e salvamento em tempo real no Azure Cosmos DB.
 
@@ -18,7 +18,7 @@ Sistema completo de recrutamento com formulário multi-etapas, análise de perfi
 
 ## 🎯 Visão Geral
 
-O **Sistema de Recrutamento ProfitSeller** é uma aplicação completa que permite:
+
 
 - **Cadastro de candidatos** com validação de dados
 - **Análise de perfil interativa** com questionário multi-etapas
@@ -196,7 +196,7 @@ projetoForm/
    **Arquivo .env**:
    ```bash
    VITE_API_BASE_URL=http://localhost:8000
-   VITE_APP_TITLE=Sistema de Recrutamento ProfitSeller
+   VITE_APP_TITLE=Sistema de Recrutamento 
    ```
 
 ## 🚀 Como Executar Localmente
@@ -280,4 +280,3 @@ Write-Host "Acesse: http://localhost:5173"
 - ❌ **Error handling** robusto
 - 📈 **Métricas de progresso** em tempo real.
 
-"# taskus" 

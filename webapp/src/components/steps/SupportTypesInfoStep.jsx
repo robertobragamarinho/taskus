@@ -1,93 +1,59 @@
-import { Phone, MessageCircle, Mail } from 'lucide-react';
 import '../../styles/refino.css';
+import Headlines from "../modules/Headlines";
+import Paragraphs from "../modules/Paragraphs";
+import Maintexts from "../modules/Main-texts";
+import Continuity from "../modules/Continuity";
+import VerifiedList from "../modules/VerifiedList";
+import ExplanatoryCards from "../modules/ExplanatoryCards";
+import { IconPhoneLike, IconChatLike, IconMailEditLike } from "../modules/SvgIcons";
+import { useEffect } from "react";   // 👈 importa o hook
 
 const SupportTypesInfoStep = () => {
+  // 👇 useEffect que sobe a tela ao entrar
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const supportTypes = [
-    {
-      id: 'phone',
-      icon: Phone,
-      title: 'Atendimento por ligação',
-      description: 'Esse modelo de atendimento é ideal para quem tem facilidade em se comunicar e deseja oferecer suporte direto às pessoas por meio de ligações.'
+     {
+      id: 'whatsapp',
+      icon: IconChatLike,
+      title: 'Atendimento por WhatsApp',
+      description:
+        'Você vai conversar com os clientes pelo WhatsApp, tirando dúvidas e ajudando de forma rápida e prática, tudo por mensagem.'
     },
     {
-      id: 'whatsapp',
-      icon: MessageCircle,
-      title: 'Atendimento por WhatsApp',
-      description: 'Você irá atender os clientes de forma rápida e prática através de mensagens no WhatsApp, oferecendo suporte no dia a dia.'
+      id: 'phone',
+      icon: IconPhoneLike,
+      title: 'Atendimento por ligação',
+      description:
+        'Esse modelo de atendimento é ideal para quem tem facilidade em se comunicar e deseja oferecer suporte direto às pessoas por meio de ligações.'
     },
     {
       id: 'email',
-      icon: Mail,
+      icon: IconMailEditLike,
       title: 'Atendimento por e-mail',
-      description: 'Você irá responder os clientes por e-mail. Esse modelo de suporte é mais utilizado em situações como devoluções, trocas e solicitações de reembolso.'
+      description:
+        'Você irá responder os clientes por e-mail. Esse modelo de suporte é mais utilizado em situações como devoluções, trocas e solicitações de reembolso.'
     }
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Título principal */}
-      <div className="text-center space-y-3">
+    <div className="bloco_principal">
 
-        <h1
-          className="titulodaetapa font-hendrix-semibold text-gray-900 mb-4"
-          style={{ fontSize: '12pt', lineHeight: '1.2' }}
-        >
-          <span className="block sm:inline">
-            São 3 áreas de atendimento disponíveis.
-          </span>
-        </h1>
+      <Maintexts>
+        <section id='ETP1T4'/>
+        <Headlines variant="black">
+          Os atendimentos são<br/> realizados de três formas:<br/> WhatsApp, e-mail ou telefone.
+        </Headlines>
 
+        <Paragraphs variant="black">
+          Depois de ser contratado(a), você escolhe a área que tiver mais <br/> facilidade pra trabalhar.
+        </Paragraphs>
+      </Maintexts>
 
-        <p className="subtitulodaetapa font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-          Quando você for contratado(a),  poderá escolher qual das 3 áreas quer trabalhar.
-        </p>
-        <p className="textocontinuidade font-hendrix-regular text-gray-600" style={{ fontSize: '9pt' }}>
-          Veja abaixo como funciona:
-        </p>
-      </div>
-
-      {/* Cards dos tipos de suporte */}
-      <div className="space-y-4">
-        {supportTypes.map((type) => (
-          <div
-            key={type.id}
-            className="p-4 rounded-2xl border border-gray-200"
-            style={{ backgroundColor: '#f3f3f3' }}
-          >
-            <div className="flex items-start space-x-3">
-              {/* Ícone */}
-              <div className="flex-shrink-0 mt-1">
-                <type.icon
-                  className="w-6 h-6"
-                  style={{ color: '#1655ff' }}
-                />
-              </div>
-
-              {/* Conteúdo */}
-              <div className="flex-1 space-y-2">
-                <h3
-                  className="font-hendrix-semibold"
-                  style={{
-                    fontSize: '10pt',
-                    color: '#1655ff'
-                  }}
-                >
-                  {type.title}
-                </h3>
-                <p
-                  className="font-hendrix-light leading-relaxed"
-                  style={{
-                    fontSize: '8pt',
-                    color: '#969696'
-                  }}
-                >
-                  {type.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <ExplanatoryCards supportTypes={supportTypes} />
+      
     </div>
   );
 };
