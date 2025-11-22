@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import VerifiedList from "./Verifiedlist";
+import Verifiedlist from "./Verifiedlist";
 
 const ExplanatoryCards = ({ supportTypes, variant = "default" }) => {
   return (
@@ -66,7 +66,7 @@ const ExplanatoryCards = ({ supportTypes, variant = "default" }) => {
               
               }}
             >
-              <VerifiedList
+              <Verifiedlist
                 resources={type.resources}
                 withDescription={false}
               />
