@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import VerifiedList from "./VerifiedList";
+import VerifiedList from "./Verifiedlist";
 
 const ExplanatoryCards = ({ supportTypes, variant = "default" }) => {
   return (
